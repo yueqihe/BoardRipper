@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   lint-and-typecheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -43,7 +43,7 @@ jobs:
   # `skipped` — so the Docker build and smoke test stopped running entirely and
   # nobody noticed. Independent jobs surface independent breakage.
   frontend-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -67,7 +67,7 @@ jobs:
           retention-days: 7
 
   backend-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
         with:
@@ -85,7 +85,7 @@ jobs:
   # Gated on backend-tests only (the image embeds the Go binary, so a failing
   # backend makes the build pointless). Deliberately NOT gated on lint.
   docker-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: backend-tests
     steps:
       - uses: actions/checkout@v5
@@ -100,7 +100,7 @@ jobs:
 
   chinese-offline:
     name: 中文离线版与同步脚本验证
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
