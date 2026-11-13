@@ -52,8 +52,11 @@ class GitHub:
         self.token = os.environ['GH_TOKEN']
 
     def request(self, path, method='GET', data=None):
+        url = f'https://api.github.com/repos/{self.repo}'
+        if path:
+            url += '/' + path
         request = urllib.request.Request(
-            f'https://api.github.com/repos/{self.repo}/{path}', method=method,
+            url, method=method,
             data=json.dumps(data, ensure_ascii=False).encode() if data is not None else None,
             headers={'Authorization': f'Bearer {self.token}', 'Accept': 'application/vnd.github+json',
                      'Content-Type': 'application/json', 'User-Agent': 'BoardRipper-upstream-sync'})
