@@ -103,7 +103,7 @@ function InfoBadge() {
               <a href="https://buymeacoffee.com/inwerp" target="_blank" rel="noopener noreferrer"
                 className="info-dropdown-donate">{uiText("Buy me a coffee")}</a>
               <a href="https://www.ripperdoc.de/boardripper/" target="_blank" rel="noopener noreferrer">{uiText("Website")}</a>
-              <a href="https://github.com/yueqihe/BoardRipper/tree/feat/chinese-ui" target="_blank" rel="noopener noreferrer">{uiText("Source")}</a>
+              <a href="https://github.com/yueqihe/BoardRipper" target="_blank" rel="noopener noreferrer">{uiText("Source")}</a>
             </div>
           </div>
         </div>

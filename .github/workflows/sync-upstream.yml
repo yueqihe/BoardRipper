@@ -1,0 +1,31 @@
+name: 同步上游
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 北京时间 10:00；平台可能延迟执行
+  workflow_dispatch:
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+jobs:
+  sync:
+    if: github.repository == 'yueqihe/BoardRipper'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: 合并到同步分支并创建待审核 PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/sync_upstream.py

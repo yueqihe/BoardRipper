@@ -4,6 +4,8 @@
 中文分支位于 [yueqihe/BoardRipper](https://github.com/yueqihe/BoardRipper)。
 原作者为 Alexey Lavrov / RipperDoc，原项目与本分支均采用 AGPL-3.0。
 
+完整项目介绍与 Docker 部署见 [中文首页](README.md)，同步和补译流程见 [维护说明](docs/UPSTREAM_SYNC.zh-CN.md)。
+
 ## 使用
 
 离线版是一个独立 HTML 文件，下载后用 Edge、Chrome 或其他现代浏览器打开即可。

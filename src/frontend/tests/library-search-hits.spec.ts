@@ -15,6 +15,8 @@ import path from 'path';
 // folder library while it expects a backend, and the built bundle has no
 // DEV test globals. `npx playwright test --config playwright.lite.config.ts
 // --project=lite-dev library-search-hits`.
+// Playwright requires an object pattern even when the hook uses no fixtures.
+// eslint-disable-next-line no-empty-pattern
 test.beforeEach(({}, info) => {
   test.skip(info.project.name !== 'lite-dev', 'needs the lite dev server (folder library + DEV globals)');
 });

@@ -1,10 +1,14 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -15,9 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: src/frontend/package-lock.json
       - run: cd src/frontend && npm ci
@@ -40,9 +46,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: src/frontend/package-lock.json
       - run: cd src/frontend && npm ci
@@ -62,6 +70,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-go@v5
         with:
           # Must match src/backend/go.mod (`go 1.25.0`) and the Dockerfile
@@ -79,9 +89,59 @@ jobs:
     needs: backend-tests
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - run: docker build -t boardripper:ci-${{ github.sha }} .
       - run: |
           docker run -d --name br-smoke -p 8080:8080 boardripper:ci-${{ github.sha }}
           sleep 3
           curl -f http://localhost:8080/ || (docker logs br-smoke && exit 1)
           docker stop br-smoke
+
+  chinese-offline:
+    name: 中文离线版与同步脚本验证
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - name: 验证同步脚本不会覆盖中文分支
+        run: python3 -m unittest discover -s .github/scripts -p 'test_*.py' -v
+      - run: npm ci
+        working-directory: src/frontend
+      - run: npm run test:unit
+        working-directory: src/frontend
+      - run: npm run build:offline
+        working-directory: src/frontend
+        env:
+          BR_DEFAULT_LANGUAGE: zh-CN
+          BR_VERSION_SUFFIX: -zh
+      - run: npx playwright install --with-deps chromium
+        working-directory: src/frontend
+      - name: 验证中文、语言切换、板图与 PDF 离线加载
+        run: npx playwright test --config playwright.chinese.config.ts
+        working-directory: src/frontend
+      - name: 准备离线版与对应源码
+        run: |
+          mkdir -p chinese-artifact
+          cp src/frontend/dist-offline/boardripper-lite.html chinese-artifact/
+          cp README.md README.zh-CN.md LICENSE THIRD_PARTY.md chinese-artifact/
+          git archive --format=zip --output=chinese-artifact/source.zip HEAD
+          printf 'Source commit: %s\nSource: https://github.com/%s/tree/%s\n' "$GITHUB_SHA" "$GITHUB_REPOSITORY" "$GITHUB_SHA" > chinese-artifact/SOURCE.txt
+      - uses: actions/upload-artifact@v5
+        with:
+          name: BoardRipper-zh-CN-offline
+          path: chinese-artifact/
+          retention-days: 30
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: chinese-playwright-report
+          path: src/frontend/test-results/
+          retention-days: 7

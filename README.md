@@ -1,397 +1,168 @@
-# BoardRipper
+# BoardRipper 简体中文版
 
-**[简体中文版说明 / Chinese edition](README.zh-CN.md)** — Chinese UI by default, with an English switch in the toolbar. Upstream authorship and AGPL-3.0 licensing are retained.
+开源 PCB 板图与 PDF 原理图查看器，支持 Allegro、Altium、KiCad、EAGLE 及多种维修板图格式。可以查看元件、引脚、网络和多层走线，在板图与 PDF 之间查找对应信息。默认使用简体中文，也可切换 English。
 
-Web-based PCB boardview viewer for board-level repair. Fifteen boardview formats and the matching PDF schematic, side by side, in a browser. GPU-accelerated rendering, dockable panels, self-hosted via Docker. Free, AGPL-3.0.
+本仓库是 [AlexeyInwerp/BoardRipper](https://github.com/AlexeyInwerp/BoardRipper) 的中文分支，初始汉化基于 0.52.1。原作者为 Alexey Lavrov / RipperDoc；保留上游署名、第三方声明与 **AGPL-3.0** 许可证。
 
-![Boardview and PDF schematic side by side — instant cross-reference](docs/screenshots/01-board-pdf-lookup.png)
+[中文使用说明](README.zh-CN.md) · [上游英文说明快照](README.en.md) · [上游同步与汉化维护](docs/UPSTREAM_SYNC.zh-CN.md) · [许可证](LICENSE)
 
-A polished overview with screenshots lives at <https://www.ripperdoc.de/boardripper/>. This README is the developer- and operator-facing companion: stack details, Docker setup, build instructions, license notes.
+![板图与 PDF 原理图并排查看](docs/screenshots/01-board-pdf-lookup.png)
 
-> **Bring your own files.** BoardRipper is the viewer only — it does not ship with any boardview files, schematics, or PDFs. The bundled board database is reference metadata (board numbers and device models), no copyrighted content.
+## 中文版有什么
 
-> **Discord:** <https://discord.gg/BYEkKTMNNY> — the RipperDoc server.
->
-> You can request features and tools there, or on
-> [GitHub](https://github.com/AlexeyInwerp/BoardRipper/issues/new/choose) — whichever you prefer.
-> There is also a small repair community on the server.
+- **中文界面**：首页、工具栏、元件与网络侧栏、设置、计算器、工作清单、提示和快捷键说明。
+- **中英文切换**：右上角选择“简体中文 / English”，切换后重新加载，语言选择保存在当前浏览器。
+- **中文设置搜索**：可搜索“引脚”“轮廓”“缩放”等中文关键词。
+- **单文件离线版**：构建为一个 HTML，Edge 或 Chrome 直接打开；板图与 PDF 在本机解析，无需上传。
+- **保留工程数据**：文件名、元件位号、网络名称、用户备注和命令示例保持原文。
+- **跟进上游**：每天检查原项目更新，生成同步 PR，经过测试和汉化检查后合并。
 
-## Run it in your browser — no install
+原始工程内的文字、外部发布说明和解析器底层诊断信息可能保留原文。这个工具用于查看与检修，不提供 PCB 布线编辑功能，也不附带商业板图或原理图。
 
-Besides the Docker build there's a **lite build**: the full viewer/inspector running entirely client-side, no backend. Open your own boardview files and PDFs locally — nothing is uploaded, nothing is stored server-side. There's no shared library, board database, or self-update (those need the backend), but all rendering, inspection, net-highlight, multi-layer, themes, and PDF viewing work.
+## 快速使用
 
-- **Open it now** — **<https://www.ripperdoc.de/boardripper/web/>**. Runs in the browser; installable as an offline PWA. An **Offline copy** button (top-right) downloads the single-file build.
-- **Offline single file** — **[boardripper-lite.html](https://www.ripperdoc.de/boardripper/web/boardripper-lite.html)** (~7 MB). Save it and open it from any browser — fully offline, no server, no internet. Copy it to a USB stick for the bench.
+### 轻量离线版
 
-Same codebase as the Docker build — `npm run build:lite` / `npm run build:offline` in `src/frontend/`. See [src/frontend/LITE_BUILD.md](src/frontend/LITE_BUILD.md).
+1. 在本仓库 [Actions → CI](https://github.com/yueqihe/BoardRipper/actions/workflows/ci.yml) 中打开最近一次成功的 `main` 构建。
+2. 登录 GitHub 后，在页面底部下载 `BoardRipper-zh-CN-offline` 构建附件并解压。
+3. 用 Edge 或 Chrome 打开其中的 `boardripper-lite.html`。
+4. 点击“打开”，或拖入板图、PDF；点击元件或引脚查看网络，在图层面板控制走线、过孔、丝印与覆铜。
 
-## Features
+也可以按下文从源码构建。离线版没有服务器共享库、服务器板号数据库或容器自更新；板图查看、搜索、网络高亮、多图层、主题和 PDF 查看均在本机运行。
 
-- **GPU-accelerated rendering** — PixiJS v8 / WebGL, 10,000+ components at 60 fps on a modern GPU. Bench-tested down to Intel HD 4000-era integrated graphics (10–30 fps).
-- **Fifteen board formats** — see table below. Both `.cad` and `.brd` are shared extensions; BoardRipper sniffs file content to pick the right parser.
-- **PDF schematic, in sync** — pan, zoom, text search, bookmarks, night mode. Right-click a net on the board to search it in the schematic.
-- **Multi-board tabs** — open several boards at once, switch between them.
-- **Multi-layer support** — show/hide top, bottom, and inner layers independently. Butterfly mode shows top and bottom side by side.
-- **Net highlight** — click a pin and the whole net lights up across the board. Chain-adjacent mode walks through neighbouring nets too.
-- **Part comparison** — put one component's pinout next to the same chip on another open board, pin by pin. Where the net names differ, BoardRipper checks what each net actually touches and reads the naming conventions boards use — a pin marked unused, a rail written two ways — so a board that was only renamed does not read as a fault. Optionally marks the differing pins on the board itself.
-- **Touch input** — pinch-zoom, drag-pan, tap to select. Usable on a tablet at the bench.
-- **Customizable colors** — per-net rules by name pattern (e.g. `GND`, `VCC`, `PP*`), per-component-type fills (R / C / L / U / Q / D / J), per-layer colors, label / pin / outline tuning. Live preview before applying.
-- **Multi-line search** — each line is an extra AND-filter, useful when a component carries value and voltage on separate label lines (`20uF` ⨯ `10V` ⨯ `C12*`).
-- **Drag-and-drop import** — drop a board file or a folder onto the window and it loads. To persist drops across container restarts, mount a writable folder at `/library/incoming` (see Docker setup).
-- **Board library** — scan folders, browse by board number or model. Filenames are auto-sorted; board numbers, manufacturers, and revisions are parsed automatically.
-- **Board database with heuristics** — a bundled reference DB maps board numbers to manufacturer / ODM / laptop or phone model and groups boards by device.
-- **PDF auto-link** — boards and their schematics get matched up automatically when both are present in the same library.
-- **IndexedDB cache** — re-open without re-parsing.
-- **Self-update** — one-click signed update from the toolbar. No GitHub token required; updates are signed with an offline Ed25519 key and verified by the running container before install.
+[上游在线版与下载页面](https://www.ripperdoc.de/boardripper/) 属于原项目，发布内容和语言以该网站为准。中文构建请从本仓库获取。
 
-![Multi-layer Allegro BRD with layer sidebar — toggle signal, power, and ground planes independently](docs/screenshots/03-multi-layer.png)
+### Docker 部署中文版
 
-- **Panel system** — Dockview: dockable, floating, and popout-to-new-window panels.
-  - Board viewer, with a sidebar for part info, layers, search, revisions, notes and the worklist
-  - PDF Viewer
-  - Library, History and Tools (calculators, part comparison, worklists)
-  - Settings (live preview mockup, per-net color rules, label/pin/outline tuning)
-  - Debug Panel (scoped log viewer, frame-time)
-- **Electron desktop wrapper** — standalone macOS (universal + legacy) and Windows builds.
-
-![Multiple boards of different formats open simultaneously in tabs — BVR, BRD, FZ, TVW, XZZ](docs/screenshots/02-format-support.png)
-
-## Supported file formats
-
-| Format | Extension(s) | Description | Spec |
-|---|---|---|---|
-| **BVR1** | `.bvr` / `.bv` | Tab-delimited boardview, coordinates ×1000 → mils | [BVR_FORMAT.md](docs/formats/BVR_FORMAT.md) |
-| **BVR3** | `.bvr` / `.bv` | Keyword-value boardview, relative pin coordinates | [BVR_FORMAT.md](docs/formats/BVR_FORMAT.md) |
-| **BRD** | `.brd` | Apple / Mac repair, bit-rotation obfuscated binary | [BRD_FORMAT.md](docs/formats/BRD_FORMAT.md) |
-| **BDV** | `.brd` / `.bdv` | Plain-text boardview (BRDOUT / NETS / PARTS / PINS / NAILS) | [BDV_FORMAT.md](docs/formats/BDV_FORMAT.md) |
-| **BDV ASC** | `.bdv` | Honhan / Tebo-ICT obfuscated multi-section ASC (line-key cipher) | [BDV_ASC_FORMAT.md](docs/formats/BDV_ASC_FORMAT.md) |
-| **FZ** | `.fz` | ASUS, RC6-encrypted, zlib-compressed | [FZ_FORMAT.md](docs/formats/FZ_FORMAT.md) |
-| **CAE** | `.cae` | ASRock PCBRepair Pro; same container and cipher as FZ, different key. Not yet verified against a real file | [FZ_FORMAT.md](docs/formats/FZ_FORMAT.md) |
-| **GenCAD** | `.cad` | GenCAD 1.4 PCB interchange (text) | [CAD_FORMAT.md](docs/formats/CAD_FORMAT.md) |
-| **Mentor Neutral** | `.cad` | Mentor Boardstation neutral file (Samsung / Quanta / Compal exports) | [MENTOR_NEUTRAL_FORMAT.md](docs/formats/MENTOR_NEUTRAL_FORMAT.md) |
-| **XZZ** | `.pcb` | XZZ PCB, DES-encrypted boardview | [XZZ_FORMAT.md](docs/formats/XZZ_FORMAT.md) |
-| **TVW** | `.tvw` | Teboview binary, multi-layer + traces + drill data | [TVW_FORMAT.md](docs/formats/TVW_FORMAT.md) |
-| **Cadence Allegro BRD** | `.brd` | Cadence Allegro PCB binary, v16.x / v17.x / v18.x | [ALLEGRO_BRD_FORMAT.md](docs/formats/ALLEGRO_BRD_FORMAT.md) |
-| ↳ Allegro v15.x | `.brd` | Same parser family, partial coverage, still in beta | [ALLEGRO_V15_FORMAT.md](docs/formats/ALLEGRO_V15_FORMAT.md) |
-| **Altium PCB** | `.PcbDoc` / `.CMPcbDoc` / `.CSPcbDoc` | Altium Designer 6.0+, Circuit Maker / Circuit Studio; binary CFB + ASCII v5.0 | [ALTIUM_PCB_FORMAT.md](docs/formats/ALTIUM_PCB_FORMAT.md) |
-| **KiCad** | `.kicad_pcb` | KiCad 4–9 board file: parts, pins, nets, outline with cutouts, tracks, vias, copper pours | [KICAD_PCB_FORMAT.md](docs/formats/KICAD_PCB_FORMAT.md) |
-| **EAGLE** | `.brd` | Autodesk / CadSoft EAGLE 6.0+ XML board; parts resolved through library packages | [EAGLE_BRD_FORMAT.md](docs/formats/EAGLE_BRD_FORMAT.md) |
-
-![Obscure CAD file with multiple boards stacked into one document — all outlines and components rendered correctly alongside the matching PDF](docs/screenshots/04-stacked-boards.png)
-
-## Keyboard shortcuts
-
-The full, always-current list lives in **Settings ▸ Input ▸ Keyboard Shortcuts** (and on the home-screen Getting Started card). The headline shortcuts:
-
-| | |
-|---|---|
-| **Open board / PDF** | `⌘O` / `⌘P` (Mac) · `Ctrl+O` / `Ctrl+P` (Win/Linux) |
-| **Find** (selection-aware) | `⌘F` / `Ctrl+F` — prefills PDF search with the selected component or net |
-| **Pan board / PDF** | `W A S D` or `Alt+arrows` |
-| **Rotate board** | `Q` / `E` (CCW / CW) or `⌘←` / `⌘→` |
-| **Mirror board** | `⌘↑` / `Ctrl+↑` |
-| **Flip layer** (top ↔ bottom) | `Space` |
-| **Zoom in / out** | `Shift+W` / `Shift+S` (centred on canvas) |
-| **Toggle Library sidebar** | `~` — the physical key left of `1` (`Backquote` / `IntlBackslash`); works on US, German, and most other layouts |
-| **Jump board ↔ PDF** | `Tab` |
-| **PDF page nav** | `PgUp` / `PgDn`, or `↑` / `↓` while a PDF panel is active and has no search matches (`Home` / `End` for first / last) |
-
-The keyboard pan and zoom step sizes are configurable in **Settings ▸ Input ▸ Navigation ▸ Keyboard pan / zoom**. The right-click context menu adds a top-row icon strip with **Copy net / Copy part / Search net / Search part** (board) and **Copy / Search Web** (PDF text) — search opens Google in a new tab.
-
-> **Layout note.** WSAD/QE/Shift+WS bind to the printed letter on your keyboard, so on AZERTY layouts the keys are physically Z/Q/S/D rather than the W/A/S/D positions — a layout-aware remapping is on the roadmap. The `~` library toggle is layout-independent.
-
-## Stack
-
-| Layer | Technology |
-|---|---|
-| Rendering | PixiJS v8 + pixi-viewport v6 (WebGL) |
-| Frontend | React 19 + TypeScript + Vite 7 |
-| Panels | Dockview v5 |
-| Backend | Go (`net/http` stdlib) |
-| Container | Docker multi-stage, scratch-based, ~28 MB image / ~14 MB compressed |
-| Desktop | Electron (macOS universal + Windows) |
-| Tests | Playwright (Chromium headless) |
-
-## Quick start
-
-BoardRipper is primarily a **server** you run on a NAS or host machine and access from any browser on your network. Standalone binaries and desktop Electron wrappers are available as alternatives.
-
-### Docker (typical deployment)
+从本仓库源码构建：
 
 ```bash
-docker compose up -d      # the checked-in compose file BUILDS the image from source (build: .)
-# → http://localhost:8081
-```
-
-It mounts `./library`, which starts empty — put your board folders in there or edit the
-`volumes:` block to mount them read-only (see Docker setup). On first visit the app asks to
-index the library and offers automatic board↔PDF linking and the OpenBoardData download.
-
-Or pull directly:
-
-```bash
-docker pull ghcr.io/alexeyinwerp/boardripper:latest
-```
-
-Mount your board-file folders under `/library` to expose them in the Library panel — see Docker Setup below.
-
-### Build from source
-
-```bash
-git clone https://github.com/AlexeyInwerp/BoardRipper.git
+git clone https://github.com/yueqihe/BoardRipper.git
 cd BoardRipper
+docker compose up -d --build
+# 浏览器打开 http://localhost:8081
+```
 
-# Build the frontend bundle:
-cd src/frontend && npm install && npm run build && cd ../..
+仓库内的 Compose 使用 `build: .`，挂载 `./data` 保存数据，`./library` 保存板图目录。可以把现有板图库以只读方式挂到 `/library` 的子目录；拖入文件的保存目录需要写权限。容器默认限制为 2 GB 内存，PDF 索引并发通过 `PDFINDEX_POOL_MAX` 调整。
 
-# Run the Go server pointing at the built bundle (go.mod lives in src/backend):
-cd src/backend
+中文版更新请拉取本仓库并重新构建：
+
+```bash
+git pull --ff-only origin main
+docker compose up -d --build
+```
+
+上游内置的“更新并重启”及拖入签名更新包，使用的是上游发布源，可能将容器替换为上游版本。维护中文版时请使用上面的源码构建流程。现有 Compose 中的 Docker socket 挂载供上游容器更新功能使用，普通查看无需依赖该功能。
+
+## 主要功能
+
+- **GPU 绘制**：PixiJS / WebGL 渲染，支持多板图标签页、缩放、旋转、镜像和触摸操作。
+- **多层板查看**：独立显示顶层、底层与内层，支持顶底层并排的蝴蝶模式。
+- **网络高亮**：从引脚查看整条网络，支持相邻网络追踪、规则配色及元件引脚对比。
+- **PDF 联动**：原理图搜索、书签、夜间模式，从板图的元件或网络跳转查找。
+- **可调整面板**：板图、原理图、图库、历史、工作清单、工具与设置可以停靠、浮动或弹出。
+- **服务器图库**：Docker / Go 服务端支持目录扫描、板号参考数据库、板图与 PDF 自动匹配及缓存；离线版不含这些服务器功能。
+- **多种运行方式**：离线 HTML、静态网页版、自托管服务器与 Electron 桌面封装，共用前端代码。
+
+![多层 Allegro 板图与图层控制](docs/screenshots/03-multi-layer.png)
+
+## 支持哪些文件
+
+扩展名可能相同，程序会根据文件内容选择解析器。支持范围继承上游，并不表示所有同名扩展名都能打开。
+
+| 格式 | 常见扩展名 | 说明 |
+|---|---|---|
+| BVR1 / BVR3 | `.bvr`、`.bv` | 文本维修板图 |
+| Apple BRD | `.brd` | Apple / Mac 维修板图二进制格式 |
+| BDV / BDV ASC | `.brd`、`.bdv` | 文本或混淆的维修板图 |
+| FZ | `.fz` | ASUS 加密压缩板图 |
+| CAE | `.cae` | ASRock PCBRepair Pro；上游标记为尚未使用真实文件验证 |
+| GenCAD | `.cad` | GenCAD 1.4 文本交换格式 |
+| Mentor Neutral | `.cad` | Mentor Boardstation 中性格式 |
+| XZZ | `.pcb` | XZZ 加密维修板图，**不是 PADS 二进制 PCB** |
+| TVW | `.tvw` | Teboview，多层、走线与钻孔信息 |
+| Cadence Allegro | `.brd` | v16 / v17 / v18；v15 为部分支持、测试阶段 |
+| Altium | `.PcbDoc`、`.CMPcbDoc`、`.CSPcbDoc` | Altium / Circuit Maker / Circuit Studio |
+| KiCad | `.kicad_pcb` | KiCad 4–9，含元件、走线、过孔与覆铜 |
+| EAGLE | `.brd` | EAGLE 6.0+ XML 板图 |
+| PDF 原理图 | `.pdf` | 与板图并排查看及文本搜索 |
+
+**PADS 二进制 `.pcb` 和 OrCAD `.dsn` 不能直接打开。** 原理图请先导出 PDF；核心板是否可查看，取决于是否提供了受支持的核心板文件。详细格式说明见 [docs/formats](docs/formats)。
+
+## 常用快捷键
+
+完整列表见界面的“设置 → 输入 → 键盘快捷键”。
+
+| 操作 | Windows / Linux |
+|---|---|
+| 打开板图 / PDF | `Ctrl+O` / `Ctrl+P` |
+| 查找 | `Ctrl+F` |
+| 平移 | `W A S D` 或 `Alt+方向键` |
+| 旋转 | `Q` / `E` |
+| 镜像 | `Ctrl+↑` |
+| 切换顶底层 | `Space` |
+| 放大 / 缩小 | `Shift+W` / `Shift+S` |
+| 切换图库侧栏 | `1` 左侧的反引号键 |
+| 在板图与 PDF 间切换 | `Tab` |
+| PDF 翻页 | `PgUp` / `PgDn` |
+
+macOS 的打开和查找等快捷键使用 `⌘`。平移与缩放步长可在输入设置中调整。
+
+## 从源码构建
+
+前端使用 Node.js 22 或更高版本；完整服务端还需要 Go 1.25。桌面封装需要相应平台的构建环境。
+
+```bash
+git clone https://github.com/yueqihe/BoardRipper.git
+cd BoardRipper/src/frontend
+npm ci
+npm run build:offline
+```
+
+离线产物：`src/frontend/dist-offline/boardripper-lite.html`。
+
+| 命令 | 用途 |
+|---|---|
+| `npm run dev` | 开发服务器，默认端口 8082 |
+| `npm run build` | 完整服务端使用的前端资源 |
+| `npm run build:lite` | 无后端的静态网页版 |
+| `npm run build:offline` | 单 HTML 离线版 |
+| `npm run test:unit` | 单元测试，包括翻译占位符检查 |
+
+PowerShell 内存提交额度较低时，可限制 esbuild 并发再构建：
+
+```powershell
+$env:GOMAXPROCS = '2'
+$env:GOMEMLIMIT = '384MiB'
+npm run build:offline
+```
+
+完整服务端运行示例（Bash）：
+
+```bash
+cd src/frontend
+npm ci && npm run build
+cd ../backend
 STATIC_DIR=../frontend/dist DATA_DIR=../../data LIBRARY_DIR=/path/to/boards go run .
-# → http://localhost:8080
+# http://localhost:8080
 ```
 
-The released artifact is the Docker image (above) — no per-platform standalone binaries are published. If you need a portable binary, build the Go server with `cd src/backend && CGO_ENABLED=0 go build -o boardripper .` and ship it next to the `dist/` directory and a `STATIC_DIR=` env var. Set `LIBRARY_DIR` to the folder to index — without it the server indexes `DATA_DIR`. Set `BIND_HOST=127.0.0.1` to listen on this machine only (unset = every interface). Self-update only works in Docker (it needs the host's Docker socket).
+开发时在另一终端运行 `PORT=1336 go run .`，供 Vite 代理访问。桌面封装在 `desktop/` 下使用 `npm ci` 后运行 `node build-all.mjs --win` 或 `--mac`；本仓库未将上游预编译桌面包标为中文构建。
 
-### Development
+## 同步上游与维护翻译
 
-```bash
-# Frontend (hot reload)
-cd src/frontend && npm install && npm run dev    # http://localhost:8082
+[同步工作流](.github/workflows/sync-upstream.yml) 每天 **北京时间 10:00** 检查原项目 `main`，也可在 [Actions](https://github.com/yueqihe/BoardRipper/actions/workflows/sync-upstream.yml) 手动运行。GitHub 定时任务可能延迟。
 
-# Backend (separate terminal) — the Vite dev proxy targets port 1336
-cd src/backend && PORT=1336 go run .             # http://localhost:1336
-```
+有更新时，合并到 `sync/upstream` 分支，创建或更新一个待审核 PR，并触发 CI。**不会自动合并到中文版 `main`。** 有冲突时保留当前中文版，创建或更新冲突提示 Issue，等待人工处理。
 
-## Docker setup
+源码同步与新增界面文案汉化是两步：Git 可以保留不冲突的现有翻译，但无法自动判断新功能该怎么翻译。新增英文文案需要接入 `uiText` 并补充中文目录；未翻译内容继续显示英文。具体流程见 [维护说明](docs/UPSTREAM_SYNC.zh-CN.md)。
 
-### docker-compose.yml
+GitHub 可能暂停长期无活动仓库的定时工作流，暂停后需在 Actions 中重新启用。源码同步也不会替换本机已下载的 HTML；需要下载新的成功构建或重新构建。
 
-```yaml
-services:
-  boardripper:
-    image: ghcr.io/alexeyinwerp/boardripper:latest    # the repo's own docker-compose.yml says `build: .` instead
-    # The image ships USER 65532:65532 (distroless `nonroot`) so a hypothetical
-    # RCE doesn't own your bind-mounted /data. The default `docker compose up`
-    # flow creates ./data as root on Linux hosts (Docker daemon runs as root),
-    # which UID 65532 can't then write — the container exits at databank.Open
-    # with "unable to open database file". Override to root for the compose
-    # path, matching what NASdeploy.sh already does. Alternatively, remove this
-    # line and either (a) `chown -R 65532:65532 ./data` before `up -d`, or
-    # (b) switch ./data to a named volume — Docker initializes named volumes
-    # from /data inside the image (pre-chowned to 65532 in the Dockerfile).
-    user: "0:0"
-    ports:
-      - "8081:8080"              # access at http://your-host:8081
-    volumes:
-      - ./data:/data             # uploaded board files + cache persist here
-      # Your library: mount EVERYTHING read-only (:ro) by default.
-      - /path/to/MacBooks:/library/MacBooks:ro
-      - /path/to/iPhones:/library/iPhones:ro
-      - /path/to/Schematics:/library/Schematics:ro
-      # The ONLY writable mount the container should ever see:
-      - /path/to/incoming:/library/incoming:rw
-      # Docker socket (required for self-update — see Self-Update below):
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - PORT=8080
-    restart: unless-stopped
-    mem_limit: 2g               # hard cap; 512M boot-fails with SQLite OOM at databank open
-    # environment also accepts:
-    #   - PDFINDEX_POOL_MAX=2   # max concurrent pdfium/wazero PDF-index workers;
-    #                           # reduce to 1 on a NAS with <1 GB free RAM
-```
+## 授权与致谢
 
-### Volume mounting
+本项目沿用 **GNU Affero General Public License v3.0**。分发离线 HTML、桌面包或其他构建时，请同时提供对应版本源码、原始许可证及第三方声明；通过网络提供修改版服务时也需要遵守 AGPL 的源码提供要求。
 
-The Library panel browses the `/library` directory inside the container. Mount your board-file folders as **subdirectories** of `/library`:
+Allegro 与 Altium 解析器参考或移植自 KiCad，其他格式也依赖 OpenBoardView、eagleview 及维修社区的研究。完整许可证与贡献者记录见 [THIRD_PARTY.md](THIRD_PARTY.md)，原始介绍与详细致谢见 [README.en.md](README.en.md)。
 
-```
--v /nas/boards/MacBooks:/library/MacBooks:ro
--v /nas/boards/iPhones:/library/iPhones:ro
--v /nas/schematics:/library/Schematics:ro
--v /nas/incoming:/library/incoming:rw
-```
-
-These appear as top-level folders in the Library panel. Use `:ro` for read-only by default. `/library/incoming` is the only path BoardRipper needs to be able to write to — that's where drag-dropped files land. The container does not need write access to your existing board folders, your schematics, or anything else.
-
-### Synology NAS (DSM 7.2+)
-
-1. Download `boardripper-<version>.tar.gz` (or `latest.tar.gz`) from <https://www.ripperdoc.de/boardripper/releases/>
-2. SSH into your NAS and load the image:
-   ```bash
-   docker load < boardripper-<version>.tar.gz
-   ```
-3. Create the container. `--user 0:0` is needed because DSM creates the data folder
-   root-owned and the image runs as UID 65532 otherwise (the container would exit with
-   "unable to open database file"); `/library/incoming` is where drag-dropped files land:
-   ```bash
-   docker run -d \
-     --name boardripper \
-     --user 0:0 \
-     -p 8090:8080 \
-     --memory 2g \
-     -v /volume1/docker/boardripper/data:/data \
-     -v /volume1/your-boards/MacBooks:/library/MacBooks:ro \
-     -v /volume1/your-boards/iPhones:/library/iPhones:ro \
-     -v /volume1/docker/boardripper/incoming:/library/incoming:rw \
-     -v /var/run/docker.sock:/var/run/docker.sock \
-     -e PORT=8080 \
-     --restart unless-stopped \
-     ghcr.io/alexeyinwerp/boardripper:latest
-   ```
-4. Open `http://your-nas-ip:8090`
-
-## Self-update
-
-BoardRipper can update itself when running in Docker:
-
-1. Click the **version badge** in the toolbar to check for updates.
-2. If an update is available, click **Update & Restart**.
-3. The container pulls the new image and restarts automatically.
-
-Requires:
-- Docker socket mounted (`-v /var/run/docker.sock:/var/run/docker.sock`).
-
-The signed release manifest is fetched from <https://www.ripperdoc.de/boardripper/manifest.json> and verified against an Ed25519 public key **compiled into the running binary** before any I/O on the body — a hijacked mirror cannot deliver a forged update. Once the manifest verifies, the image itself is pulled by content-addressed digest from `ghcr.io/alexeyinwerp/boardripper@sha256:…`; the [signed tarball mirror](https://www.ripperdoc.de/boardripper/releases/) is the fallback if GHCR is unreachable. The pipeline also enforces a monotonic counter (replay defence), a 30-day freshness window, a 90-day expiry, and a `min_supported_version` downgrade defence. See [docs/RELEASE_RUNBOOK.md](docs/RELEASE_RUNBOOK.md) for the maintainer-side release procedure.
-
-### Drop-to-update fallback
-
-For installs that can't reach the registry or the mirror (firewalled networks, air-gapped shops, recovery from a broken self-update):
-
-1. Download `latest-update.tar` from <https://www.ripperdoc.de/boardripper/releases/latest-update.tar> (signed bundle: manifest + signature + image, ~13 MB).
-2. Drag the file anywhere on the BoardRipper UI.
-3. Confirm the prompt; the running container verifies the signature, applies the update, and restarts.
-4. The browser reloads after ~30 s.
-
-Same trust envelope as the in-app updater — the manifest signature is what grants trust, the file itself is treated as untrusted bytes until verification passes.
-
-### Manual update
-
-```bash
-docker pull ghcr.io/alexeyinwerp/boardripper:latest
-docker compose down && docker compose up -d
-```
-
-Or with a downloaded tarball:
-
-```bash
-docker load < boardripper-docker-<new-version>.tar.gz
-docker compose down && docker compose up -d
-```
-
-### Older versions
-
-Historical releases live at **<https://www.ripperdoc.de/boardripper/archive.html>** — Docker tarballs and signed drop-bundles for v0.19.0 onward, with per-version source links for everything older. The GitHub Releases page intentionally lists only the current release; the archive is the canonical "give me an older version" landing page.
-
-A handful of versions are also kept on GHCR (`v0.19.0`, `v0.19.5`, `v0.20.5`, `v0.20.8`) for direct `docker pull` — see the archive table for which ones are still pull-able vs. tarball/source-only.
-
-## Electron desktop wrapper (optional)
-
-Prebuilt Electron wrappers are published with every release (`BoardRipper-macOS-universal-<version>.zip`, `BoardRipper-Windows-x64-<version>.zip`). They run the same React frontend inside an Electron shell; the Go backend is bundled but runs only while **Settings ▸ Integrations ▸ MCP** is enabled, and then also brings the library database, board database, OBD and PDF search to the desktop. The Docker / server path is the primary way to deploy BoardRipper; the desktop wrapper is here for single-machine use.
-
-The wrappers are **unsigned**, so macOS Gatekeeper and Windows SmartScreen will warn on first launch:
-
-- **macOS** — after unzipping, run `xattr -cr /Applications/BoardRipper.app` (or wherever you extracted it), then double-click. On macOS < 15 you can also right-click → Open → Open once, or use System Settings → Privacy & Security → Open Anyway after the first failed launch.
-- **Windows** — SmartScreen shows "Windows protected your PC". Click **More info → Run anyway**.
-
-### Building the wrappers locally
-
-```bash
-cd desktop
-npm install
-node build-all.mjs           # builds macOS universal + legacy + Windows
-node build-all.mjs --mac     # macOS only
-node build-all.mjs --win     # Windows only
-```
-
-Output in `desktop/out/` (macOS), `desktop/out-legacy/` (macOS legacy), `desktop/out-win/` (Windows).
-
-## License
-
-BoardRipper is released under the **GNU Affero General Public License v3.0** (AGPL-3.0). See [LICENSE](LICENSE) for the full text.
-
-This project incorporates code derived from KiCad — the Cadence Allegro BRD reader in [`src/frontend/src/parsers/allegro/`](src/frontend/src/parsers/allegro/), transliterated from KiCad's `pcbnew/pcb_io/allegro/` (GPL-3.0), and the Altium reader in [`src/frontend/src/parsers/altium/`](src/frontend/src/parsers/altium/), transliterated from `pcbnew/pcb_io/altium/` (GPL-2.0+, one file GPL-3.0+) — which is why AGPL-3.0 was chosen: it is compatible with GPL-3.0 and additionally closes the "SaaS loophole" by requiring source availability to users who interact with a hosted instance over a network.
-
-For a complete list of third-party sources, libraries, and attributions, see [THIRD_PARTY.md](THIRD_PARTY.md).
-
-## Credits & references
-
-BoardRipper exists because of the reverse-engineering work already done by the boardview community. Each entry below was consulted during development; full attribution and license details are in [THIRD_PARTY.md](THIRD_PARTY.md).
-
-**Community reverse engineering incorporated into BoardRipper**
-
-- **Sean Johnson** ([@sjohnson1021](https://github.com/sjohnson1021)) — XZZ format
-  work, reverse-engineered independently and reported with full evidence:
-  the through-hole **drill diameter** in the pin sub-block and the slot
-  geometry for oblong through-holes ([#32](https://github.com/AlexeyInwerp/BoardRipper/issues/32)),
-  the **component value** carried in a part's second label block
-  ([#27](https://github.com/AlexeyInwerp/BoardRipper/issues/27)), the fact that
-  the oblong-pad pen is the shorter axis rather than a fixed field, the via
-  layer-span correction, and the `isOblongRoundPad` / `drawPinShape` /
-  `emitPartOutlineShape` refactor that unified seven copies of one decision.
-  Attribution is repeated at each site in the source. He also maintains
-  [XZZPCB-Layer-Viewer](https://github.com/sjohnson1021/XZZPCB-Layer-Viewer)
-  and an ImHex pattern for the format.
-
-- **Roger Barbara and Rogério Pires, 2R Tools**
-  ([@reparomac](https://github.com/reparomac)) — run a customised BoardRipper
-  inside their Scanner Diagnostic Suite and published it under the AGPL in
-  [boardripper-2r](https://github.com/reparomac/boardripper-2r). Reviewed
-  from it and re-implemented in v0.51.0: loose name search, N / Shift+N
-  result stepping, the pin-table filter and sort, the pin colour legend, the
-  supplement-mode diode-reading declutter and the loopback-only desktop
-  backend.
-- **[@pigeon-labs-stack](https://github.com/pigeon-labs-stack)** — MCP board
-  actions that report a missing part or net instead of claiming success
-  ([#44](https://github.com/AlexeyInwerp/BoardRipper/pull/44)).
-
-**Parser references**
-
-- [KiCad](https://gitlab.com/kicad/code/kicad) *(GPL-3.0 / GPL-2.0+)* — Cadence Allegro BRD and Altium PcbDoc readers, transliterated to TypeScript. The reason BoardRipper as a whole is AGPL-3.0.
-- [OpenBoardView](https://github.com/OpenBoardView/OpenBoardView) *(MIT)* — reference implementations for BVR1/BVR3, BRD (Apple), BDV (plain-text), BDV ASC (Honhan / Tebo-ICT), FZ (ASUS), GenCAD, XZZ.
-- [eagleview](https://github.com/nitrocaster/eagleview) by Pavel Kovalenko *(MIT)* — TVW / Teboview parser source.
-- [brd_parser](https://github.com/bernayigit/brd_parser) by Jeff Wheeler *(MIT)* — cross-validation reference for Allegro block layout.
-- [piernov's Honhan BDV gist](https://gist.github.com/piernov/37849a3b92375e18515160b8a1efde18) & [OpenBoardView issue #2](https://github.com/OpenBoardView/OpenBoardView/issues/2) — identified the BDV ASC signature and line-key cipher.
-- Mentor Boardstation Neutral — original reverse engineering, no third-party code or text incorporated.
-- **Cryptographic standards** — [RC6](https://people.csail.mit.edu/rivest/pubs/RRSY98.pdf) by Rivest/Robshaw/Sidney/Yin (FZ), [DES / FIPS PUB 46-3](https://csrc.nist.gov/pubs/fips/46-3/final) (XZZ). GenCAD 1.4 has no canonical online specification — see [docs/formats/CAD_FORMAT.md](docs/formats/CAD_FORMAT.md) for the BoardRipper interpretation.
-
-**Rendering & runtime**
-
-- [PixiJS](https://pixijs.com/) *(MIT)* — WebGL renderer
-- [pixi-viewport](https://github.com/davidfig/pixi-viewport) *(MIT)* — pan/zoom/culling
-- [React](https://react.dev/) *(MIT)* — UI framework
-- [Vite](https://vitejs.dev/) *(MIT)* — build pipeline
-- [Dockview](https://dockview.dev/) *(MIT)* — dockable / floating / popout panel system
-- [pdf.js](https://mozilla.github.io/pdf.js/) *(Apache-2.0)* — PDF rendering and text extraction
-- [pdf-lib](https://pdf-lib.js.org/) *(MIT)* — PDF manipulation
-- [opentype.js](https://opentype.js.org/) *(MIT)* — font glyph extraction
-- [Tabler Icons](https://tabler.io/icons) *(MIT)* — icon set
-
-**Backend**
-
-- [Go standard library](https://pkg.go.dev/std) *(BSD-3-Clause)*
-- [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) *(BSD-3-Clause)* — pure-Go SQLite driver
-- [github.com/klippa-app/go-pdfium](https://github.com/klippa-app/go-pdfium) *(MIT)* — PDF text extraction for the FTS5 index (embedded `pdfium.wasm`)
-- [github.com/tetratelabs/wazero](https://github.com/tetratelabs/wazero) *(Apache-2.0)* — pure-Go WebAssembly runtime hosting `pdfium.wasm`
-- [aead.dev/minisign](https://github.com/aead/minisign) *(MIT)* — Ed25519 update-manifest signature verification
-- [golang.org/x/text](https://pkg.go.dev/golang.org/x/text) *(BSD-3-Clause)* — Unicode NFKC normalisation for watermark matching
-
-**Desktop**
-
-- [Electron](https://www.electronjs.org/) *(MIT)*, [@electron/packager](https://github.com/electron/packager) *(MIT)*, [@electron/universal](https://github.com/electron/universal) *(MIT)*
-
-Corrections and missing attributions are welcome — open an issue, or email <mail@ripperdoc.de>.
-
-## About this software
-
-BoardRipper is not hand-written. The codebase — parsers, renderer, panels, backend — was generated with [Claude Code](https://www.anthropic.com/claude-code), working from format specs and reference implementations from the boardview community. I review, test, and direct it; the lines of code came out of an LLM.
-
-Treat that as you would any AI-assisted software: it works on the boards I've tested, it has bugs I haven't found yet, and the right level of trust is "a useful viewer, not a forensic tool." Bug reports welcome.
-
-## Feedback
-
-- Discord: **@inwerp** on the [RipperDoc server](https://discord.gg/BYEkKTMNNY) — feature requests, questions about deployment or file formats, and a small repair community.
-- Bugs and feature requests: [file an issue](https://github.com/AlexeyInwerp/BoardRipper/issues/new/choose) on GitHub, or ask on Discord.
-- Email: <mail@ripperdoc.de>.
-
-If BoardRipper saves you time, [buy me a coffee](https://buymeacoffee.com/inwerp).
+上游说明其开发使用了 AI 辅助，并由维护者审核和测试；中文分支同样需要真实板图回归验证。发现中文界面或本分支的问题，请在 [本仓库提交 Issue](https://github.com/yueqihe/BoardRipper/issues)；原项目与社区链接见 [上游仓库](https://github.com/AlexeyInwerp/BoardRipper)。

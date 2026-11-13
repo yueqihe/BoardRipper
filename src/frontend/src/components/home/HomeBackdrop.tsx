@@ -1102,7 +1102,7 @@ function Footer() {
   return (
     <footer className="home-footer">{uiText("BoardRipper ")}{state.current_version}{uiText(" · AGPL-3.0 ·")}{' '}
       <a
-        href="https://github.com/yueqihe/BoardRipper/tree/feat/chinese-ui"
+        href="https://github.com/yueqihe/BoardRipper"
         target="_blank"
         rel="noreferrer"
         className="home-footer-link"
