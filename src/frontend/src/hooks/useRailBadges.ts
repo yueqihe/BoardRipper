@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useSyncExternalStore } from 'react';
 import { Emitter } from '../store/emitter';
 import { logStore } from '../store/log-store';
@@ -114,16 +115,16 @@ export function useRailBadges(): RailBadges {
     badges.debug = {
       kind: 'warn',
       count,
-      title: count === 1 ? '1 new error in the log' : `${count} new errors in the log`,
+      title: count === 1 ? uiText("1 new error in the log") : uiText`${count} new errors in the log`,
     };
   }
 
   if (sync.backendAvailable && sync.configLoaded && sync.config.enabled) {
     const s = sync.status;
     if (s.phase === 'error') {
-      badges.library = { kind: 'err', title: 'Library sync failed' };
+      badges.library = { kind: 'err', title: uiText("Library sync failed") };
     } else if (s.errors > 0) {
-      badges.library = { kind: 'err', title: s.errors === 1 ? '1 file failed to sync' : `${s.errors} files failed to sync` };
+      badges.library = { kind: 'err', title: s.errors === 1 ? uiText("1 file failed to sync") : uiText`${s.errors} files failed to sync` };
     }
   }
 

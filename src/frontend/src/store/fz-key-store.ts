@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * FZ decryption key store.
  *
@@ -26,8 +27,8 @@ const STORAGE_KEY_CAE = 'boardripper-cae-key';
 export type FzKeyKind = 'fz' | 'cae';
 
 export const KEY_KIND_LABEL: Record<FzKeyKind, string> = {
-  fz: 'ASUS .fz',
-  cae: 'ASRock .cae',
+  fz: uiText("ASUS .fz"),
+  cae: uiText("ASRock .cae"),
 };
 
 /**
@@ -42,11 +43,11 @@ export const KEY_KIND_LABEL: Record<FzKeyKind, string> = {
 export const FZ_KEY_SOURCES: Array<{ url: string; label: string }> = [
   {
     url: 'https://raw.githubusercontent.com/cryptonek/illegal-numbers/main/FZkey.md',
-    label: 'github.com/cryptonek/illegal-numbers',
+    label: uiText("github.com/cryptonek/illegal-numbers"),
   },
   {
     url: 'https://raw.githubusercontent.com/yliu-d/illegal-numbers/main/FZkey.md',
-    label: 'github.com/yliu-d/illegal-numbers (mirror)',
+    label: uiText("github.com/yliu-d/illegal-numbers (mirror)"),
   },
 ];
 

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useRef } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { boardStore } from '../store/board-store';
@@ -43,9 +44,9 @@ export function UpdatePrompt() {
     // No auto-dismiss: the toast IS the update notice. It goes away with the
     // reload, or when the user taps it.
     boardStore.addToast(
-      'A new BoardRipper version is ready.',
+      uiText("A new BoardRipper version is ready."),
       'info',
-      { label: 'Reload', run: () => { void updateServiceWorker(true); } },
+      { label: uiText("Reload"), run: () => { void updateServiceWorker(true); } },
       24 * 60 * 60 * 1000,
     );
     setNeedRefresh(false);

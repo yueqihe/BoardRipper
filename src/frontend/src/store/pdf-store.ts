@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import * as pdfjsLib from 'pdfjs-dist';
 import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist/types/src/pdf';
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
@@ -1223,7 +1224,7 @@ class PdfStore extends Emitter {
         // or the filter menu offers a reload that only fails the same way.
         d.parsedWith = { ...d.parsedWith, stripImages: currentParseOptions().stripImages };
         void import('./board-store').then(({ boardStore }) =>
-          boardStore.addToast(`Could not strip images from ${fileName} — shown unstripped.`));
+          boardStore.addToast(uiText`Could not strip images from ${fileName} — shown unstripped.`));
         this.notify();
         return;
       }
@@ -1293,7 +1294,7 @@ class PdfStore extends Emitter {
         } catch (err) {
           log.pdf.error('stripWatermarkImages failed:', err);
           void import('./board-store').then(({ boardStore }) =>
-            boardStore.addToast(`Could not strip images from ${fileName} — shown unstripped.`));
+            boardStore.addToast(uiText`Could not strip images from ${fileName} — shown unstripped.`));
         }
       }
       if (this._documents.get(fileName) !== d) {           // closed meanwhile
@@ -1889,7 +1890,7 @@ class PdfStore extends Emitter {
     const targetName = this.getLiveLinkedDoc(sourceFileName);
     if (!targetName) {
       if (source && this._links.get(sourceFileName)) {
-        source.crossProbeHint = 'Linked PDF not open';
+        source.crossProbeHint = uiText("Linked PDF not open");
         this.notify();
       }
       return;
@@ -1915,7 +1916,7 @@ class PdfStore extends Emitter {
     }
     if (source) {
       source.crossProbeHint = target.matches.length === 0
-        ? `No match for ${q} in ${targetName}`
+        ? uiText`No match for ${q} in ${targetName}`
         : null;
       this.notify();
     }

@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 import { useSyncExternalStore } from 'react';
 import { IconMap, IconMap2, IconPresentation } from '@tabler/icons-react';
 import { renderSettingsStore, minimapMode, type MinimapMode } from '../../../store/render-settings';
@@ -6,9 +7,9 @@ import { slideStore } from '../../../store/slide-store';
 
 const NEXT: Record<MinimapMode, MinimapMode> = { off: 'onPan', onPan: 'always', always: 'off' };
 const TITLE: Record<MinimapMode, string> = {
-  off:    'Minimap: off — click to show it while panning',
-  onPan:  'Minimap: while panning — click to keep it on screen',
-  always: 'Minimap: always on — click to turn it off',
+  off:    uiText("Minimap: off — click to show it while panning"),
+  onPan:  uiText("Minimap: while panning — click to keep it on screen"),
+  always: uiText("Minimap: always on — click to turn it off"),
 };
 
 /** Minimap, three states: off → fades in while panning → always on (the map
@@ -39,7 +40,7 @@ export function SlideModeButton() {
       data-testid="slide-mode-toggle"
       aria-pressed={on}
       onClick={() => slideStore.toggle()}
-      title={on ? 'Slide mode: on (click to leave)' : 'Slide mode: mark up the view and save it as a PNG'}
+      title={on ? uiText("Slide mode: on (click to leave)") : uiText("Slide mode: mark up the view and save it as a PNG")}
     >
       <IconPresentation size={16} />
     </button>

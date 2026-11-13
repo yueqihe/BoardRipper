@@ -33,7 +33,14 @@
  *  so there an absolute path points outside the bundle and the tile 404s —
  *  the outline then silently draws nothing. BASE_URL is './' for both of
  *  those builds and '/' for the NAS one. */
+// pack-offline keeps one HTML file, so public/ tiles must be inlined there.
+const OFFLINE_HDR_TILES = import.meta.env.MODE === 'offline'
+  ? import.meta.glob<string>('../../public/hdr-line-*.avif', { eager: true, query: '?inline', import: 'default' })
+  : {};
+
 export function hdrTileUrl(rung: number): string {
+  const inline = OFFLINE_HDR_TILES[`../../public/hdr-line-${rung}.avif`];
+  if (inline) return inline;
   return `${import.meta.env.BASE_URL ?? '/'}hdr-line-${rung}.avif`;
 }
 

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Library Sync section — embedded into the Settings → Library tab.
  *
@@ -51,10 +52,8 @@ export function LibrarySyncSection() {
   if (isElectron()) return null;
   if (!backendAvailable) {
     return (
-      <StandaloneCollapsibleSection title="Library Sync" defaultOpen={false} storageKey="library-sync" searchSectionId="library-sync">
-        <div className="color-rule-hint">
-          Library sync needs the backend — it will be configurable once the server is reachable.
-        </div>
+      <StandaloneCollapsibleSection title={uiText("Library Sync")} defaultOpen={false} storageKey="library-sync" searchSectionId="library-sync">
+        <div className="color-rule-hint">{uiText("Library sync needs the backend — it will be configurable once the server is reachable.")}</div>
       </StandaloneCollapsibleSection>
     );
   }
@@ -63,7 +62,7 @@ export function LibrarySyncSection() {
   // the configured state summarised in the header so it's collapsed ≠ hidden.
   const summary = !configLoaded ? undefined : config.enabled ? `on · ${config.schedule}` : 'off';
   return (
-    <StandaloneCollapsibleSection title="Library Sync" defaultOpen={false} summary={summary}
+    <StandaloneCollapsibleSection title={uiText("Library Sync")} defaultOpen={false} summary={summary}
       storageKey="library-sync" searchSectionId="library-sync">
       <SyncConfigCard />
       <SyncProgressCard />
@@ -180,21 +179,17 @@ function SyncConfigCard() {
   return (
     <div className="settings-section">
       <div className="settings-section-body">
-        <h3 style={{ margin: '0 0 4px' }}>Library Sync</h3>
-        <p style={{ fontSize: 12, color: '#888', lineHeight: 1.4, margin: '0 0 12px' }}>
-          Pull schematic / boardview files from a remote WebDAV / CopyParty source into the library
-          folder. One-way only — by default no local files are deleted (toggle <em>strict mirror</em>
-          to change that).
-        </p>
+        <h3 style={{ margin: '0 0 4px' }}>{uiText("Library Sync")}</h3>
+        <p style={{ fontSize: 12, color: '#888', lineHeight: 1.4, margin: '0 0 12px' }}>{uiText("Pull schematic / boardview files from a remote WebDAV / CopyParty source into the library folder. One-way only — by default no local files are deleted (toggle ")}<em>{uiText("strict mirror")}</em>{uiText("to change that).")}</p>
 
-        <Row label="Enabled">
+        <Row label={uiText("Enabled")}>
           <input type="checkbox"
             checked={draft.enabled}
             onChange={e => update('enabled', e.target.checked)}
             disabled={status.running} />
         </Row>
 
-        <Row label="Server URL">
+        <Row label={uiText("Server URL")}>
           <input type="text"
             className="settings-library-input"
             placeholder="https://example.com"
@@ -203,19 +198,19 @@ function SyncConfigCard() {
             spellCheck={false} autoComplete="off" />
         </Row>
 
-        <Row label="Username">
+        <Row label={uiText("Username")}>
           <input type="text"
             className="settings-library-input"
-            placeholder="(empty for anonymous)"
+            placeholder={uiText("(empty for anonymous)")}
             value={draft.user}
             onChange={e => update('user', e.target.value)}
             spellCheck={false} autoComplete="off" />
         </Row>
 
-        <Row label="Password">
+        <Row label={uiText("Password")}>
           <input type="password"
             className="settings-library-input"
-            placeholder={config.has_password ? '(stored — leave blank to keep)' : '(not set)'}
+            placeholder={config.has_password ? uiText("(stored — leave blank to keep)") : uiText("(not set)")}
             value={draft.password}
             onChange={e => { update('password', e.target.value); update('clearPassword', false); }}
             autoComplete="new-password" />
@@ -223,15 +218,14 @@ function SyncConfigCard() {
             <label style={{ marginLeft: 8, fontSize: 11, color: '#888' }}>
               <input type="checkbox" checked={draft.clearPassword}
                 onChange={e => { update('clearPassword', e.target.checked); if (e.target.checked) update('password', ''); }} />
-              {' '}clear stored
-            </label>
+              {' '}{uiText("clear stored")}</label>
           )}
         </Row>
 
-        <Row label="Target folder">
+        <Row label={uiText("Target folder")}>
           <input type="text"
             className="settings-library-input"
-            placeholder="(empty = use library folder)"
+            placeholder={uiText("(empty = use library folder)")}
             value={draft.target}
             onChange={e => update('target', e.target.value)}
             spellCheck={false} autoComplete="off" />
@@ -242,37 +236,35 @@ function SyncConfigCard() {
           </span>
         </div>
 
-        <Row label="Schedule">
+        <Row label={uiText("Schedule")}>
           <select value={draft.schedule}
             onChange={e => update('schedule', e.target.value as SyncSchedule)}>
-            <option value="off">off (manual only)</option>
-            <option value="daily">daily, 03:00 local</option>
-            <option value="weekly">weekly, Sunday 03:00 local</option>
-            <option value="monthly">monthly, 1st 03:00 local</option>
+            <option value="off">{uiText("off (manual only)")}</option>
+            <option value="daily">{uiText("daily, 03:00 local")}</option>
+            <option value="weekly">{uiText("weekly, Sunday 03:00 local")}</option>
+            <option value="monthly">{uiText("monthly, 1st 03:00 local")}</option>
           </select>
         </Row>
 
-        <Row label="Strict mirror">
+        <Row label={uiText("Strict mirror")}>
           <input type="checkbox"
             checked={draft.strict}
             onChange={e => update('strict', e.target.checked)}
             disabled={status.running} />
           <span style={{ marginLeft: 6, fontSize: 11, color: draft.strict ? '#c80' : '#888' }}>
-            {draft.strict ? 'WILL delete local files not on source' : 'never deletes (recommended)'}
+            {draft.strict ? uiText("WILL delete local files not on source") : uiText("never deletes (recommended)")}
           </span>
         </Row>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 10, flexWrap: 'wrap' }}>
           <button onClick={onSave} disabled={saving || pristine}>
-            {saving ? 'Saving…' : pristine ? 'Saved' : 'Save'}
+            {saving ? uiText("Saving…") : pristine ? uiText("Saved") : uiText("Save")}
           </button>
-          <button onClick={onTest} disabled={saving || !draft.url}>Test connection</button>
+          <button onClick={onTest} disabled={saving || !draft.url}>{uiText("Test connection")}</button>
           {!status.running ? (
-            <button onClick={() => librarySyncStore.start()} disabled={!draft.url || !pristine}>
-              Sync now
-            </button>
+            <button onClick={() => librarySyncStore.start()} disabled={!draft.url || !pristine}>{uiText("Sync now")}</button>
           ) : (
-            <button onClick={() => librarySyncStore.stop()}>Cancel sync</button>
+            <button onClick={() => librarySyncStore.stop()}>{uiText("Cancel sync")}</button>
           )}
           {testResult && (
             <span style={{ fontSize: 12, color: testResult.startsWith('OK') ? '#393' : testResult.startsWith('Testing') ? '#888' : '#c33' }}>
@@ -308,19 +300,17 @@ function SyncProgressCard() {
   return (
     <div className="settings-section">
       <div className="settings-section-body">
-        <h3 style={{ margin: '0 0 8px' }}>
-          Sync progress
-          {status.running && <span style={{ marginLeft: 8, fontSize: 12, color: '#393' }}>● running</span>}
-          {!status.running && status.phase === 'error' && <span style={{ marginLeft: 8, fontSize: 12, color: '#c33' }}>✕ failed</span>}
-          {!status.running && status.phase === 'done' && <span style={{ marginLeft: 8, fontSize: 12, color: '#393' }}>✓ done</span>}
-          {!status.running && status.phase === 'cancelled' && <span style={{ marginLeft: 8, fontSize: 12, color: '#888' }}>○ cancelled</span>}
+        <h3 style={{ margin: '0 0 8px' }}>{uiText("Sync progress")}{status.running && <span style={{ marginLeft: 8, fontSize: 12, color: '#393' }}>{uiText("● running")}</span>}
+          {!status.running && status.phase === 'error' && <span style={{ marginLeft: 8, fontSize: 12, color: '#c33' }}>{uiText("✕ failed")}</span>}
+          {!status.running && status.phase === 'done' && <span style={{ marginLeft: 8, fontSize: 12, color: '#393' }}>{uiText("✓ done")}</span>}
+          {!status.running && status.phase === 'cancelled' && <span style={{ marginLeft: 8, fontSize: 12, color: '#888' }}>{uiText("○ cancelled")}</span>}
         </h3>
 
         {showLive && (
           <>
-            <DetailRow label="phase" value={status.phase} />
-            <DetailRow label="description" value={status.description || '—'} />
-            <DetailRow label="files" value={
+            <DetailRow label={uiText("phase")} value={status.phase} />
+            <DetailRow label={uiText("description")} value={status.description || '—'} />
+            <DetailRow label={uiText("files")} value={
               status.files_total > 0
                 ? `${fmtNum(status.files_done)} / ${fmtNum(status.files_total)} (${pct}%)`
                 : fmtNum(status.files_done)
@@ -328,24 +318,24 @@ function SyncProgressCard() {
             {status.files_total > 0 && <Bar value={pct} />}
             {status.bytes_total > 0 && (
               <>
-                <DetailRow label="bytes" value={`${fmtBytes(status.bytes_done)} / ${fmtBytes(status.bytes_total)} (${bytePct}%)`} />
+                <DetailRow label={uiText("bytes")} value={`${fmtBytes(status.bytes_done)} / ${fmtBytes(status.bytes_total)} (${bytePct}%)`} />
                 <Bar value={bytePct} />
               </>
             )}
-            {status.current_file && <DetailRow label="current" value={status.current_file} />}
-            <DetailRow label="errors" value={fmtNum(status.errors)} />
-            <DetailRow label="started" value={fmtTime(status.started_at_iso)} />
+            {status.current_file && <DetailRow label={uiText("current")} value={status.current_file} />}
+            <DetailRow label={uiText("errors")} value={fmtNum(status.errors)} />
+            <DetailRow label={uiText("started")} value={fmtTime(status.started_at_iso)} />
           </>
         )}
 
         {ranBefore && (
           <div style={{ marginTop: showLive ? 12 : 0, paddingTop: showLive ? 8 : 0, borderTop: showLive ? '1px solid var(--border-color, #333)' : 'none' }}>
-            <DetailRow label="last run" value={fmtTime(status.last_run_at_iso)} />
-            <DetailRow label="last files" value={fmtNum(status.last_run_files)} />
-            <DetailRow label="last bytes" value={fmtBytes(status.last_run_bytes)} />
-            <DetailRow label="last exit" value={status.last_run_exit === undefined ? '—' : String(status.last_run_exit)} />
-            {status.last_run_message && <DetailRow label="last message" value={status.last_run_message} />}
-            {status.next_run_at_iso && <DetailRow label="next run" value={fmtTime(status.next_run_at_iso)} />}
+            <DetailRow label={uiText("last run")} value={fmtTime(status.last_run_at_iso)} />
+            <DetailRow label={uiText("last files")} value={fmtNum(status.last_run_files)} />
+            <DetailRow label={uiText("last bytes")} value={fmtBytes(status.last_run_bytes)} />
+            <DetailRow label={uiText("last exit")} value={status.last_run_exit === undefined ? '—' : String(status.last_run_exit)} />
+            {status.last_run_message && <DetailRow label={uiText("last message")} value={status.last_run_message} />}
+            {status.next_run_at_iso && <DetailRow label={uiText("next run")} value={fmtTime(status.next_run_at_iso)} />}
           </div>
         )}
       </div>
@@ -380,16 +370,13 @@ function SyncErrorsCard() {
   return (
     <div className="settings-section">
       <div className="settings-section-body">
-        <h3 style={{ margin: '0 0 8px' }}>
-          Recent sync errors
-          <span style={{ marginLeft: 8, fontSize: 12, color: '#c33' }}>
-            {status.errors > 0 ? `${status.errors} total` : ''}
+        <h3 style={{ margin: '0 0 8px' }}>{uiText("Recent sync errors")}<span style={{ marginLeft: 8, fontSize: 12, color: '#c33' }}>
+            {status.errors > 0 ? uiText`${status.errors} total` : ''}
           </span>
         </h3>
         {errs.length === 0 ? (
           <div style={{ fontSize: 12, color: '#888' }}>
-            ({status.errors} earlier — buffer cleared on next run)
-          </div>
+            ({status.errors}{uiText(" earlier — buffer cleared on next run)")}</div>
         ) : (
           <div style={{
             background: 'var(--bg-primary, #0a0a0a)',
@@ -412,9 +399,7 @@ function SyncErrorsCard() {
             ))}
           </div>
         )}
-        <div style={{ fontSize: 11, color: '#666', marginTop: 6 }}>
-          Showing last {errs.length} of {status.errors}. Full log: <code>docker logs boardripper</code> on the NAS.
-        </div>
+        <div style={{ fontSize: 11, color: '#666', marginTop: 6 }}>{uiText("Showing last ")}{errs.length}{uiText(" of ")}{status.errors}{uiText(". Full log: ")}<code>docker logs boardripper</code>{uiText(" on the NAS.")}</div>
       </div>
     </div>
   );
@@ -430,23 +415,21 @@ function IndexingStatusCard() {
   return (
     <div className="settings-section">
       <div className="settings-section-body">
-        <h3 style={{ margin: '0 0 8px' }}>
-          Indexing
-          {running && <span style={{ marginLeft: 8, fontSize: 12, color: '#393' }}>● scanning</span>}
-          {!running && <span style={{ marginLeft: 8, fontSize: 12, color: '#888' }}>○ idle</span>}
+        <h3 style={{ margin: '0 0 8px' }}>{uiText("Indexing")}{running && <span style={{ marginLeft: 8, fontSize: 12, color: '#393' }}>{uiText("● scanning")}</span>}
+          {!running && <span style={{ marginLeft: 8, fontSize: 12, color: '#888' }}>{uiText("○ idle")}</span>}
         </h3>
         {running && (
           <>
-            <DetailRow label="phase" value={scanStatus.phase || '—'} />
-            <DetailRow label="files" value={`${fmtNum(scanStatus.scanned)} / ${fmtNum(scanStatus.total)}`} />
-            <DetailRow label="added" value={fmtNum(scanStatus.added)} />
-            <DetailRow label="updated" value={fmtNum(scanStatus.updated)} />
-            <DetailRow label="errors" value={fmtNum(scanStatus.errors)} />
-            {scanStatus.last_file && <DetailRow label="current" value={scanStatus.last_file} />}
+            <DetailRow label={uiText("phase")} value={scanStatus.phase || '—'} />
+            <DetailRow label={uiText("files")} value={`${fmtNum(scanStatus.scanned)} / ${fmtNum(scanStatus.total)}`} />
+            <DetailRow label={uiText("added")} value={fmtNum(scanStatus.added)} />
+            <DetailRow label={uiText("updated")} value={fmtNum(scanStatus.updated)} />
+            <DetailRow label={uiText("errors")} value={fmtNum(scanStatus.errors)} />
+            {scanStatus.last_file && <DetailRow label={uiText("current")} value={scanStatus.last_file} />}
           </>
         )}
         {!running && scanStatus.completed_at && (
-          <DetailRow label="last completed" value={fmtTime(scanStatus.completed_at)} />
+          <DetailRow label={uiText("last completed")} value={fmtTime(scanStatus.completed_at)} />
         )}
       </div>
     </div>
@@ -471,26 +454,22 @@ export function SoftwareUpdateSection() {
     try { await updateStore.check(); } finally { setChecking(false); }
   };
   return (
-    <StandaloneCollapsibleSection title="Software update" summary={summary}
+    <StandaloneCollapsibleSection title={uiText("Software update")} summary={summary}
       storageKey="software-update" searchSectionId="updates">
       <div style={{ marginBottom: 8 }}>
-        {has && <span style={{ fontSize: 12, color: '#c80' }}>● update available</span>}
-        {!has && update.state.current_version !== 'dev' && <span style={{ fontSize: 12, color: '#393' }}>● up to date</span>}
+        {has && <span style={{ fontSize: 12, color: '#c80' }}>{uiText("● update available")}</span>}
+        {!has && update.state.current_version !== 'dev' && <span style={{ fontSize: 12, color: '#393' }}>{uiText("● up to date")}</span>}
       </div>
-      <DetailRow label="current version" value={update.state.current_version} />
-      {update.state.latest_version && <DetailRow label="latest version" value={update.state.latest_version} />}
-      <DetailRow label="last checked" value={fmtTime(update.state.checked_at)} />
-      {update.state.error && <DetailRow label="error" value={update.state.error} />}
+      <DetailRow label={uiText("current version")} value={update.state.current_version} />
+      {update.state.latest_version && <DetailRow label={uiText("latest version")} value={update.state.latest_version} />}
+      <DetailRow label={uiText("last checked")} value={fmtTime(update.state.checked_at)} />
+      {update.state.error && <DetailRow label={uiText("error")} value={update.state.error} />}
       <div style={{ marginTop: 8 }}>
         <button className="settings-action-btn" onClick={handleCheck} disabled={checking}>
-          {checking ? 'Checking…' : 'Check now'}
+          {checking ? uiText("Checking…") : uiText("Check now")}
         </button>
       </div>
-      <p className="settings-hint" style={{ marginTop: 8 }}>
-        Recovery: if the app can&apos;t reach the update servers, download the signed
-        update bundle (<code>boardripper-update-v*.tar</code>) on another machine and
-        drag it onto this window — it verifies and installs offline.
-      </p>
+      <p className="settings-hint" style={{ marginTop: 8 }}>{uiText("Recovery: if the app can't reach the update servers, download the signed update bundle (")}<code>boardripper-update-v*.tar</code>{uiText(") on another machine and drag it onto this window — it verifies and installs offline.")}</p>
     </StandaloneCollapsibleSection>
   );
 }

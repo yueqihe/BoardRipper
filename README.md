@@ -1,5 +1,7 @@
 # BoardRipper
 
+**[简体中文版说明 / Chinese edition](README.zh-CN.md)** — Chinese UI by default, with an English switch in the toolbar. Upstream authorship and AGPL-3.0 licensing are retained.
+
 Web-based PCB boardview viewer for board-level repair. Fifteen boardview formats and the matching PDF schematic, side by side, in a browser. GPU-accelerated rendering, dockable panels, self-hosted via Docker. Free, AGPL-3.0.
 
 ![Boardview and PDF schematic side by side — instant cross-reference](docs/screenshots/01-board-pdf-lookup.png)

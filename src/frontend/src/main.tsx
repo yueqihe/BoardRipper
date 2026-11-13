@@ -1,4 +1,5 @@
 import './polyfills';
+import { initLanguage } from './i18n';
 // Must precede any renderer creation: swaps PixiJS's `new Function` uniform
 // parsers for eval-free ones. Lets the hosted lite build's CSP drop
 // 'unsafe-eval' (deploy/boardripper-web.htaccess) — the only reason it was there.
@@ -18,6 +19,7 @@ import { installStaleBuildGuard } from './store/stale-build';
 // this is set; mounting would paint the app over it and then fail somewhere
 // deeper. Nothing below this line runs on an unsupported browser.
 if (!window.__brUnsupported) {
+  initLanguage();
   // Before React mounts: the page translator must not be able to crash it (#36).
   installTranslateGuard();
   installBrowserZoomBlock();

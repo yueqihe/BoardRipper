@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useMemo } from 'react';
 import type { ObdSection, ObdNote } from '../store/obd-store';
 import { boardStore } from '../store/board-store';
@@ -28,9 +29,7 @@ export function DiagnosisNotes({
   if (!sections || sections.length === 0) return null;
   return (
     <div className="obd-diagnosis-notes" data-testid="obd-diagnosis-notes" style={{ marginTop: 8 }}>
-      <div style={{ fontSize: 11, color: '#aaa', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
-        Repair notes
-      </div>
+      <div style={{ fontSize: 11, color: '#aaa', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{uiText("Repair notes")}</div>
       {sections.map((sec, i) => (
         <DiagnosisSectionView key={`${i}-${sec.title}`} section={sec} board={board} />
       ))}
@@ -59,9 +58,9 @@ function DiagnosisSectionView({ section, board }: { section: ObdSection; board: 
           borderRadius: 4,
         }}
       >
-        {section.title || '(untitled section)'}
+        {section.title || uiText("(untitled section)")}
         <span style={{ marginLeft: 6, fontSize: 10, color: '#888', fontWeight: 400 }}>
-          {section.notes.length} note{section.notes.length === 1 ? '' : 's'}
+          {section.notes.length}{uiText(" note")}{section.notes.length === 1 ? '' : uiText("plural.s")}
         </span>
       </summary>
       <div style={{ padding: '4px 8px 6px' }}>
@@ -77,7 +76,7 @@ function DiagnosisNoteView({ note, board }: { note: ObdNote; board: BoardData | 
   return (
     <details data-testid="obd-note-spoiler" style={{ marginTop: 4 }}>
       <summary style={{ fontSize: 11, color: '#cde', cursor: 'pointer', padding: '2px 0' }}>
-        {note.title || '(untitled)'}
+        {note.title || uiText("(untitled)")}
       </summary>
       <div
         style={{
@@ -147,7 +146,7 @@ export function NetChip({ netName }: { netName: string }) {
         const cur = boardStore.selection.highlightedNet;
         boardStore.highlightNet(cur === netName ? null : netName);
       }}
-      title={`Highlight net ${netName}`}
+      title={uiText`Highlight net ${netName}`}
       style={{
         display: 'inline-block',
         padding: '0 6px',
@@ -200,8 +199,8 @@ export function PartChip({
       disabled={!known}
       title={
         known
-          ? `Select ${partName}${pinId ? ` pin ${pinId}` : ''}`
-          : `${partName} not found in this board`
+          ? uiText`Select ${partName}${pinId ? ` pin ${pinId}` : ''}`
+          : uiText`${partName} not found in this board`
       }
       style={{
         display: 'inline-block',

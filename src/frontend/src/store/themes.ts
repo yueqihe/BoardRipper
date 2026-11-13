@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { Emitter } from './emitter';
 import { log } from './log-store';
 import { setThemeOverridesProvider, renderSettingsStore } from './render-settings';
@@ -162,7 +163,7 @@ const DARK_UI: Theme['ui'] = {
 export const THEMES: Record<string, Theme> = {
   default: {
     id: 'default',
-    label: 'BoardRipper Default',
+    label: uiText("BoardRipper Default"),
     // Note for future palette work: avoid AI-cliché colour schemes —
     // saturated cyan-blue dashboards and warm amber/orange "cyberpunk"
     // accents are both visually generic now. When picking a new default
@@ -203,7 +204,7 @@ export const THEMES: Record<string, Theme> = {
   // and selection ≥ 3:1). Mockup: claude.ai/artifact/9SzQM5xQaWsoEab6CPNgPX.
   dark: {
     id: 'dark',
-    label: 'Dark',
+    label: uiText("Dark"),
     // Near-monochrome on NexusBV's principle: parts are grey outlines, every
     // pin one quiet grey, power a step brighter, ground a dark teal. Colour is
     // kept for the selection (yellow net, red part).
@@ -228,7 +229,7 @@ export const THEMES: Record<string, Theme> = {
   },
   landrex: {
     id: 'landrex',
-    label: 'Landrex Classic',
+    label: uiText("Landrex Classic"),
     // As Landrex Test Link drew a board: black, an olive board edge,
     // lavender-grey part outlines, every pin the same blue, nothing filled.
     // The only additions: ground set apart, an amber underside, a yellow
@@ -255,7 +256,7 @@ export const THEMES: Record<string, Theme> = {
   },
   light: {
     id: 'light',
-    label: 'Light',
+    label: uiText("Light"),
     // Paper-white sheet, dark ink. Part tints reuse the pin hues (rail 29,
     // crystal 48, logic 174, data 213, on/off 262, one green), so parts and
     // pins are one family. Red means power only; the underside is warm brown
@@ -290,7 +291,7 @@ export const THEMES: Record<string, Theme> = {
   },
   atari: {
     id: 'atari',
-    label: 'Atari (light)',
+    label: uiText("Atari (light)"),
     // The 2600's silver label and black ink. Every colour is one of the five
     // rainbow-stripe hues (green #4faf4a, yellow #f4e325, orange #fe8b1f,
     // red #ed3823, blue #2a3192) at a set lightness: pale tints for parts,
@@ -430,22 +431,22 @@ export function applyUiScaleToDOM(scale: number) {
  * variants), Wikipedia (Atari, Inc. + Atari 2600 articles).
  */
 export const ACCENT_PRESETS: ReadonlyArray<{ hex: string; label: string }> = [
-  { hex: '#4a9eff', label: 'BoardRipper default' },
+  { hex: '#4a9eff', label: uiText("BoardRipper default") },
   // Pantone Bright Red C — the canonical post-2002 Atari Fuji red.
-  { hex: '#e5141e', label: 'ATARI Red (Pantone Bright Red C)' },
+  { hex: '#e5141e', label: uiText("ATARI Red (Pantone Bright Red C)") },
   // Atari 2600 silver-label rainbow stripe (1983) — five-bar packaging
   // palette also used on "long/short rainbow" 2600 consoles. Sampled from
   // the cartridge label artwork; values are commonly-cited reproductions.
-  { hex: '#4faf4a', label: 'Atari rainbow — green' },
-  { hex: '#f4e325', label: 'Atari rainbow — yellow' },
-  { hex: '#fe8b1f', label: 'Atari rainbow — orange' },
-  { hex: '#ed3823', label: 'Atari rainbow — red' },
-  { hex: '#2a3192', label: 'Atari rainbow — blue' },
+  { hex: '#4faf4a', label: uiText("Atari rainbow — green") },
+  { hex: '#f4e325', label: uiText("Atari rainbow — yellow") },
+  { hex: '#fe8b1f', label: uiText("Atari rainbow — orange") },
+  { hex: '#ed3823', label: uiText("Atari rainbow — red") },
+  { hex: '#2a3192', label: uiText("Atari rainbow — blue") },
   // Non-Atari, non-cliché alternates.
-  { hex: '#ff3aa1', label: 'Hot magenta' },
-  { hex: '#b8ff2b', label: 'Acid lime' },
-  { hex: '#9c6bff', label: 'Deep violet' },
-  { hex: '#00c7b7', label: 'Teal' },
+  { hex: '#ff3aa1', label: uiText("Hot magenta") },
+  { hex: '#b8ff2b', label: uiText("Acid lime") },
+  { hex: '#9c6bff', label: uiText("Deep violet") },
+  { hex: '#00c7b7', label: uiText("Teal") },
 ];
 
 interface PersistedTheme {
@@ -503,7 +504,7 @@ function saveHexOverride(key: string, hex: string | null) {
 function seedCustomFrom(src: Theme): Theme {
   return {
     id: CUSTOM_ID,
-    label: 'Custom',
+    label: uiText("Custom"),
     ui: { ...src.ui },
     board: { ...src.board },
     // boardOverrides start empty: the custom theme only overrides global
@@ -521,7 +522,7 @@ function loadCustomTheme(): Theme | null {
     // Minimal shape validation — a corrupt blob shouldn't brick the app.
     if (!parsed?.ui?.bgPrimary || !parsed?.board?.canvasBackground) return null;
     parsed.id = CUSTOM_ID;
-    if (!parsed.label) parsed.label = 'Custom';
+    if (!parsed.label) parsed.label = uiText("Custom");
     return parsed;
   } catch {
     return null;

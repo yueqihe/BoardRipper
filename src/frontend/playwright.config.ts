@@ -55,13 +55,15 @@ export default defineConfig({
   // expect ⌘. Top-level `testIgnore` gets the same result while leaving every
   // other setting exactly as it was. `.webkit.spec.ts` files drive WebKit-only
   // behaviour and are meaningless under Chromium.
-  testIgnore: WEBKIT ? undefined : /.*\.webkit\.spec\.ts/,
+  testIgnore: WEBKIT ? /chinese-ui\.spec\.ts/ : /(.*\.webkit\.spec\.ts|chinese-ui\.spec\.ts)/,
   webServer: {
     command: `npx vite --port ${VITE_PORT} --strictPort`,
     port: VITE_PORT,
     reuseExistingServer: true,
     timeout: 15000,
     env: {
+      // Existing upstream UI specs use English; Chinese has its own offline suite.
+      BR_DEFAULT_LANGUAGE: 'en',
       // Forward backend port to vite so its proxy targets the right backend.
       // vite.config.ts reads BOARDRIPPER_BACKEND_PORT.
       BOARDRIPPER_BACKEND_PORT: String(BACKEND_PORT),

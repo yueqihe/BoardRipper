@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Live PixiJS preview for the Settings panel.
  *
@@ -407,9 +408,7 @@ export function SettingsMockup({
       <div className={`mockup-zoom-badge${zoomPct !== 100 ? ' mockup-zoom-active' : ''}`}>
         {zoomPct}%
       </div>
-      <div className="mockup-hint">
-        scroll to zoom · drag to pan · dbl-click to fit
-      </div>
+      <div className="mockup-hint">{uiText("scroll to zoom · drag to pan · dbl-click to fit")}</div>
     </div>
   );
 }

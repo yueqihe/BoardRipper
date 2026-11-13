@@ -1,3 +1,5 @@
+import { uiText } from '../i18n';
+import { LanguageSelect } from './LanguageSelect';
 import { useRef, useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { IconBoxMultiple, IconLayoutBoardSplit, IconUpload, IconDownload, IconInfoCircle } from '@tabler/icons-react';
@@ -46,12 +48,10 @@ function DownloadOfflineButton() {
       href="./boardripper-lite.html"
       download="boardripper-lite.html"
       data-testid="download-offline"
-      title="Download BoardRipper as a single offline HTML file — save it to your computer and open it in any browser, no internet needed."
+      title={uiText("Download BoardRipper as a single offline HTML file — save it to your computer and open it in any browser, no internet needed.")}
       style={{ display: 'inline-flex', alignItems: 'center', gap: 5, textDecoration: 'none' }}
     >
-      <IconDownload size={15} stroke={2} />
-      Offline copy
-    </a>
+      <IconDownload size={15} stroke={2} />{uiText("Offline copy")}</a>
   );
 }
 
@@ -81,8 +81,8 @@ function InfoBadge() {
         data-testid="info-badge"
         className={`toolbar-btn toolbar-info-badge${open ? ' active' : ''}`}
         onClick={() => setOpen(v => !v)}
-        title="About BoardRipper"
-        aria-label="About BoardRipper"
+        title={uiText("About BoardRipper")}
+        aria-label={uiText("About BoardRipper")}
       >
         <IconInfoCircle size={15} stroke={2} />
       </button>
@@ -91,26 +91,19 @@ function InfoBadge() {
         <div className="update-dropdown info-dropdown">
           <div className="update-dropdown-header">
             <div className="update-dropdown-header-main">
-              <span>BoardRipper {fmtVersion(__APP_VERSION__)}</span>
+              <span>{uiText("BoardRipper ")}{fmtVersion(__APP_VERSION__)}</span>
             </div>
             <button className="update-dropdown-close" onClick={() => setOpen(false)}>x</button>
           </div>
           <div className="update-dropdown-body info-dropdown-body">
-            <p>
-              Built as a tool for my own repair shop, then shared once it turned out
-              useful. Free software under AGPL-3.0 — no accounts, no paywall, no
-              telemetry; your boards stay on your machine.
-            </p>
-            <p className="info-dropdown-author">by Alexey Lavrov — RipperDoc, Munich</p>
-            <p>
-              Development runs about €100 a month in AI tokens out of my own pocket.
-              If BoardRipper is useful to you, support is genuinely appreciated.
-            </p>
+            <p>{uiText("Built as a tool for my own repair shop, then shared once it turned out useful. Free software under AGPL-3.0 — no accounts, no paywall, no telemetry; your boards stay on your machine.")}</p>
+            <p className="info-dropdown-author">{uiText("by Alexey Lavrov — RipperDoc, Munich")}</p>
+            <p>{uiText("Development runs about €100 a month in AI tokens out of my own pocket. If BoardRipper is useful to you, support is genuinely appreciated.")}</p>
             <div className="info-dropdown-links">
               <a href="https://buymeacoffee.com/inwerp" target="_blank" rel="noopener noreferrer"
-                className="info-dropdown-donate">Buy me a coffee</a>
-              <a href="https://www.ripperdoc.de/boardripper/" target="_blank" rel="noopener noreferrer">Website</a>
-              <a href="https://github.com/AlexeyInwerp/BoardRipper" target="_blank" rel="noopener noreferrer">Source</a>
+                className="info-dropdown-donate">{uiText("Buy me a coffee")}</a>
+              <a href="https://www.ripperdoc.de/boardripper/" target="_blank" rel="noopener noreferrer">{uiText("Website")}</a>
+              <a href="https://github.com/yueqihe/BoardRipper/tree/feat/chinese-ui" target="_blank" rel="noopener noreferrer">{uiText("Source")}</a>
             </div>
           </div>
         </div>
@@ -163,10 +156,10 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
           if (!open) updateStore.check();
           setOpen(v => !v);
         }}
-        title={updating ? 'Updating — see Debug tab' : unverified ? 'Update available — manual install required (signature not verifiable by this build)' : state.has_update ? (isImportant ? `Important update: ${fmtVersion(state.latest_version)}` : `Update available: ${fmtVersion(state.latest_version)}`) : `${fmtVersion(state.current_version)} — click to check`}
+        title={updating ? uiText("Updating — see Debug tab") : unverified ? uiText("Update available — manual install required (signature not verifiable by this build)") : state.has_update ? (isImportant ? uiText`Important update: ${fmtVersion(state.latest_version)}` : uiText`Update available: ${fmtVersion(state.latest_version)}`) : uiText`${fmtVersion(state.current_version)} — click to check`}
       >
         {updating
-          ? 'Updating…'
+          ? uiText("Updating…")
           : state.has_update
             // Alternates between the version on offer and the word for what to
             // do about it. Both sit in one grid cell so the badge keeps a
@@ -177,7 +170,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
               // string. The button's title already says it in a sentence.
               <span className="update-badge-swap" aria-hidden="true">
                 <span className="swap-version">{fmtVersion(state.latest_version)}</span>
-                <span className="swap-word">Update</span>
+                <span className="swap-word">{uiText("Update")}</span>
               </span>
             )
             : fmtVersion(state.current_version)}
@@ -187,7 +180,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
         <div className={`update-dropdown${isImportant && state.has_update ? ' update-dropdown-important' : ''}`}>
           <div className="update-dropdown-header">
             <div className="update-dropdown-header-main">
-              <span>{state.has_update ? (isImportant ? 'Important update' : 'Update available') : fmtVersion(state.current_version)}</span>
+              <span>{state.has_update ? (isImportant ? uiText("Important update") : uiText("Update available")) : fmtVersion(state.current_version)}</span>
               {state.has_update && <span className="update-dropdown-version-tag">{fmtVersion(manifest?.version || state.latest_version)}</span>}
             </div>
             {isImportant && manifest?.important_reason && (
@@ -198,7 +191,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
 
           {pendingNotes && (
             <details className="update-dropdown-notes" data-testid="update-whats-new">
-              <summary>What&apos;s new in {fmtVersion(manifest?.version || state.latest_version)}</summary>
+              <summary>{uiText("What's new in ")}{fmtVersion(manifest?.version || state.latest_version)}</summary>
               <div className="update-dropdown-body">
                 <ReleaseNotes notes={pendingNotes} />
               </div>
@@ -207,7 +200,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
 
           {!state.has_update && !updating && (
             <div className="update-dropdown-body">
-              <p>You are on the latest version.</p>
+              <p>{uiText("You are on the latest version.")}</p>
             </div>
           )}
 
@@ -223,28 +216,17 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
 
           {unverified && (
             <div className="update-dropdown-unverified" data-testid="update-unverified">
-              <p><b>Update available &mdash; manual install required</b></p>
-              <p>
-                A newer release is published, but this build cannot verify its
-                signature, so it will not install it automatically.
-              </p>
-              <p>
-                This normally means the release signing key has been rotated.
-                Rotating the key is a security measure, and your install only
-                trusts the key it was built with &mdash; that refusal is exactly
-                what stops anyone else pushing an update to it.
-              </p>
-              <p>To update, pull the new image yourself:</p>
+              <p><b>{uiText("Update available &mdash; manual install required")}</b></p>
+              <p>{uiText("A newer release is published, but this build cannot verify its signature, so it will not install it automatically.")}</p>
+              <p>{uiText("This normally means the release signing key has been rotated. Rotating the key is a security measure, and your install only trusts the key it was built with &mdash; that refusal is exactly what stops anyone else pushing an update to it.")}</p>
+              <p>{uiText("To update, pull the new image yourself:")}</p>
               <code>docker compose pull{'\n'}docker compose up -d</code>
-              <p>
-                The current signing key is published at{' '}
+              <p>{uiText("The current signing key is published at")}{' '}
                 <a
                   href="https://www.ripperdoc.de/boardripper/"
                   target="_blank"
                   rel="noopener noreferrer"
-                >ripperdoc.de/boardripper</a>, so you can confirm the release is
-                the maintainer&rsquo;s before installing it.
-              </p>
+                >{uiText("ripperdoc.de/boardripper")}</a>{uiText(", so you can confirm the release is the maintainer&rsquo;s before installing it.")}</p>
             </div>
           )}
 
@@ -263,7 +245,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
                     setOpen(false);
                   }}
                 >
-                  {updating ? 'Updating…' : 'Update & Restart'}
+                  {updating ? uiText("Updating…") : uiText("Update & Restart")}
                 </button>
               ) : (
                 <a
@@ -271,9 +253,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
                   href="https://www.ripperdoc.de/boardripper/"
                   target="_blank"
                   rel="noopener"
-                >
-                  Download from ripperdoc.de
-                </a>
+                >{uiText("Download from ripperdoc.de")}</a>
               )}
               <div className="update-dropdown-actions-right">
                 {state.docker_available && manifest?.notes_url && (
@@ -282,9 +262,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
                     href={manifest.notes_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                  >
-                    Release notes ↗
-                  </a>
+                  >{uiText("Release notes ↗")}</a>
                 )}
                 <span className="update-dropdown-version">
                   {fmtVersion(state.current_version)} &#8594; {fmtVersion(state.latest_version)}
@@ -298,9 +276,8 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
               mistaken for the pending release's notes above. */}
           {installed && !updating && (
             <details className="update-dropdown-notes" data-testid="update-installed-notes">
-              <summary>
-                What&apos;s new in {fmtVersion(installed.version)}
-                {state.has_update && <span className="update-dropdown-yours"> · yours</span>}
+              <summary>{uiText("What's new in ")}{fmtVersion(installed.version)}
+                {state.has_update && <span className="update-dropdown-yours">{uiText(" · yours")}</span>}
               </summary>
               <div className="update-dropdown-body">
                 <ReleaseNotes notes={installed.notes} />
@@ -310,9 +287,7 @@ function UpdateBadge({ update }: { update: ReturnType<typeof useUpdateStore> }) 
                     href={installed.notes_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                  >
-                    Full release notes ↗
-                  </a>
+                  >{uiText("Full release notes ↗")}</a>
                 )}
               </div>
             </details>
@@ -433,7 +408,7 @@ function GlobalSearch() {
     // Library: by board_number, filename, manufacturer, model (same filter as LibraryPanel)
     const hits = libraryHitsFor(ql);
     items.push({
-      label: 'Library', count: hits.length, group: 'Library',
+      label: uiText("Library"), count: hits.length, group: 'Library',
       action: () => {
         databankStore.setViewMode('metadata');
         showSidebarTab('library');
@@ -463,7 +438,7 @@ function GlobalSearch() {
       <input
         ref={inputRef}
         type="text"
-        placeholder="Search parts, nets, PDFs, library"
+        placeholder={uiText("Search parts, nets, PDFs, library")}
         className="toolbar-search"
         value={query}
         onChange={handleChange}
@@ -516,7 +491,7 @@ function GlobalSearch() {
                   data-testid="search-library-more"
                   onClick={() => setLibraryExpanded(true)}
                 >
-                  {`${libraryHits.length - LIBRARY_HITS_SHOWN} more…`}
+                  {uiText`${libraryHits.length - LIBRARY_HITS_SHOWN} more…`}
                 </button>
               )}
               {libraryExpanded && libraryHits.length > LIBRARY_HITS_CAP && libraryRow && (
@@ -525,7 +500,7 @@ function GlobalSearch() {
                   data-testid="search-library-all"
                   onClick={() => { setOpen(false); libraryRow.action(); }}
                 >
-                  {`Show all ${libraryHits.length} in the Library`}
+                  {uiText`Show all ${libraryHits.length} in the Library`}
                 </button>
               )}
             </div>
@@ -673,16 +648,16 @@ export function Toolbar() {
         onClick={handleFileOpen}
         className="toolbar-btn toolbar-quiet"
         data-testid="open-btn"
-        data-tooltip={isElectron() ? 'Open boards or PDFs' : 'Open boards or PDFs from your device'}
+        data-tooltip={isElectron() ? uiText("Open boards or PDFs") : uiText("Open boards or PDFs from your device")}
       >
-        <IconUpload size={16} stroke={1.75} />Open
-      </button>
+        <IconUpload size={16} stroke={1.75} />{uiText("Open")}</button>
 
       {/* ── Search, centred ── */}
       <div className="toolbar-spacer" />
       <GlobalSearch />
       <div className="toolbar-spacer" />
 
+      <LanguageSelect />
       {/* Pop-out needs a real second window. The offline single file has no
        *  popout.html to open, and a tablet's window.open is a new tab (iPadOS)
        *  or nothing — so the control is hidden where it can only fail. Read
@@ -693,13 +668,13 @@ export function Toolbar() {
           className={`toolbar-btn toolbar-quiet ${twoWindow ? 'active' : ''}`}
           data-testid="two-window-toggle"
           data-tooltip={twoWindow
-            ? '2-window mode ON — click to re-dock PDF into main window'
-            : '2-window mode — detach PDF viewer into its own window'}
+            ? uiText("2-window mode ON — click to re-dock PDF into main window")
+            : uiText("2-window mode — detach PDF viewer into its own window")}
         >
           {twoWindow
             ? <IconBoxMultiple size={16} stroke={1.75} />
             : <IconLayoutBoardSplit size={16} stroke={1.75} />}
-          <span>2-Window</span>
+          <span>{uiText("2-Window")}</span>
         </button>
       )}
 

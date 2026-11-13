@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { uiZoom } from '../store/ui-zoom';
 import { useDatabank } from '../hooks/useDatabank';
@@ -99,13 +100,13 @@ function tailTruncate(s: string, max = 60) {
  *  attacker controls. */
 function donorStatusLabel(s?: string): string {
   switch (s) {
-    case 'indexed': return 'Indexed';
-    case 'indexing': return 'Indexing…';
-    case 'pending': return 'Pending';
-    case 'failed': return 'Failed';
-    case 'empty': return 'No text';
-    case 'duplicate': return 'Duplicate';
-    default: return 'Unknown';
+    case 'indexed': return uiText("Indexed");
+    case 'indexing': return uiText("Indexing…");
+    case 'pending': return uiText("Pending");
+    case 'failed': return uiText("Failed");
+    case 'empty': return uiText("No text");
+    case 'duplicate': return uiText("Duplicate");
+    default: return uiText("Unknown");
   }
 }
 
@@ -145,7 +146,7 @@ function PdfSearchStatus({ outcome, shown, indexState, indexReason, onRetry }: {
       <div className="library-search-results-header library-pdf-search-status" data-testid="pdf-search-failed">
         <span>{text}</span>
         {outcome.code !== 'too_short' && outcome.code !== 'no_index' && outcome.code !== 'no_server' && (
-          <button className="library-search-btn" onClick={onRetry}>Retry</button>
+          <button className="library-search-btn" onClick={onRetry}>{uiText("Retry")}</button>
         )}
       </div>
     );
@@ -167,7 +168,7 @@ function PdfSearchStatus({ outcome, shown, indexState, indexReason, onRetry }: {
   if (indexState === 'unavailable') {
     return (
       <div className="library-search-results-header library-pdf-search-status" data-testid="pdf-index-unavailable">
-        <span>PDF text search is not available: {indexReason}.</span>
+        <span>{uiText("PDF text search is not available: ")}{indexReason}.</span>
       </div>
     );
   }
@@ -666,7 +667,7 @@ export function LibraryPanel() {
       // here and nowhere else — the Debug panel is not where the user is
       // looking, so say it where they clicked.
       if (databankStore.folderMode) {
-        boardStore.addToast(err instanceof Error ? err.message : `Could not open "${file.filename}"`, 'error');
+        boardStore.addToast(err instanceof Error ? err.message : uiText`Could not open "${file.filename}"`, 'error');
       }
     }
     // `files` is intentionally absent: the binding lookup goes through
@@ -765,7 +766,7 @@ export function LibraryPanel() {
     try {
       const res = await pdfIndexClient.indexFolder(folderPath);
       if (res.status === 409) {
-        if (confirm('An index is already running. Stop it and index this folder instead?')) {
+        if (confirm(uiText("An index is already running. Stop it and index this folder instead?"))) {
           await pdfIndexClient.stop();
           await new Promise(r => setTimeout(r, 600));
           await pdfIndexClient.indexFolder(folderPath);
@@ -803,11 +804,11 @@ export function LibraryPanel() {
     ? Math.min(100, Math.round((libraryLoad.done / libraryLoad.total) * 100))
     : 0;
   const loadStripLabel =
-    libraryLoad.phase === 'connecting' ? 'Connecting'
-    : libraryLoad.phase === 'cache' ? 'Restoring cache'
-    : libraryLoad.phase === 'streaming' ? 'Streaming database from server'
-    : libraryLoad.phase === 'finalizing' ? 'Indexing'
-    : libraryLoad.phase === 'error' ? 'Load failed'
+    libraryLoad.phase === 'connecting' ? uiText("Connecting")
+    : libraryLoad.phase === 'cache' ? uiText("Restoring cache")
+    : libraryLoad.phase === 'streaming' ? uiText("Streaming database from server")
+    : libraryLoad.phase === 'finalizing' ? uiText("Indexing")
+    : libraryLoad.phase === 'error' ? uiText("Load failed")
     : '';
   const loadStrip = showLoadStrip && (
     <div className={`library-loadstrip ${libraryLoad.phase}`} role="status" aria-live="polite">
@@ -824,7 +825,7 @@ export function LibraryPanel() {
             {libraryLoad.done.toLocaleString()} / {libraryLoad.total.toLocaleString()} ({loadStripPct}%)
           </span>
         ) : libraryLoad.done > 0 ? (
-          <span className="library-loadstrip-counter">{libraryLoad.done.toLocaleString()} files</span>
+          <span className="library-loadstrip-counter">{libraryLoad.done.toLocaleString()}{uiText(" files")}</span>
         ) : null}
         {libraryLoad.note && (
           <span className="library-loadstrip-note">{libraryLoad.note}</span>
@@ -835,9 +836,7 @@ export function LibraryPanel() {
             style={{ marginLeft: 8, padding: '0 6px', fontSize: 10 }}
             onClick={() => { void databankStore.fetchFiles(); }}
             title={libraryLoad.error}
-          >
-            Retry
-          </button>
+          >{uiText("Retry")}</button>
         )}
       </div>
     </div>
@@ -870,18 +869,16 @@ export function LibraryPanel() {
         />
       </div>
       <div className="library-loadstrip-text">
-        <span className="library-loadstrip-phase">Library load incomplete</span>
+        <span className="library-loadstrip-phase">{uiText("Library load incomplete")}</span>
         <span className="library-loadstrip-counter">
           {loadedTotal.toLocaleString()} / {expectedTotal.toLocaleString()} ({incompleteFillPct}%)
         </span>
-        <span className="library-loadstrip-note">stream stopped early</span>
+        <span className="library-loadstrip-note">{uiText("stream stopped early")}</span>
         <button
           className="library-scan-btn"
           style={{ marginLeft: 8, padding: '0 6px', fontSize: 10 }}
           onClick={() => { void databankStore.fetchFiles({ force: true }); }}
-        >
-          Reload
-        </button>
+        >{uiText("Reload")}</button>
       </div>
     </div>
   );
@@ -897,14 +894,14 @@ export function LibraryPanel() {
     || isIncomplete;
   const statusExpanded = opPending || statusOpen;
   const summaryText = scanning
-    ? `Indexing ${scanStatus && scanStatus.total > 0 ? `${scanStatus.scanned}/${scanStatus.total}` : ''}${scanStatus?.phase ? ` — ${scanStatus.phase}` : '…'}`
+    ? uiText`Indexing ${scanStatus && scanStatus.total > 0 ? `${scanStatus.scanned}/${scanStatus.total}` : ''}${scanStatus?.phase ? ` — ${scanStatus.phase}` : '…'}`
     : dedupProgress?.running
-      ? `Finding duplicates ${dedupProgress.total > 0 ? `${dedupProgress.done}/${dedupProgress.total}` : ''}`
+      ? uiText`Finding duplicates ${dedupProgress.total > 0 ? `${dedupProgress.done}/${dedupProgress.total}` : ''}`
       : pdfIndexProgress?.running
         ? (pdfIndexProgress.total === 0 && pdfIndexProgress.done === 0
-          ? 'Indexing PDFs — counting files…'
-          : `Indexing PDFs ${pdfIndexProgress.done}/${pdfIndexProgress.total}`)
-        : `${boardCount} boards · ${pdfCount} PDFs${pdfIndexStats ? ` · ${pdfIndexStats.indexed} indexed` : ''}`;
+          ? uiText("Indexing PDFs — counting files…")
+          : uiText`Indexing PDFs ${pdfIndexProgress.done}/${pdfIndexProgress.total}`)
+        : uiText`${boardCount} boards · ${pdfCount} PDFs${pdfIndexStats ? ` · ${pdfIndexStats.indexed} indexed` : ''}`;
   const statsBar = (
     <div className={`library-statsbar ${statusExpanded ? 'expanded' : 'collapsed'}`}>
       {statusExpanded && loadStrip}
@@ -916,7 +913,7 @@ export function LibraryPanel() {
           onClick={() => { if (!opPending) setStatusOpen(o => !o); }}
           disabled={opPending}
           aria-expanded={statusExpanded}
-          title={opPending ? undefined : (statusOpen ? 'Hide details' : 'Show details')}
+          title={opPending ? undefined : (statusOpen ? uiText("Hide details") : uiText("Show details"))}
         >
           {!opPending && (
             <IconChevronDown size={13} className={`library-statsbar-caret ${statusOpen ? 'open' : ''}`} />
@@ -930,9 +927,9 @@ export function LibraryPanel() {
             style={{ padding: '0 5px', fontSize: 10 }}
             onClick={failedListLoading ? undefined : showFailedList}
             disabled={failedListLoading}
-            title="Show failed PDF files"
+            title={uiText("Show failed PDF files")}
           >
-            {failedListLoading ? '…' : `${pdfIndexStats.failed} failed`}
+            {failedListLoading ? '…' : uiText`${pdfIndexStats.failed} failed`}
           </button>
         )}
         <div className="library-statsbar-actions">
@@ -940,7 +937,7 @@ export function LibraryPanel() {
             <button
               className="library-scan-btn library-scan-icon"
               onClick={() => treeCollapseAllRef.current?.()}
-              title="Collapse all open folders in the current view"
+              title={uiText("Collapse all open folders in the current view")}
             >
               <IconChevronsUp size={14} />
             </button>
@@ -948,7 +945,7 @@ export function LibraryPanel() {
           <button
             className="library-scan-btn library-scan-icon"
             onClick={() => showSidebarTab('settings')}
-            title="Open Library settings (scan, index, …)"
+            title={uiText("Open Library settings (scan, index, …)")}
           >
             <IconSettings size={14} />
           </button>
@@ -966,16 +963,16 @@ export function LibraryPanel() {
             <>
               {scanStatus && scanStatus.duration_ms > 0 && (
                 <div className="library-scan-result">
-                  {`Last scan: +${scanStatus.added} -${scanStatus.deleted} ~${scanStatus.updated} (${scanStatus.scanned}/${scanStatus.total}, ${scanStatus.duration_ms}ms)`}
+                  {uiText`Last scan: +${scanStatus.added} -${scanStatus.deleted} ~${scanStatus.updated} (${scanStatus.scanned}/${scanStatus.total}, ${scanStatus.duration_ms}ms)`}
                 </div>
               )}
               {pdfIndexProgress?.running && (
                 <div className="library-indexing">
                   {pdfIndexProgress.total === 0 && pdfIndexProgress.done === 0
-                    ? 'Indexing — counting files…'
-                    : `Indexing ${pdfIndexProgress.done}/${pdfIndexProgress.total}`
-                      + (pdfIndexProgress.workers > 0 ? ` · ${pdfIndexProgress.active_workers}/${pdfIndexProgress.workers} threads` : '')
-                      + (pdfIndexProgress.errors > 0 ? ` (${pdfIndexProgress.errors} err)` : '')
+                    ? uiText("Indexing — counting files…")
+                    : uiText`Indexing ${pdfIndexProgress.done}/${pdfIndexProgress.total}`
+                      + (pdfIndexProgress.workers > 0 ? uiText` · ${pdfIndexProgress.active_workers}/${pdfIndexProgress.workers} threads` : '')
+                      + (pdfIndexProgress.errors > 0 ? uiText` (${pdfIndexProgress.errors} err)` : '')
                       + (fmtIndexEta(pdfIndexProgress) ? ` · ${fmtIndexEta(pdfIndexProgress)}` : '')}
                 </div>
               )}
@@ -985,15 +982,13 @@ export function LibraryPanel() {
                 </div>
               )}
               {dedupProgress?.running && (
-                <div className="library-indexing">
-                  Finding duplicates {dedupProgress.done}/{dedupProgress.total}
-                  {dedupProgress.errors > 0 ? ` (${dedupProgress.errors} err)` : ''}
+                <div className="library-indexing">{uiText("Finding duplicates ")}{dedupProgress.done}/{dedupProgress.total}
+                  {dedupProgress.errors > 0 ? uiText` (${dedupProgress.errors} err)` : ''}
                 </div>
               )}
               {!pdfIndexProgress?.running && pdfIndexStats && (
                 <div className="library-scan-result">
-                  {pdfIndexStats.indexed} indexed · {pdfIndexStats.pages} pages
-                </div>
+                  {pdfIndexStats.indexed}{uiText(" indexed · ")}{pdfIndexStats.pages}{uiText(" pages")}</div>
               )}
             </>
           )}
@@ -1021,7 +1016,7 @@ export function LibraryPanel() {
         onClick={() => { databankStore.setBrowseMode('database'); closeSourceMenu(); }}
       >
         <IconDatabase size={14} />
-        <span>Database</span>
+        <span>{uiText("Database")}</span>
         {browseMode === 'database' && <IconCheck size={13} className="library-source-check" />}
       </button>
       <button
@@ -1032,7 +1027,7 @@ export function LibraryPanel() {
         onClick={() => { databankStore.setBrowseMode('live'); closeSourceMenu(); }}
       >
         <IconDeviceDesktop size={14} />
-        <span>Live filesystem</span>
+        <span>{uiText("Live filesystem")}</span>
         {browseMode === 'live' && <IconCheck size={13} className="library-source-check" />}
       </button>
     </div>
@@ -1055,7 +1050,7 @@ export function LibraryPanel() {
         onClick={() => { handleSetViewMode('search'); closePdfMenu(); }}
       >
         <IconFileText size={14} />
-        <span>PDF search</span>
+        <span>{uiText("PDF search")}</span>
         {viewMode === 'search' && <IconCheck size={13} className="library-source-check" />}
       </button>
       <button
@@ -1066,7 +1061,7 @@ export function LibraryPanel() {
         onClick={() => { handleSetViewMode('bench'); closePdfMenu(); }}
       >
         <IconStack2 size={14} />
-        <span>Donor boards</span>
+        <span>{uiText("Donor boards")}</span>
         {viewMode === 'bench' && <IconCheck size={13} className="library-source-check" />}
       </button>
     </div>
@@ -1075,24 +1070,24 @@ export function LibraryPanel() {
   const failedModal = failedList !== null && (
     <div className="library-modal-backdrop" onClick={() => setFailedList(null)}>
       <div className="library-modal library-modal-wide" onClick={e => e.stopPropagation()}>
-        <div className="library-modal-title">PDF indexing failures ({failedList.length})</div>
+        <div className="library-modal-title">{uiText("PDF indexing failures (")}{failedList.length})</div>
         {failedList.length === 0 ? (
-          <div className="library-modal-filename">No failed files.</div>
+          <div className="library-modal-filename">{uiText("No failed files.")}</div>
         ) : (
           <div style={{ maxHeight: 420, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {failedList.map(f => (
               <div key={f.file_id} className="library-failed-row">
-                <div className="library-failed-filename" title={f.filename || `ID ${f.file_id}`}>
-                  {f.filename || `(deleted file — id ${f.file_id})`}
+                <div className="library-failed-filename" title={f.filename || uiText`ID ${f.file_id}`}>
+                  {f.filename || uiText`(deleted file — id ${f.file_id})`}
                 </div>
                 {f.path && (
                   <div className="library-failed-path" title={f.path}>{f.path}</div>
                 )}
                 <div className="library-failed-error">
-                  {f.error || '(no error message returned by the indexer — likely a worker crash; check container logs for a panic / SIGSEGV around this file)'}
+                  {f.error || uiText("(no error message returned by the indexer — likely a worker crash; check container logs for a panic / SIGSEGV around this file)")}
                 </div>
                 {(f.attempts ?? 0) >= 3 && (
-                  <div className="library-failed-path">Tried {f.attempts} times — no longer retried automatically.</div>
+                  <div className="library-failed-path">{uiText("Tried ")}{f.attempts}{uiText(" times — no longer retried automatically.")}</div>
                 )}
               </div>
             ))}
@@ -1104,12 +1099,12 @@ export function LibraryPanel() {
               className="library-scan-btn"
               onClick={handleRetryFailed}
               disabled={retrying}
-              title="Reset only the failed rows back to pending and re-run the indexer — already-indexed files are NOT touched"
+              title={uiText("Reset only the failed rows back to pending and re-run the indexer — already-indexed files are NOT touched")}
             >
-              {retrying ? 'Retrying…' : `Retry ${failedList.length} failed (does not re-index the rest)`}
+              {retrying ? uiText("Retrying…") : uiText`Retry ${failedList.length} failed (does not re-index the rest)`}
             </button>
           )}
-          <button className="library-scan-btn" onClick={() => setFailedList(null)}>Close</button>
+          <button className="library-scan-btn" onClick={() => setFailedList(null)}>{uiText("Close")}</button>
         </div>
       </div>
     </div>
@@ -1127,32 +1122,32 @@ export function LibraryPanel() {
             className={`library-tab icon-tab ${viewMode === 'history' ? 'active' : ''}`}
             data-library-tab="history"
             onClick={() => handleSetViewMode('history')}
-            data-title="Recently opened"
-            aria-label="Recently opened"
+            data-title={uiText("Recently opened")}
+            aria-label={uiText("Recently opened")}
           >
             <IconHistory size={14} />
-            {viewMode === 'history' && <span className="icon-tab-caption">Recent</span>}
+            {viewMode === 'history' && <span className="icon-tab-caption">{uiText("Recent")}</span>}
           </button>
           <button
             className={`library-tab icon-tab ${viewMode === 'metadata' ? 'active' : ''}`}
             data-library-tab="metadata"
             onClick={() => handleSetViewMode('metadata')}
-            data-title="Board #"
-            aria-label="Board #"
+            data-title={uiText("Board #")}
+            aria-label={uiText("Board #")}
           >
             <IconHash size={14} />
-            {viewMode === 'metadata' && <span className="icon-tab-caption">Board #</span>}
+            {viewMode === 'metadata' && <span className="icon-tab-caption">{uiText("Board #")}</span>}
           </button>
           <div className="library-tab-folder-wrap" ref={sourceMenuWrapRef}>
             <button
               className={`library-tab icon-tab ${viewMode === 'folders' ? 'active' : ''}`}
               data-library-tab="folders"
               onClick={() => handleSetViewMode('folders')}
-              data-title="Browse folders"
-              aria-label="Browse folders"
+              data-title={uiText("Browse folders")}
+              aria-label={uiText("Browse folders")}
             >
               <IconFolder size={14} />
-              {viewMode === 'folders' && <span className="icon-tab-caption">Folders</span>}
+              {viewMode === 'folders' && <span className="icon-tab-caption">{uiText("Folders")}</span>}
             </button>
             {sourceMenuOpen && viewMode === 'folders' && folderSourceMenu}
           </div>
@@ -1176,11 +1171,11 @@ export function LibraryPanel() {
                 setPdfMenuOpen(true);
                 armPdfMenuTimeout();
               }}
-              data-title="PDF text search · Donor boards"
-              aria-label="PDF"
+              data-title={uiText("PDF text search · Donor boards")}
+              aria-label={uiText("PDF")}
             >
               <IconFileText size={14} />
-              {(viewMode === 'search' || viewMode === 'bench') && <span className="icon-tab-caption">PDF</span>}
+              {(viewMode === 'search' || viewMode === 'bench') && <span className="icon-tab-caption">{uiText("PDF")}</span>}
             </button>
             {pdfMenuOpen && (viewMode === 'search' || viewMode === 'bench') && pdfSourceMenu}
           </div>
@@ -1193,7 +1188,7 @@ export function LibraryPanel() {
           <input
             ref={filterInputRef}
             type="text"
-            placeholder="Filter files..."
+            placeholder={uiText("Filter files...")}
             className="library-search-input"
             value={localSearch}
             onChange={(e) => {
@@ -1206,7 +1201,7 @@ export function LibraryPanel() {
               onClick={() => {
                 setLocalSearch('');
               }}
-              title="Clear search"
+              title={uiText("Clear search")}
             >
               x
             </button>
@@ -1221,7 +1216,7 @@ export function LibraryPanel() {
             className="library-folder-btn"
             onClick={() => databankStore.selectLibraryFolder()}
           >
-            {libraryPath ? 'Change Folder' : 'Set Library Folder'}
+            {libraryPath ? uiText("Change Folder") : uiText("Set Library Folder")}
           </button>
           {libraryPath && (
             <span className="library-folder-path" title={libraryPath}>
@@ -1237,13 +1232,11 @@ export function LibraryPanel() {
           store's reconnect timer; the button skips its current wait. */}
       {!isElectron() && backendState === 'down' && (
         <div className="library-backend-warn" role="status">
-          <span>Backend unreachable — is the BoardRipper server running? Retrying every {backendRetryDelaySec} s.</span>
+          <span>{uiText("Backend unreachable — is the BoardRipper server running? Retrying every ")}{backendRetryDelaySec} s.</span>
           <button
             className="library-backend-retry"
             onClick={() => { void databankStore.retryBackendNow(); }}
-          >
-            Retry now
-          </button>
+          >{uiText("Retry now")}</button>
         </div>
       )}
 
@@ -1251,10 +1244,10 @@ export function LibraryPanel() {
       <div className="library-content">
         {viewMode === 'bench' ? (
           <div className="library-bench">
-            <div className="library-bench-header">Donor boards ({donorList.length})</div>
+            <div className="library-bench-header">{uiText("Donor boards (")}{donorList.length})</div>
             <div className="library-donor-list">
               {donorList.length === 0
-                ? <div className="library-empty">No donor boards yet. Mark a PDF as a donor from its details to add it here.</div>
+                ? <div className="library-empty">{uiText("No donor boards yet. Mark a PDF as a donor from its details to add it here.")}</div>
                 : donorList.map(d => (
                     <div
                       key={d.file_id}
@@ -1262,7 +1255,7 @@ export function LibraryPanel() {
                       data-testid="donor-row"
                       role="button"
                       tabIndex={0}
-                      title="Click to show its linked board · double-click to open the PDF"
+                      title={uiText("Click to show its linked board · double-click to open the PDF")}
                       onClick={() => handleSelectResult(d.file_id)}
                       onDoubleClick={() => handleOpenDonor(d)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleOpenDonor(d); } }}
@@ -1276,7 +1269,7 @@ export function LibraryPanel() {
                       </span>
                       <button
                         className="library-donor-remove"
-                        title="Remove from donor list"
+                        title={uiText("Remove from donor list")}
                         onClick={async (e) => { e.stopPropagation(); await databankStore.removeDonor(d.file_id); refreshDonorList(); }}
                       >×</button>
                     </div>
@@ -1287,13 +1280,9 @@ export function LibraryPanel() {
                 className="library-bench-btn"
                 data-testid="donor-export-link"
                 href="/api/databank/donors/export"
-                title="Download the donor list as a JSON backup"
-              >
-                Export
-              </a>
-              <label className="library-bench-btn" title="Import a donor backup JSON">
-                Import
-                <input
+                title={uiText("Download the donor list as a JSON backup")}
+              >{uiText("Export")}</a>
+              <label className="library-bench-btn" title={uiText("Import a donor backup JSON")}>{uiText("Import")}<input
                   type="file"
                   accept="application/json,.json"
                   data-testid="donor-import-input"
@@ -1322,9 +1311,8 @@ export function LibraryPanel() {
                     setDonorBackups(await databankStore.listDonorBackups());
                     refreshDonorList();
                   }}
-                  title={`Restore ${donorBackups[0].count} donor(s) from the latest backup`}
-                >
-                  Restore ({donorBackups[0].count})
+                  title={uiText`Restore ${donorBackups[0].count} donor(s) from the latest backup`}
+                >{uiText("Restore (")}{donorBackups[0].count})
                 </button>
               )}
             </div>
@@ -1335,31 +1323,29 @@ export function LibraryPanel() {
               <input
                 ref={pdfSearchInputRef}
                 className="library-search-input"
-                placeholder="Search PDF text (e.g. 10UF 25V)…"
+                placeholder={uiText("Search PDF text (e.g. 10UF 25V)…")}
                 value={pdfQuery}
                 onChange={e => setPdfQuery(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') runPdfSearch(); }}
               />
-              <label className="library-pdf-search-toggle" title="Restrict search to donor PDFs only">
+              <label className="library-pdf-search-toggle" title={uiText("Restrict search to donor PDFs only")}>
                 <input
                   type="checkbox"
                   checked={pdfScope === 'donor'}
                   onChange={e => setPdfScope(e.target.checked ? 'donor' : 'all')}
-                />
-                Donors only
-              </label>
+                />{uiText("Donors only")}</label>
               <button
                 className="library-search-btn"
                 data-testid="pdf-search-btn"
                 onClick={() => (pdfSearching ? cancelPdfSearch() : runPdfSearch())}
               >
-                {pdfSearching ? 'Cancel' : 'Search'}
+                {pdfSearching ? uiText("Cancel") : uiText("Search")}
               </button>
               {pdfResults.length > 0 && (
                 <button
                   className="library-search-clear"
                   onClick={() => { setPdfResults([]); setPdfQuery(''); setPdfOutcome(null); }}
-                  title="Clear"
+                  title={uiText("Clear")}
                 >x</button>
               )}
             </div>
@@ -1373,7 +1359,7 @@ export function LibraryPanel() {
             <>
               {donorResults.length > 0 && (
                 <details className="library-donor-spoiler" open>
-                  <summary>Donors ({donorResults.length})</summary>
+                  <summary>{uiText("Donors (")}{donorResults.length})</summary>
                   <SearchResultsView
                     results={donorResults}
                     selectedFileId={selectedFileId}
@@ -1393,30 +1379,25 @@ export function LibraryPanel() {
                 />
               )}
               {pdfResults.length === 0 && pdfSearching && (
-                <div className="library-search-results-header">
-                  Searching… <span className="library-search-spinner" aria-hidden />
+                <div className="library-search-results-header">{uiText("Searching… ")}<span className="library-search-spinner" aria-hidden />
                 </div>
               )}
               {pdfResults.length === 0 && !pdfSearching && pdfOutcome?.kind === 'done' && (
                 <div className="library-empty" data-testid="pdf-search-empty">
-                  <span>No results for </span><span translate="no">"{pdfQuery}"</span>
+                  <span>{uiText("No results for ")}</span><span translate="no">"{pdfQuery}"</span>
                 </div>
               )}
               {pdfResults.length === 0 && !pdfQuery.trim() && (
-                <div className="library-empty">Enter a query and press Search or Enter</div>
+                <div className="library-empty">{uiText("Enter a query and press Search or Enter")}</div>
               )}
             </>
           </div>
         ) : loadStatus === 'error' ? (
-          <div className="library-empty">
-            Failed to load library{loadError ? `: ${loadError.message}` : '.'} Open the Debug panel for details.
-          </div>
+          <div className="library-empty">{uiText("Failed to load library")}{loadError ? `: ${loadError.message}` : '.'}{uiText(" Open the Debug panel for details.")}</div>
         ) : folderLibraryUi && files.length === 0 ? (
           <FolderLibraryEmptyState />
         ) : backendState === 'down' && files.length === 0 ? (
-          <div className="library-empty">
-            Library will appear once the backend is reachable.
-          </div>
+          <div className="library-empty">{uiText("Library will appear once the backend is reachable.")}</div>
         ) : files.length === 0 && !filesComplete && (loading || backendState !== 'ok') ? (
           // No answer yet. `filesComplete` is the only proof of an empty
           // library — it is set by the stream's own completion, so a request
@@ -1425,29 +1406,25 @@ export function LibraryPanel() {
           // 2026-09-22 report was the old order of these branches: with the
           // backend silent, `loading` was still false and the panel offered
           // "Library is empty — Open Settings to scan" until the failure came.
-          <div className="library-empty">Loading library…</div>
+          <div className="library-empty">{uiText("Loading library…")}</div>
         ) : files.length === 0 && !filesComplete ? (
           // The backend answered but the list stream did not finish (a torn
           // stream, a parse error) — say that, with the way out, instead of
           // either a spinner for ever or a false "empty".
           <div className="library-empty">
-            <div>The library list did not finish loading.</div>
-            <button className="library-empty-action" onClick={() => { void databankStore.fetchFiles({ force: true }); }}>
-              Reload
-            </button>
+            <div>{uiText("The library list did not finish loading.")}</div>
+            <button className="library-empty-action" onClick={() => { void databankStore.fetchFiles({ force: true }); }}>{uiText("Reload")}</button>
           </div>
         ) : files.length === 0 ? (
           <div className="library-empty">
-            <div>Library is empty — no files indexed yet.</div>
+            <div>{uiText("Library is empty — no files indexed yet.")}</div>
             <button
               className="library-empty-action"
               onClick={() => {
                 showSidebarTab('settings');
-                window.dispatchEvent(new CustomEvent('settings-focus-section', { detail: 'server' }));
+                window.dispatchEvent(new CustomEvent('settings-focus-section', { detail: uiText("server") }));
               }}
-            >
-              Open Settings ▸ Library to scan
-            </button>
+            >{uiText("Open Settings ▸ Library to scan")}</button>
           </div>
         ) : viewMode === 'history' ? (
           <HistoryView
@@ -1554,7 +1531,7 @@ function LiveBrowser({ browseResult, browsing, searchFilter, onIndexFolder }: {
         label: name,
         onRetry: (attempt) => {
           if (attempt === 2) {
-            boardStore.addToast(`Downloading "${name}" from cloud storage…`, 'info');
+            boardStore.addToast(uiText`Downloading "${name}" from cloud storage…`, 'info');
           }
         },
       },
@@ -1596,8 +1573,8 @@ function LiveBrowser({ browseResult, browsing, searchFilter, onIndexFolder }: {
     }
   }, [browseResult, readLiveFile]);
 
-  if (browsing && !browseResult) return <div className="library-empty">Loading...</div>;
-  if (!browseResult) return <div className="library-empty">Browse the live filesystem</div>;
+  if (browsing && !browseResult) return <div className="library-empty">{uiText("Loading...")}</div>;
+  if (!browseResult) return <div className="library-empty">{uiText("Browse the live filesystem")}</div>;
 
   const entries = browseResult.entries || [];
   // Client-side filter on the current directory's listing. Cheap — the
@@ -1616,10 +1593,10 @@ function LiveBrowser({ browseResult, browsing, searchFilter, onIndexFolder }: {
         <div className="library-live-index-header">
           <button
             className="library-scan-btn"
-            title={currentPath ? `Index PDFs in "${currentPath}"` : 'Index all PDFs in library root'}
+            title={currentPath ? uiText`Index PDFs in "${currentPath}"` : uiText("Index all PDFs in library root")}
             onClick={() => onIndexFolder(currentPath)}
           >
-            {currentPath ? `Index "${currentPath.split('/').pop()}"` : 'Index root'}
+            {currentPath ? uiText`Index "${currentPath.split('/').pop()}"` : uiText("Index root")}
           </button>
         </div>
       )}
@@ -1638,11 +1615,9 @@ function LiveBrowser({ browseResult, browsing, searchFilter, onIndexFolder }: {
             {onIndexFolder && (
               <button
                 className="library-live-index-btn"
-                title={`Index PDFs in "${d.name}"`}
+                title={uiText`Index PDFs in "${d.name}"`}
                 onClick={(e) => { e.stopPropagation(); onIndexFolder(dirPath); }}
-              >
-                idx
-              </button>
+              >{uiText("idx")}</button>
             )}
           </div>
         );
@@ -1665,7 +1640,7 @@ function LiveBrowser({ browseResult, browsing, searchFilter, onIndexFolder }: {
         );
       })}
       {dirs.length === 0 && files.length === 0 && (
-        <div className="library-empty">Empty directory</div>
+        <div className="library-empty">{uiText("Empty directory")}</div>
       )}
     </div>
   );
@@ -1676,9 +1651,9 @@ function LiveBrowser({ browseResult, browsing, searchFilter, onIndexFolder }: {
 const BINDING_CATEGORIES = ['schematic', 'datasheet', 'other'] as const;
 type BindingCategory = (typeof BINDING_CATEGORIES)[number];
 const CATEGORY_LABEL: Record<string, string> = {
-  schematic: 'Schematic',
-  datasheet: 'Datasheet',
-  other: 'Other',
+  schematic: uiText("Schematic"),
+  datasheet: uiText("Datasheet"),
+  other: uiText("Other"),
 };
 /** Auto-open default per category. Schematics open with their board;
  *  everything else is listed-only. The user can override per-binding via
@@ -1787,10 +1762,10 @@ function DonorToggle({ fileId }: { fileId: number }) {
   };
 
   const label = busy
-    ? (isDonor ? 'Removing…' : 'Marking…')
+    ? (isDonor ? uiText("Removing…") : uiText("Marking…"))
     : indexing
-      ? 'Indexing…'
-      : isDonor ? 'Remove donor' : 'Mark as donor';
+      ? uiText("Indexing…")
+      : isDonor ? uiText("Remove donor") : uiText("Mark as donor");
 
   return (
     <button
@@ -1799,9 +1774,9 @@ function DonorToggle({ fileId }: { fileId: number }) {
       disabled={busy}
       title={isDonor
         ? (indexing
-            ? 'Indexing this donor PDF… (click to remove it from the donor pool)'
-            : 'Remove this PDF from the donor pool (will no longer appear in donor searches)')
-        : 'Mark this PDF as a donor (makes it appear in donor-scoped searches)'}
+            ? uiText("Indexing this donor PDF… (click to remove it from the donor pool)")
+            : uiText("Remove this PDF from the donor pool (will no longer appear in donor searches)"))
+        : uiText("Mark this PDF as a donor (makes it appear in donor-scoped searches)")}
     >
       {label}
     </button>
@@ -1815,9 +1790,9 @@ function useRevealLabel(): string {
     window.electronAPI?.platform().then(p => { if (!cancelled) setPlatform(p); });
     return () => { cancelled = true; };
   }, []);
-  if (platform === 'darwin') return 'Show in Finder';
-  if (platform === 'win32') return 'Show in Explorer';
-  return 'Show in folder';
+  if (platform === 'darwin') return uiText("Show in Finder");
+  if (platform === 'win32') return uiText("Show in Explorer");
+  return uiText("Show in folder");
 }
 
 function RevealButton({ path }: { path: string }) {
@@ -1858,7 +1833,7 @@ function FileDetailPath({ path }: { path: string }) {
       tabIndex={0}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(v => !v); } }}
     >
-      <span className="library-detail-path-label">path:</span>
+      <span className="library-detail-path-label">{uiText("path:")}</span>
       <span className="library-detail-path-value">{expanded ? path : truncated}</span>
     </div>
   );
@@ -1933,7 +1908,7 @@ function FileDetailPane({ detail, files, onOpen, onCreateBinding, onUpdateBindin
           <span className={`library-file-icon ${isBoard ? 'library-icon-board' : 'library-icon-pdf'}`}>{isBoard ? 'B' : 'P'}</span>
           <span className="library-detail-filename" title={detail.filename} translate="no">{detail.filename}</span>
           <div className="library-detail-icons">
-            <button className="library-detail-icon primary" data-testid="library-detail-open" onClick={() => onOpen(detail)} title="Open in viewer" aria-label="Open in viewer">
+            <button className="library-detail-icon primary" data-testid="library-detail-open" onClick={() => onOpen(detail)} title={uiText("Open in viewer")} aria-label={uiText("Open in viewer")}>
               <IconExternalLink size={15} />
             </button>
             {isElectron() ? (
@@ -1944,8 +1919,8 @@ function FileDetailPane({ detail, files, onOpen, onCreateBinding, onUpdateBindin
                 data-testid="library-detail-download"
                 href={`/api/files/path/${detail.path.split('/').map(encodeURIComponent).join('/')}?download=1`}
                 download={detail.filename}
-                title="Download"
-                aria-label="Download"
+                title={uiText("Download")}
+                aria-label={uiText("Download")}
               >
                 <IconDownload size={15} />
               </a>
@@ -1963,7 +1938,7 @@ function FileDetailPane({ detail, files, onOpen, onCreateBinding, onUpdateBindin
         aria-expanded={detailsOpen}
       >
         <IconChevronDown size={12} className={`library-statsbar-caret ${detailsOpen ? 'open' : ''}`} />
-        <span>Details</span>
+        <span>{uiText("Details")}</span>
       </button>
 
       {detailsOpen && (
@@ -1981,8 +1956,8 @@ function FileDetailPane({ detail, files, onOpen, onCreateBinding, onUpdateBindin
           </dl>
           <FileDetailPath path={detail.path} />
           <div className="library-detail-actions">
-            <button className="library-detail-edit" onClick={() => setShowEditModal(true)} title="Edit metadata">
-              <IconPencil size={12} /><span>Edit metadata</span>
+            <button className="library-detail-edit" onClick={() => setShowEditModal(true)} title={uiText("Edit metadata")}>
+              <IconPencil size={12} /><span>{uiText("Edit metadata")}</span>
             </button>
             {detail.file_type === 'pdf' && <DonorToggle fileId={detail.id} />}
           </div>
@@ -2000,12 +1975,12 @@ function FileDetailPane({ detail, files, onOpen, onCreateBinding, onUpdateBindin
        *  semantics line up). */}
       <div className="library-detail-bindings">
         <div className="library-detail-bindings-header">
-          <span>{isBoard ? `Bindings (${detail.bindings.length})` : `Linked boards (${detail.bindings.length})`}</span>
+          <span>{isBoard ? uiText`Bindings (${detail.bindings.length})` : uiText`Linked boards (${detail.bindings.length})`}</span>
           {isBoard && (
             <button
               className="library-detail-bind-btn"
               onClick={() => setShowBindPicker(!showBindPicker)}
-              title="Bind a PDF"
+              title={uiText("Bind a PDF")}
             >
               +
             </button>
@@ -2021,7 +1996,7 @@ function FileDetailPane({ detail, files, onOpen, onCreateBinding, onUpdateBindin
         />
 
         {detail.bindings.length === 0 && !showBindPicker && (
-          <div className="library-binding-empty">{isBoard ? 'No bindings' : 'Not linked to any board'}</div>
+          <div className="library-binding-empty">{isBoard ? uiText("No bindings") : uiText("Not linked to any board")}</div>
         )}
 
         {isBoard && showBindPicker && (
@@ -2175,12 +2150,12 @@ function BindingRow({ row, isBoard, onOpen, onUpdateBinding, onDeleteBinding }: 
       <div
         className="library-binding-row"
         onDoubleClick={() => { if (boundFile) onOpen(boundFile); }}
-        title={boundFile ? `Double-click to open ${filename}` : undefined}
+        title={boundFile ? uiText`Double-click to open ${filename}` : undefined}
         style={boundFile ? { cursor: 'pointer' } : undefined}
       >
         <span className="library-file-icon library-icon-pdf">P</span>
         <span className="library-binding-name">{filename}</span>
-        <span className="library-binding-auto" title="Auto-detected from board metadata">D</span>
+        <span className="library-binding-auto" title={uiText("Auto-detected from board metadata")}>D</span>
       </div>
     );
   }
@@ -2189,7 +2164,7 @@ function BindingRow({ row, isBoard, onOpen, onUpdateBinding, onDeleteBinding }: 
     <div
       className="library-binding-row"
       onDoubleClick={() => { if (boundFile) onOpen(boundFile); }}
-      title={boundFile ? `Double-click to open ${filename}` : undefined}
+      title={boundFile ? uiText`Double-click to open ${filename}` : undefined}
       style={boundFile ? { cursor: 'pointer' } : undefined}
     >
       <span className={`library-file-icon ${isBoard ? 'library-icon-pdf' : 'library-icon-board'}`}>
@@ -2209,7 +2184,7 @@ function BindingRow({ row, isBoard, onOpen, onUpdateBinding, onDeleteBinding }: 
           onChange={handleCategoryChange}
           onClick={(e) => e.stopPropagation()}
           onDoubleClick={(e) => e.stopPropagation()}
-          title={row.auto_open ? 'Auto-opens with board' : 'Listed only'}
+          title={row.auto_open ? uiText("Auto-opens with board") : uiText("Listed only")}
         >
           {BINDING_CATEGORIES.map(c => (
             <option key={c} value={c}>{CATEGORY_LABEL[c]}</option>
@@ -2218,13 +2193,13 @@ function BindingRow({ row, isBoard, onOpen, onUpdateBinding, onDeleteBinding }: 
       )}
       {row.auto_matched && (
         <span className="library-binding-auto"
-          title={`Linked automatically${row.source === 'binding' && row.rule ? ` — ${AUTOBIND_RULE_LABEL[row.rule] ?? row.rule}` : ''}`}>A</span>
+          title={uiText`Linked automatically${row.source === 'binding' && row.rule ? ` — ${AUTOBIND_RULE_LABEL[row.rule] ?? row.rule}` : ''}`}>A</span>
       )}
       <button
         className="library-binding-remove"
         onClick={(e) => { e.stopPropagation(); onDeleteBinding(row.id); }}
         onDoubleClick={(e) => e.stopPropagation()}
-        title="Remove binding"
+        title={uiText("Remove binding")}
       >
         x
       </button>
@@ -2287,7 +2262,7 @@ function BindPicker({ isBoard, focal, candidates, onPick }: {
         <input
           type="text"
           className="library-bind-picker-filter"
-          placeholder={`Filter ${isBoard ? 'PDFs' : 'boards'}…`}
+          placeholder={uiText`Filter ${isBoard ? 'PDFs' : 'boards'}…`}
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           autoFocus
@@ -2296,8 +2271,8 @@ function BindPicker({ isBoard, focal, candidates, onPick }: {
       {filtered.length === 0 ? (
         <div className="library-binding-empty">
           {scored.length === 0
-            ? `No ${isBoard ? 'PDFs' : 'boards'} available to bind`
-            : `No matches for "${filter}"`}
+            ? uiText`No ${isBoard ? 'PDFs' : 'boards'} available to bind`
+            : uiText`No matches for "${filter}"`}
         </div>
       ) : (
         visible.map(({ f, score }) => (
@@ -2305,22 +2280,22 @@ function BindPicker({ isBoard, focal, candidates, onPick }: {
             key={f.id}
             className="library-bind-candidate"
             onClick={() => onPick(f)}
-            title={score >= 50 ? `Likely match (score ${score})` : undefined}
+            title={score >= 50 ? uiText`Likely match (score ${score})` : undefined}
           >
             <span className={`library-file-icon ${f.file_type === 'board' ? 'library-icon-board' : 'library-icon-pdf'}`}>
               {f.file_type === 'board' ? 'B' : 'P'}
             </span>
             <span>{f.filename}</span>
             {score >= 50 && (
-              <span className="library-bind-match-badge" title={`Likely match (score ${score})`}>match</span>
+              <span className="library-bind-match-badge" title={uiText`Likely match (score ${score})`}>{uiText("match")}</span>
             )}
           </div>
         ))
       )}
       {hidden > 0 && (
         <div className="library-bind-more" data-testid="bind-picker-more">
-          … {hidden.toLocaleString()} more — type to narrow{' '}
-          <button type="button" onClick={() => setShowAll(true)}>Show all</button>
+          … {hidden.toLocaleString()}{uiText(" more — type to narrow")}{' '}
+          <button type="button" onClick={() => setShowAll(true)}>{uiText("Show all")}</button>
         </div>
       )}
     </div>
@@ -2386,7 +2361,7 @@ function HistoryView({ onOpenFile, onSelectFile, selectedFileId, searchFilter }:
         className={`library-file-row${dbFile ? '' : ' library-file-missing'}${selected ? ' selected' : ''}`}
         onClick={() => { if (dbFile) onSelectFile(dbFile); }}
         onDoubleClick={() => { if (dbFile) onOpenFile(dbFile); }}
-        title={dbFile ? item.path : `${item.path} (not in library)`}
+        title={dbFile ? item.path : uiText`${item.path} (not in library)`}
       >
         <span className={`library-file-icon ${item.fileType === 'pdf' ? 'library-icon-pdf' : 'library-icon-board'}`}>
           {item.fileType === 'pdf' ? 'P' : 'B'}
@@ -2396,8 +2371,8 @@ function HistoryView({ onOpenFile, onSelectFile, selectedFileId, searchFilter }:
         <button
           className={`library-history-pin${isPinned ? ' is-pinned' : ''}`}
           onClick={(e) => { e.stopPropagation(); databankStore.toggleFavorite(item.path); }}
-          title={isPinned ? 'Unpin from top' : 'Pin to top'}
-          aria-label={isPinned ? 'Unpin from top' : 'Pin to top'}
+          title={isPinned ? uiText("Unpin from top") : uiText("Pin to top")}
+          aria-label={isPinned ? uiText("Unpin from top") : uiText("Pin to top")}
         >
           {isPinned ? <IconPinFilled size={14} /> : <IconPin size={14} />}
         </button>
@@ -2415,9 +2390,9 @@ function HistoryView({ onOpenFile, onSelectFile, selectedFileId, searchFilter }:
     <div className="library-history" ref={rootRef}>
       <div className="library-history-opened">
         {recentItems.length === 0 ? (
-          <div className="library-empty">No recently opened files.</div>
+          <div className="library-empty">{uiText("No recently opened files.")}</div>
         ) : filteredItems.length === 0 ? (
-          <div className="library-empty">No recent files match "{searchFilter}".</div>
+          <div className="library-empty">{uiText("No recent files match \"")}{searchFilter}".</div>
         ) : (
           <div className="library-tree-children">
             {pinned.map((item, i) => renderRow(item, i))}
@@ -2435,12 +2410,12 @@ function HistoryView({ onOpenFile, onSelectFile, selectedFileId, searchFilter }:
         aria-orientation="horizontal"
         onPointerDown={onSplitterDown}
       >
-        <span>Recently added</span>
+        <span>{uiText("Recently added")}</span>
       </div>
       <div className="library-history-added" data-testid="library-added" style={{ height: addedHeight }}>
         {added.length === 0 ? (
           <div className="library-empty">
-            {searchFilter.trim() ? `No added files match "${searchFilter}".` : 'No files in the library yet.'}
+            {searchFilter.trim() ? uiText`No added files match "${searchFilter}".` : uiText("No files in the library yet.")}
           </div>
         ) : (
           <div className="library-tree-children">
@@ -2549,15 +2524,15 @@ function SearchResultsView({ results, selectedFileId, onSelectResult, onOpenResu
     <div className="library-search-results">
       <div className="library-search-results-header">
         {searching
-          ? <>Searching… {results.length} found <span className="library-search-spinner" aria-hidden /></>
-          : `${results.length} result${results.length !== 1 ? 's' : ''}`}
+          ? <>{uiText("Searching… ")}{results.length}{uiText(" found ")}<span className="library-search-spinner" aria-hidden /></>
+          : uiText`${results.length} result${results.length !== 1 ? uiText('plural.s') : ''}`}
       </div>
       {results.map((r, i) => (
         <div
           key={`${r.file_id}-${i}`}
           className={`library-search-result${r.file_id === selectedFileId ? ' selected' : ''}`}
           tabIndex={0}
-          title="Double-click or press Enter to open"
+          title={uiText("Double-click or press Enter to open")}
           onClick={() => onSelectResult(r.file_id)}
           onDoubleClick={() => onOpenResult(r)}
           onKeyDown={(e) => {
@@ -2568,16 +2543,14 @@ function SearchResultsView({ results, selectedFileId, onSelectResult, onOpenResu
             <span className="library-file-icon library-icon-pdf">P</span>
             <span className="library-search-result-file">{r.filename}</span>
             <span className="library-search-result-hits">
-              {r.hit_count ?? 1} hit{(r.hit_count ?? 1) === 1 ? '' : 's'}
+              {r.hit_count ?? 1}{uiText(" hit")}{(r.hit_count ?? 1) === 1 ? '' : uiText("plural.s")}
             </span>
             <span className="library-search-result-page">p{r.page_num}</span>
             <button
               className="library-search-result-open"
-              title="Open this PDF"
+              title={uiText("Open this PDF")}
               onClick={(e) => { e.stopPropagation(); onOpenResult(r); }}
-            >
-              Open
-            </button>
+            >{uiText("Open")}</button>
           </div>
           {r.snippet && (
             <div className="library-search-result-snippet">
@@ -2590,7 +2563,7 @@ function SearchResultsView({ results, selectedFileId, onSelectResult, onOpenResu
               onClick={(e) => e.stopPropagation()}
             >
               <summary>
-                +{r.copies.length} cop{r.copies.length === 1 ? 'y' : 'ies'}
+                +{r.copies.length}{uiText(" cop")}{r.copies.length === 1 ? uiText("plural.y") : uiText("plural.ies")}
               </summary>
               {r.copies.map((p) => (
                 <div key={p} className="library-copies-path" title={p}>
@@ -2686,7 +2659,7 @@ function NameGroupedFileRows({ files, indent, selectedFileId, onSelectFile, onOp
               style={{ paddingLeft: indent * 16 + 20 }}
               onClick={e => e.stopPropagation()}
             >
-              <summary>+{extra} same-name {extra === 1 ? 'variant' : 'variants'}</summary>
+              <summary>+{extra}{uiText(" same-name ")}{extra === 1 ? uiText("variant") : uiText("variants")}</summary>
               {group.slice(1).map(v => (
                 <FileRow
                   key={v.id}
@@ -2849,7 +2822,7 @@ function MetadataView({ groups, unrecognizedTree, selectedFileId, filterFile, se
         if (rootChildren.length === 0 && rootFiles.length === 0) return null;
         return (
           <>
-            <div className="library-tree-separator"><span>unrecognized</span></div>
+            <div className="library-tree-separator"><span>{uiText("unrecognized")}</span></div>
             {rootChildren.map(child => (
               <FolderNodeView
                 key={child.path}
@@ -3079,11 +3052,11 @@ function LibraryHitList({ hits, selectedFileId, onReveal, onOpen }: {
         className="library-hits-head"
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
-        title={open ? 'Hide the list' : 'Show the list'}
+        title={open ? uiText("Hide the list") : uiText("Show the list")}
       >
         <IconChevronDown size={13} className={`library-statsbar-caret ${open ? 'open' : ''}`} />
-        <span className="library-hits-count">{`${hits.length} file${hits.length === 1 ? '' : 's'} found`}</span>
-        <span className="library-hits-hint">{open ? 'hide' : 'show'}</span>
+        <span className="library-hits-count">{uiText`${hits.length} file${hits.length === 1 ? '' : uiText('plural.s')} found`}</span>
+        <span className="library-hits-hint">{open ? uiText("hide") : uiText("show")}</span>
       </button>
       {open && (
         <div
@@ -3098,7 +3071,7 @@ function LibraryHitList({ hits, selectedFileId, onReveal, onOpen }: {
               data-testid="library-hit"
               onClick={() => onReveal(h)}
               onDoubleClick={() => onOpen(h.file)}
-              title={`${h.file.path}\nClick to show it in the tree, double-click to open`}
+              title={uiText`${h.file.path}\nClick to show it in the tree, double-click to open`}
             >
               <span className={`library-file-icon ${h.file.file_type === 'board' ? 'library-icon-board' : 'library-icon-pdf'}`}>
                 {h.file.file_type === 'board' ? 'B' : 'P'}
@@ -3111,7 +3084,7 @@ function LibraryHitList({ hits, selectedFileId, onReveal, onOpen }: {
           ))}
           {!showAll && hits.length > HIT_LIST_CAP && (
             <button type="button" className="library-hits-more" onClick={() => setShowAll(true)}>
-              {`Show all ${hits.length}`}
+              {uiText`Show all ${hits.length}`}
             </button>
           )}
         </div>
@@ -3181,15 +3154,15 @@ function FolderView({ tree, treeLoading, selectedFileId, filterFile, searchFilte
               <div className="library-loadstrip-fill indeterminate" />
             </div>
             <div className="library-loadstrip-text">
-              <span className="library-loadstrip-phase">Loading folder tree</span>
-              <span className="library-loadstrip-note">~2 MB · one moment</span>
+              <span className="library-loadstrip-phase">{uiText("Loading folder tree")}</span>
+              <span className="library-loadstrip-note">{uiText("~2 MB · one moment")}</span>
             </div>
           </div>
         </div>
       );
     }
     return <div className="library-empty">
-      {searchFilter.trim() ? `No folders match "${searchFilter}".` : 'Loading folder tree...'}
+      {searchFilter.trim() ? uiText`No folders match "${searchFilter}".` : uiText("Loading folder tree...")}
     </div>;
   }
 
@@ -3258,11 +3231,9 @@ function FolderNodeView({ node, depth, expanded, selectedFileId, filterFile, fil
         {showIdxBtn && (
           <button
             className="library-live-index-btn"
-            title={`Re-index PDFs in "${node.path}"`}
+            title={uiText`Re-index PDFs in "${node.path}"`}
             onClick={(e) => { e.stopPropagation(); onIndexFolder!(node.path); }}
-          >
-            idx
-          </button>
+          >{uiText("idx")}</button>
         )}
       </div>
       {isExpanded && (
@@ -3305,8 +3276,8 @@ function FolderNodeView({ node, depth, expanded, selectedFileId, filterFile, fil
             >
               <IconChevronDown size={12} className={`library-statsbar-caret ${showNeighbours ? 'open' : ''}`} />
               <span>{showNeighbours
-                ? `Hide the other ${neighbours.length} files in this folder`
-                : `${neighbours.length} more file${neighbours.length === 1 ? '' : 's'} in this folder`}</span>
+                ? uiText`Hide the other ${neighbours.length} files in this folder`
+                : uiText`${neighbours.length} more file${neighbours.length === 1 ? '' : uiText('plural.s')} in this folder`}</span>
             </button>
           )}
           {neighboursOpen && neighbours.map(f => (
@@ -3376,8 +3347,8 @@ function FileRow({ file, selected, indent, showPreview, hit = false, neighbour =
           className="library-copies-chip"
           title={
             copyPaths && copyPaths.length
-              ? `${copyCount} byte-identical ${copyCount === 1 ? 'copy' : 'copies'} also at:\n${copyPaths.join('\n')}`
-              : `${copyCount} byte-identical ${copyCount === 1 ? 'copy' : 'copies'} collapsed`
+              ? uiText`${copyCount} byte-identical ${copyCount === 1 ? 'copy' : 'copies'} also at:\n${copyPaths.join('\n')}`
+              : uiText`${copyCount} byte-identical ${copyCount === 1 ? 'copy' : 'copies'} collapsed`
           }
         >
           ×{copyCount + 1}
@@ -3453,18 +3424,18 @@ function PcbColorRow({ detail }: { detail: FileDetail }) {
   let labelText: string;
   if (!colorName) {
     dotColor = '#666';
-    labelText = '— (no resolver match)';
+    labelText = uiText("— (no resolver match)");
   } else if (!colorHex) {
     dotColor = '#666';
-    labelText = `${colorName} (no hex yet)`;
+    labelText = uiText`${colorName} (no hex yet)`;
   } else {
     dotColor = colorHex;
-    labelText = `${colorName} (hex set)`;
+    labelText = uiText`${colorName} (hex set)`;
   }
 
   return (
     <div className="library-modal-pcb-color">
-      <span>PCB Color:</span>
+      <span>{uiText("PCB Color:")}</span>
       <span className="library-modal-pcb-color-dot" style={{ background: dotColor }} aria-hidden="true" />
       <span className="library-modal-pcb-color-text">{labelText}</span>
     </div>
@@ -3496,13 +3467,13 @@ function MetadataEditModal({ detail, onClose }: {
   return (
     <div className="library-modal-backdrop" onClick={onClose}>
       <div className="library-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="library-modal-title">Edit Metadata</div>
+        <div className="library-modal-title">{uiText("Edit Metadata")}</div>
         <div className="library-modal-filename">{detail.filename}</div>
 
         <PcbColorRow detail={detail} />
 
         <label className="library-modal-field">
-          <span>Board Number</span>
+          <span>{uiText("Board Number")}</span>
           <input
             type="text"
             value={boardNumber}
@@ -3512,29 +3483,29 @@ function MetadataEditModal({ detail, onClose }: {
         </label>
 
         <label className="library-modal-field">
-          <span>Manufacturer</span>
+          <span>{uiText("Manufacturer")}</span>
           <input
             type="text"
             value={manufacturer}
             onChange={(e) => setManufacturer(e.target.value)}
-            placeholder="e.g. Apple"
+            placeholder={uiText("e.g. Apple")}
           />
         </label>
 
         <label className="library-modal-field">
-          <span>Model</span>
+          <span>{uiText("Model")}</span>
           <input
             type="text"
             value={model}
             onChange={(e) => setModel(e.target.value)}
-            placeholder="e.g. MacBook Pro 16"
+            placeholder={uiText("e.g. MacBook Pro 16")}
           />
         </label>
 
         <div className="library-modal-actions">
-          <button onClick={onClose} disabled={saving}>Cancel</button>
+          <button onClick={onClose} disabled={saving}>{uiText("Cancel")}</button>
           <button className="library-modal-save" onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? uiText("Saving...") : uiText("Save")}
           </button>
         </div>
       </div>

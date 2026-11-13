@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 import { useState } from 'react';
 import { decodeResistorColor, type BandColor } from '../../tools/resistor-color';
 
@@ -20,8 +21,8 @@ function columns(count: BandCount): { label: string; colors: BandColor[] }[] {
   const cols: { label: string; colors: BandColor[] }[] = [];
   for (let i = 0; i < digits; i++) cols.push({ label: `d${i + 1}`, colors: DIGIT_COLORS });
   cols.push({ label: '×', colors: MULT_COLORS });
-  cols.push({ label: 'tol', colors: TOL_COLORS });
-  if (count === 6) cols.push({ label: 'tc', colors: TC_COLORS });
+  cols.push({ label: uiText("tol"), colors: TOL_COLORS });
+  if (count === 6) cols.push({ label: uiText("tc"), colors: TC_COLORS });
   return cols;
 }
 
@@ -51,7 +52,7 @@ export function ResistorColorTool() {
             key={c}
             className={`rc-count-btn${count === c ? ' active' : ''}`}
             onClick={() => setCountAndReset(c)}
-          >{c}-band</button>
+          >{c}{uiText("-band")}</button>
         ))}
       </div>
       <div className="rc-bands">
@@ -76,7 +77,7 @@ export function ResistorColorTool() {
               <div className="rc-value">{result.formatted}</div>
               <div className="rc-sub">
                 ±{result.tolerancePct}%
-                {result.tempCoPpm !== undefined ? ` · ${result.tempCoPpm} ppm/K` : ''}
+                {result.tempCoPpm !== undefined ? uiText` · ${result.tempCoPpm} ppm/K` : ''}
               </div>
             </>
           )}

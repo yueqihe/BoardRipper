@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 /** Slide mode's drawing layer and toolbar for one board panel.
  *
  *  The layer is a Canvas2D sheet over the board (same CSS zoom as the board
@@ -198,7 +199,7 @@ function SlideGuide({ tool, multi, onClose }: { tool: SlideTool; multi: boolean;
       : 'Drag an annotation to move it, its handles to resize. Drag empty board to pan; click a part to label it.',
     arrow: 'Drag from the tail to the tip.',
     rect: 'Drag out a box. Drag its border later to move it.',
-    text: `${tap} where the text goes, Enter to finish${touch ? '' : ' (Shift+Enter: new line)'}. ${tap} a text to edit it, drag it to move it.`,
+    text: uiText`${tap} where the text goes, Enter to finish${touch ? '' : ' (Shift+Enter: new line)'}. ${tap} a text to edit it, drag it to move it.`,
     pen: touch
       ? 'Draw freehand. With a stylus, fingers keep panning and zooming.'
       : 'Draw freehand.',
@@ -210,17 +211,17 @@ function SlideGuide({ tool, multi, onClose }: { tool: SlideTool; multi: boolean;
       : `${mod}+click a part to add it to the labels. Shift+click still adds to the worklist.`;
   return (
     <div className="slide-guide" data-testid="slide-guide" onPointerDown={e => e.stopPropagation()}>
-      <button className="slide-guide-close" title="Hide the guide (the ? in the toolbar brings it back)" aria-label="Hide the guide" onClick={onClose}>
+      <button className="slide-guide-close" title={uiText("Hide the guide (the ? in the toolbar brings it back)")} aria-label={uiText("Hide the guide")} onClick={onClose}>
         <IconX size={13} />
       </button>
-      <div className="slide-guide-title">Slide mode</div>
+      <div className="slide-guide-title">{uiText("Slide mode")}</div>
       <p data-testid="slide-guide-tool">{toolLine[tool]}</p>
       <p data-testid="slide-guide-parts">{parts}</p>
-      <p>Ω and ▷| under a label: readings for the part picked last. They print on its label.</p>
+      <p>{uiText("Ω and ▷| under a label: readings for the part picked last. They print on its label.")}</p>
       <p className="slide-guide-keys">
         {touch
-          ? 'The bin deletes the selected annotation. PNG saves the view with its labels.'
-          : `⌫ delete · ${mod}Z undo · Esc leave · PNG saves the view with its labels`}
+          ? uiText("The bin deletes the selected annotation. PNG saves the view with its labels.")
+          : uiText`⌫ delete · ${mod}Z undo · Esc leave · PNG saves the view with its labels`}
       </p>
     </div>
   );
@@ -497,9 +498,9 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
 
   const savePng = useCallback(() => {
     const cv = capture();
-    if (!cv) { boardStore.addToast('Could not capture the board view.'); return; }
+    if (!cv) { boardStore.addToast(uiText("Could not capture the board view.")); return; }
     cv.toBlob(blob => {
-      if (!blob) { boardStore.addToast('Could not encode the PNG.'); return; }
+      if (!blob) { boardStore.addToast(uiText("Could not encode the PNG.")); return; }
       const stem = fileName.replace(/\.[^.]+$/, '') || 'board';
       const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
       const a = document.createElement('a');
@@ -515,26 +516,26 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
 
   const copyPng = useCallback(async () => {
     const cv = capture();
-    if (!cv) { boardStore.addToast('Could not capture the board view.'); return; }
+    if (!cv) { boardStore.addToast(uiText("Could not capture the board view.")); return; }
     try {
       // Safari wants the ClipboardItem built synchronously from a promise.
       const blob = new Promise<Blob>((res, rej) => cv.toBlob(b => (b ? res(b) : rej(new Error('encode failed'))), 'image/png'));
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-      boardStore.addToast('Board view copied to the clipboard.', 'info', undefined, 2500);
+      boardStore.addToast(uiText("Board view copied to the clipboard."), 'info', undefined, 2500);
     } catch (err) {
       log.ui.warn('slide: clipboard write failed', err);
-      boardStore.addToast('This browser would not put an image on the clipboard — use Save PNG.');
+      boardStore.addToast(uiText("This browser would not put an image on the clipboard — use Save PNG."));
     }
   }, [capture]);
 
   if (!slide.enabled) return null;
 
   const tools: Array<{ id: SlideTool; icon: typeof IconPointer; title: string }> = [
-    { id: 'select', icon: IconPointer, title: 'Select · move and resize; on empty board, pan and pick parts' },
-    { id: 'arrow', icon: IconArrowUpRight, title: 'Arrow · drag from tail to tip' },
-    { id: 'rect', icon: IconSquare, title: 'Rectangle · drag a box' },
-    { id: 'text', icon: IconTypography, title: 'Text · click where it goes; click a text to edit, drag it to move' },
-    { id: 'pen', icon: IconPencil, title: 'Pen · draw freehand (with a stylus, fingers keep panning)' },
+    { id: 'select', icon: IconPointer, title: uiText("Select · move and resize; on empty board, pan and pick parts") },
+    { id: 'arrow', icon: IconArrowUpRight, title: uiText("Arrow · drag from tail to tip") },
+    { id: 'rect', icon: IconSquare, title: uiText("Rectangle · drag a box") },
+    { id: 'text', icon: IconTypography, title: uiText("Text · click where it goes; click a text to edit, drag it to move") },
+    { id: 'pen', icon: IconPencil, title: uiText("Pen · draw freehand (with a stylus, fingers keep panning)") },
   ];
 
   return (
@@ -550,7 +551,7 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
               data-testid={`slide-readings-${slot.key}`}
               style={{ left: slot.x, top: slot.y, width: slot.w }}
             >
-              <label title={`Resistance of ${slot.key}`}>
+              <label title={uiText`Resistance of ${slot.key}`}>
                 <span>Ω</span>
                 <input
                   data-testid={`slide-ohm-${slot.key}`}
@@ -559,7 +560,7 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
                   onKeyDown={e => { e.stopPropagation(); if (e.key === 'Enter' || e.key === 'Escape') (e.target as HTMLInputElement).blur(); }}
                 />
               </label>
-              <label title={`Diode-mode reading of ${slot.key}`}>
+              <label title={uiText`Diode-mode reading of ${slot.key}`}>
                 <span>▷|</span>
                 <input
                   data-testid={`slide-diode-${slot.key}`}
@@ -578,7 +579,7 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
             autoFocus
             rows={Math.max(1, editing.text.split('\n').length)}
             value={editing.text}
-            placeholder="Text"
+            placeholder={uiText("Text")}
             style={{
               left: editing.screen.x, top: editing.screen.y,
               color: editing.id === null ? slideStore.color : slideStore.list(tabId).find(a => a.id === editing.id)?.color,
@@ -614,10 +615,10 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
           data-testid="slide-multi"
           aria-pressed={slide.multi}
           title={slide.multi
-            ? `Several parts: on — ${isTouchPrimary() ? 'tap' : 'click'} a part to add it; on a selected part, once to type its readings, again to remove it`
+            ? uiText`Several parts: on — ${isTouchPrimary() ? 'tap' : 'click'} a part to add it; on a selected part, once to type its readings, again to remove it`
             : isTouchPrimary()
-              ? 'Several parts: tap parts to add them to the selection'
-              : `Several parts: click parts to add them to the selection (${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl'}+click works anytime; Shift+click stays the worklist's)`}
+              ? uiText("Several parts: tap parts to add them to the selection")
+              : uiText`Several parts: click parts to add them to the selection (${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl'}+click works anytime; Shift+click stays the worklist's)`}
           onClick={() => slideStore.setMulti(!slide.multi)}
         >
           <IconSquaresSelected size={16} />
@@ -626,7 +627,7 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
           <button
             className="board-netlines-toggle slide-wide"
             data-testid="slide-multi-clear"
-            title="Clear the multi-selection"
+            title={uiText("Clear the multi-selection")}
             onClick={() => selectionSetStore.clear(tabId)}
           >
             <span>{multiCount}</span><IconX size={13} />
@@ -638,7 +639,7 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
             key={c}
             className={`slide-swatch ${slide.color === c ? 'active' : ''}`}
             style={{ background: c }}
-            title={`Colour ${c}`}
+            title={uiText`Colour ${c}`}
             aria-pressed={slide.color === c}
             onClick={() => slideStore.setColor(c)}
           />
@@ -656,12 +657,12 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
           </button>
         ))}
         <span className="slide-toolbar-sep" />
-        <button className="board-netlines-toggle" title="Undo (⌘Z)" disabled={!slideStore.canUndo(tabId)} onClick={() => slideStore.undo(tabId)}>
+        <button className="board-netlines-toggle" title={uiText("Undo (⌘Z)")} disabled={!slideStore.canUndo(tabId)} onClick={() => slideStore.undo(tabId)}>
           <IconArrowBackUp size={16} />
         </button>
         <button
           className="board-netlines-toggle"
-          title={slide.selectedId !== null ? 'Delete selected (⌫)' : 'Clear all annotations'}
+          title={slide.selectedId !== null ? uiText("Delete selected (⌫)") : uiText("Clear all annotations")}
           data-testid="slide-delete"
           disabled={!slideStore.list(tabId).length}
           onClick={() => (slide.selectedId !== null ? slideStore.remove(tabId, slide.selectedId) : slideStore.clear(tabId))}
@@ -669,22 +670,22 @@ export function SlideLayer({ tabId, renderer, rootRef, hostRef, fileName }: Prop
           <IconTrash size={16} />
         </button>
         <span className="slide-toolbar-sep" />
-        <button className="board-netlines-toggle slide-wide" data-testid="slide-save-png" title="Save the current view as a PNG" onClick={savePng}>
-          <IconPhotoDown size={16} /><span>PNG</span>
+        <button className="board-netlines-toggle slide-wide" data-testid="slide-save-png" title={uiText("Save the current view as a PNG")} onClick={savePng}>
+          <IconPhotoDown size={16} /><span>{uiText("PNG")}</span>
         </button>
-        <button className="board-netlines-toggle" data-testid="slide-copy-png" title="Copy the current view to the clipboard" onClick={copyPng}>
+        <button className="board-netlines-toggle" data-testid="slide-copy-png" title={uiText("Copy the current view to the clipboard")} onClick={copyPng}>
           <IconCopy size={16} />
         </button>
         <button
           className={`board-netlines-toggle ${guideHidden ? '' : 'active'}`}
           data-testid="slide-guide-toggle"
           aria-pressed={!guideHidden}
-          title={guideHidden ? 'Show the guide' : 'Hide the guide'}
+          title={guideHidden ? uiText("Show the guide") : uiText("Hide the guide")}
           onClick={() => setGuide(!guideHidden)}
         >
           <IconHelp size={16} />
         </button>
-        <button className="board-netlines-toggle" title="Leave slide mode (Esc) — the annotations come back with it" onClick={() => slideStore.setEnabled(false)}>
+        <button className="board-netlines-toggle" title={uiText("Leave slide mode (Esc) — the annotations come back with it")} onClick={() => slideStore.setEnabled(false)}>
           <IconX size={16} />
         </button>
       </div>

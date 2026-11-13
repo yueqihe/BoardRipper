@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Quality presets: one choice that writes several render settings at once.
  *
@@ -39,8 +40,8 @@ const LABELS_DEFAULT = { labelMinScreenPx: 3, circleLabelMinScreenPx: 8, twoPinL
 export const QUALITY_PRESETS: readonly QualityPreset[] = [
   {
     id: 'quality',
-    label: 'Quality',
-    hint: 'Full resolution and the display\'s full refresh rate, on a tablet too.',
+    label: uiText("Quality"),
+    hint: uiText("Full resolution and the display's full refresh rate, on a tablet too."),
     values: {
       touchPerformanceMode: false, boardResolutionCap: 0, boardAntialiasing: true, cap60Fps: false,
       traceCorners: 'round', ...LABELS_DEFAULT,
@@ -48,8 +49,8 @@ export const QUALITY_PRESETS: readonly QualityPreset[] = [
   },
   {
     id: 'balanced',
-    label: 'Balanced',
-    hint: 'The default. On a tablet: 60 fps and 1.5× resolution; elsewhere the same as Quality.',
+    label: uiText("Balanced"),
+    hint: uiText("The default. On a tablet: 60 fps and 1.5× resolution; elsewhere the same as Quality."),
     values: {
       touchPerformanceMode: true, boardResolutionCap: 0, boardAntialiasing: true, cap60Fps: false,
       traceCorners: 'round', ...LABELS_DEFAULT,
@@ -57,8 +58,8 @@ export const QUALITY_PRESETS: readonly QualityPreset[] = [
   },
   {
     id: 'fast',
-    label: 'Fast',
-    hint: 'For older tablets and laptops: 1× resolution, 60 fps, simpler trace corners, fewer tiny labels.',
+    label: uiText("Fast"),
+    hint: uiText("For older tablets and laptops: 1× resolution, 60 fps, simpler trace corners, fewer tiny labels."),
     values: {
       touchPerformanceMode: true, boardResolutionCap: 1, boardAntialiasing: true, cap60Fps: true,
       traceCorners: 'simple', labelMinScreenPx: 5, circleLabelMinScreenPx: 9, twoPinLabelMinScreenPx: 8,
@@ -66,8 +67,8 @@ export const QUALITY_PRESETS: readonly QualityPreset[] = [
   },
   {
     id: 'fastest',
-    label: 'Fastest',
-    hint: 'Fast, plus no edge smoothing and only larger labels. Thin lines look jagged.',
+    label: uiText("Fastest"),
+    hint: uiText("Fast, plus no edge smoothing and only larger labels. Thin lines look jagged."),
     values: {
       touchPerformanceMode: true, boardResolutionCap: 1, boardAntialiasing: false, cap60Fps: true,
       traceCorners: 'simple', labelMinScreenPx: 7, circleLabelMinScreenPx: 11, twoPinLabelMinScreenPx: 10,
@@ -100,7 +101,7 @@ export function applyQualityPreset(id: QualityPresetId): void {
 export function effectiveBoardRender(s: Pick<RenderSettings, PresetKey>): { resolution: number; fps: string } {
   const res = boardPixelRatio(s.touchPerformanceMode, s.boardResolutionCap);
   const max = boardMaxFps(s.cap60Fps, s.touchPerformanceMode);
-  return { resolution: Math.round(res * 100) / 100, fps: max > 0 ? `${max} fps` : 'display rate' };
+  return { resolution: Math.round(res * 100) / 100, fps: max > 0 ? `${max} fps` : uiText('display rate') };
 }
 
 export { isTouchPrimary };

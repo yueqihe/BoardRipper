@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect } from 'react';
 import { useObdForBoard, type ObdData } from '../store/obd-store';
 
@@ -48,7 +49,7 @@ export function ObdSection({ boardNumber }: { boardNumber: string }) {
   return (
     <div className="library-detail-section obd-card" data-testid="obd-section">
       <div className="obd-card-line">
-        <span className="obd-card-label">OpenBoardData</span>
+        <span className="obd-card-label">{uiText("OpenBoardData")}</span>
         {obd.matches.map(m => {
           const isFetched = m.fetched || obd.dataByBpath.has(m.bpath);
           const isFetching = obd.fetching.has(m.bpath);
@@ -62,7 +63,7 @@ export function ObdSection({ boardNumber }: { boardNumber: string }) {
                 className={`obd-card-chip ${isFetched ? 'fetched' : ''}`}
                 onClick={() => obd.fetchBoard(m.bpath)}
                 disabled={isFetching}
-                title={isFetched ? 'Update from openboarddata.org' : 'Fetch from openboarddata.org'}
+                title={isFetched ? uiText("Update from openboarddata.org") : uiText("Fetch from openboarddata.org")}
               >
                 <span translate="no">{leaf}</span>
                 <span>{isFetching ? ' …' : isFetched ? ' ↻' : ' ↓'}</span>
@@ -72,7 +73,7 @@ export function ObdSection({ boardNumber }: { boardNumber: string }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="obd-card-upstream"
-                title={`Open ${m.bpath} on openboarddata.org`}
+                title={uiText`Open ${m.bpath} on openboarddata.org`}
                 data-testid={`obd-upstream-${leaf}`}
               >
                 ↗
@@ -81,15 +82,13 @@ export function ObdSection({ boardNumber }: { boardNumber: string }) {
           );
         })}
         {stale && (
-          <span className="obd-card-stale" data-testid="obd-stale-warning" title="The OpenBoardData index is over 30 days old — re-sync it in Settings ▸ Library">
-            stale
-          </span>
+          <span className="obd-card-stale" data-testid="obd-stale-warning" title={uiText("The OpenBoardData index is over 30 days old — re-sync it in Settings ▸ Library")}>{uiText("stale")}</span>
         )}
       </div>
       <div
         className="obd-card-counts"
         data-testid="obd-summary"
-        title={`${d?.header.comment ? `${d.header.comment}\n\n` : ''}Readings and repair notes are shown in the board's Info tab when it is open.`}
+        title={uiText`${d?.header.comment ? `${d.header.comment}\n\n` : ''}Readings and repair notes are shown in the board's Info tab when it is open.`}
       >
         {counts}
       </div>

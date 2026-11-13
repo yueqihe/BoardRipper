@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * What the board legend lists, computed from the board and the effective
  * render settings. Pure: the card (components/BoardLegend.tsx) only lays it
@@ -20,11 +21,11 @@ import { DIODE_RED_BELOW_MV, DIODE_YELLOW_UPTO_MV, DIODE_COLOR } from './diode-r
 export type LegendMode = 'pins' | 'parts' | 'readings' | 'lines' | 'keys';
 
 export const LEGEND_MODES: ReadonlyArray<{ id: LegendMode; label: string; title: string }> = [
-  { id: 'pins',     label: 'Pins',     title: 'Pin colours: which rule coloured a pin, and how many pins on this board' },
-  { id: 'parts',    label: 'Parts',    title: 'Component colours by type' },
-  { id: 'readings', label: 'Readings', title: 'Diode reading colours' },
-  { id: 'lines',    label: 'Lines',    title: 'Net lines and selection colours' },
-  { id: 'keys',     label: 'Keys',     title: 'Board keys' },
+  { id: 'pins',     label: uiText("Pins"),     title: uiText("Pin colours: which rule coloured a pin, and how many pins on this board") },
+  { id: 'parts',    label: uiText("Parts"),    title: uiText("Component colours by type") },
+  { id: 'readings', label: uiText("Readings"), title: uiText("Diode reading colours") },
+  { id: 'lines',    label: uiText("Lines"),    title: uiText("Net lines and selection colours") },
+  { id: 'keys',     label: uiText("Keys"),     title: uiText("Board keys") },
 ];
 
 export interface PinLegend {
@@ -89,10 +90,10 @@ export function partTypeCounts(board: BoardData, s: RenderSettings): Map<string,
 export type ReadingBand = 'short' | 'junction' | 'high' | 'open';
 
 export const READING_BANDS: ReadonlyArray<{ id: ReadingBand; label: string; range: string; color: number }> = [
-  { id: 'short',    label: 'Short or near short', range: `below ${(DIODE_RED_BELOW_MV / 1000).toFixed(3)} V`, color: DIODE_COLOR.short },
-  { id: 'junction', label: 'Junction, loaded rail', range: `${(DIODE_RED_BELOW_MV / 1000).toFixed(3)}–${(DIODE_YELLOW_UPTO_MV / 1000).toFixed(3)} V`, color: DIODE_COLOR.junction },
-  { id: 'high',     label: 'Higher',              range: `above ${(DIODE_YELLOW_UPTO_MV / 1000).toFixed(3)} V`, color: DIODE_COLOR.high },
-  { id: 'open',     label: 'Open, no path',       range: 'OL', color: DIODE_COLOR.open },
+  { id: 'short',    label: uiText("Short or near short"), range: `below ${(DIODE_RED_BELOW_MV / 1000).toFixed(3)} V`, color: DIODE_COLOR.short },
+  { id: 'junction', label: uiText("Junction, loaded rail"), range: `${(DIODE_RED_BELOW_MV / 1000).toFixed(3)}–${(DIODE_YELLOW_UPTO_MV / 1000).toFixed(3)} V`, color: DIODE_COLOR.junction },
+  { id: 'high',     label: uiText("Higher"),              range: `above ${(DIODE_YELLOW_UPTO_MV / 1000).toFixed(3)} V`, color: DIODE_COLOR.high },
+  { id: 'open',     label: uiText("Open, no path"),       range: 'OL', color: DIODE_COLOR.open },
 ];
 
 /** Which band a reading falls in; null for no reading. Mirrors diodeReadingColor. */

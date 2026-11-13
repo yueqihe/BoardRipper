@@ -1,7 +1,8 @@
+import { uiText, getLanguage } from '../../i18n';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useDatabank } from '../../hooks/useDatabank';
 import { databankStore } from '../../store/databank-store';
-import { isLiteBuild } from '../../store/build-mode';
+import { isLiteBuild, isOfflineBuild } from '../../store/build-mode';
 import { fileInputRefs } from '../../store/file-inputs';
 import { boardStore } from '../../store/board-store';
 import { IconUpload } from '@tabler/icons-react';
@@ -33,7 +34,10 @@ import {
 } from '../../store/scroll-bindings';
 import { sessionRant } from './rants';
 import { renderMarkdown } from './markdown';
-import instructionsMd from './instructions.md?raw';
+import englishInstructions from './instructions.md?raw';
+import chineseInstructions from './instructions.zh-CN.md?raw';
+import offlineSampleBoard from '../../../public/samples/tomu-fpga.kicad_pcb?raw';
+const instructionsMd = getLanguage() === 'zh-CN' ? chineseInstructions : englishInstructions;
 import { hdrTileUrl } from '../../renderer/hdr-selection-outline';
 
 // ─────────────────────────────────────────────────────────────
@@ -204,8 +208,8 @@ function CollapsibleCard({
           type="button"
           className="home-card-toggle"
           onClick={() => setCollapsed(!collapsed)}
-          title={collapsed ? 'Expand' : 'Collapse'}
-          aria-label={collapsed ? 'Expand section' : 'Collapse section'}
+          title={collapsed ? uiText("Expand") : uiText("Collapse")}
+          aria-label={collapsed ? uiText("Expand section") : uiText("Collapse section")}
           aria-expanded={!collapsed}
         >
           {collapsed ? '+' : '\u2212'}
@@ -223,7 +227,7 @@ function CollapsibleCard({
 function Banner() {
   return (
     <header className="home-banner">
-      <h1 className="home-banner-title">***WELCOME YOU TO BOARDRIPPER***</h1>
+      <h1 className="home-banner-title">{uiText("***WELCOME YOU TO BOARDRIPPER***")}</h1>
       <p className="home-banner-rant">{sessionRant}</p>
     </header>
   );
@@ -257,7 +261,7 @@ const SAMPLE_BOARD = {
   // CC-BY-SA 4.0 — "Tomu, I'm" by Sean 'xobs' Cross, https://tomu.im (see THIRD_PARTY.md).
   url: './samples/tomu-fpga.kicad_pcb',
   name: 'tomu-fpga.kicad_pcb',
-  label: 'Tomu FPGA (KiCad, CC-BY-SA 4.0)',
+  label: uiText("Tomu FPGA (KiCad, CC-BY-SA 4.0)"),
 };
 
 function LiteOpenCard() {
@@ -266,14 +270,19 @@ function LiteOpenCard() {
   const openSample = async () => {
     setBusy(true);
     try {
-      const res = await fetch(SAMPLE_BOARD.url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const buf = await res.arrayBuffer();
+      let buf: ArrayBuffer;
+      if (isOfflineBuild()) {
+        buf = new TextEncoder().encode(offlineSampleBoard).buffer;
+      } else {
+        const res = await fetch(SAMPLE_BOARD.url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        buf = await res.arrayBuffer();
+      }
       const dt = new DataTransfer();
       dt.items.add(new File([buf], SAMPLE_BOARD.name, { type: 'application/octet-stream' }));
       await boardStore.loadFiles(dt.files);
     } catch (err) {
-      boardStore.addToast(`Could not load the sample board: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      boardStore.addToast(uiText`Could not load the sample board: ${err instanceof Error ? err.message : String(err)}`, 'error');
     } finally {
       setBusy(false);
     }
@@ -282,17 +291,13 @@ function LiteOpenCard() {
     <section className="home-card home-open-card" data-testid="home-open-card">
       <div className="home-open-actions">
         <button type="button" className="home-open-btn home-open-btn-primary" onClick={openPicker} data-testid="home-open-btn">
-          <IconUpload size={18} stroke={1.75} /> Open a board or PDF
-        </button>
+          <IconUpload size={18} stroke={1.75} />{uiText(" Open a board or PDF")}</button>
         <FolderLibraryOpenButton className="home-open-btn" />
         <button type="button" className="home-open-btn" onClick={openSample} disabled={busy} data-testid="home-sample-btn" title={SAMPLE_BOARD.label}>
-          {busy ? 'Loading…' : 'Try a sample board'}
+          {busy ? uiText("Loading…") : uiText("Try a sample board")}
         </button>
       </div>
-      <p className="home-open-note">
-        Everything runs in this browser tab. Nothing is uploaded. Pick a board and its schematic
-        PDF together and both open side by side.
-      </p>
+      <p className="home-open-note">{uiText("Everything runs in this browser tab. Nothing is uploaded. Pick a board and its schematic PDF together and both open side by side.")}</p>
     </section>
   );
 }
@@ -335,11 +340,11 @@ function LatestUpdate() {
   return (
     <CollapsibleCard
       id="latest-update"
-      title="Latest update"
+      title={uiText("Latest update")}
       headerExtra={
         state.has_update ? (
           <span className={`home-update-badge${isImportant ? ' home-update-badge-important' : ''}`}>
-            {isImportant ? 'Important update' : 'Update available'}
+            {isImportant ? uiText("Important update") : uiText("Update available")}
           </span>
         ) : undefined
       }
@@ -361,9 +366,7 @@ function LatestUpdate() {
               <span className="home-update-date">· {formatRelativeTime(info.released_at)}</span>
             )}
             {info.notes_url && !isImportant && (
-              <a href={info.notes_url} target="_blank" rel="noreferrer" className="home-update-date">
-                · Release notes ↗
-              </a>
+              <a href={info.notes_url} target="_blank" rel="noreferrer" className="home-update-date">{uiText("· Release notes ↗")}</a>
             )}
           </div>
           {installed && <InstalledNotes installed={installed} showHeading={state.has_update} />}
@@ -375,7 +378,7 @@ function LatestUpdate() {
           <InstalledNotes installed={installed} showHeading={false} />
         </div>
       ) : (
-        <p className="home-card-empty">No release info — check your connection.</p>
+        <p className="home-card-empty">{uiText("No release info — check your connection.")}</p>
       )}
     </CollapsibleCard>
   );
@@ -392,9 +395,7 @@ function InstalledNotes({ installed, showHeading }: {
   return (
     <div className="home-update-notes" data-testid="home-installed-notes">
       {showHeading && (
-        <div className="home-update-notes-heading">
-          What&apos;s new in {installed.version} · yours
-        </div>
+        <div className="home-update-notes-heading">{uiText("What's new in ")}{installed.version}{uiText(" · yours")}</div>
       )}
       <ReleaseNotes notes={installed.notes} maxLines={6} />
     </div>
@@ -442,7 +443,7 @@ function MatrixSlot({ modifier, actionLabel, color, testId, action, onClick }: M
         style={{ '--pill-color': color } as React.CSSProperties}
         data-testid={testId}
         data-action={action}
-        title="Click to change"
+        title={uiText("Click to change")}
         onClick={onClick}
       >
         {actionLabel}
@@ -474,12 +475,12 @@ function setGlobalSetting<K extends 'dragToZoom' | 'twoFingerPan'>(key: K, next:
 }
 
 const DRAG_SLOT_LABELS: Record<'bare' | 'shift', string> = {
-  bare: 'Left-drag',
-  shift: 'Shift + Left-drag',
+  bare: uiText("Left-drag"),
+  shift: uiText("Shift + Left-drag"),
 };
 
-const SCROLL_HINT = 'Click an action to change it. Pinch and Ctrl+Scroll always zoom, dragging always pans.';
-const DRAG_HINT = 'Click to swap left-drag and Shift+left-drag actions.';
+const SCROLL_HINT = uiText("Click an action to change it. Pinch and Ctrl+Scroll always zoom, dragging always pans.");
+const DRAG_HINT = uiText("Click to swap left-drag and Shift+left-drag actions.");
 
 /** Board drag: still a two-way swap (`dragToZoom`), so a click on either
  *  cell flips both. */
@@ -490,7 +491,7 @@ function DragBindings() {
     shift: dragToZoom ? 'pan' : 'zoom',
   };
   return (
-    <MatrixRow label="Board: Drag" hint={DRAG_HINT}>
+    <MatrixRow label={uiText("Board: Drag")} hint={DRAG_HINT}>
       {(['bare', 'shift'] as const).map((key) => {
         const action = bindings[key];
         return (
@@ -519,7 +520,7 @@ function ScrollBindings() {
     renderSettingsStore.applyGlobal({ ...snap, ...boardScrollSettings({ ...bindings, [slot]: action }) });
   };
   return (
-    <MatrixRow label="Board: Scroll" hint={bindings.shift === 'pan' ? SCROLL_HINT : SHIFT_SCROLL_NOTE}>
+    <MatrixRow label={uiText("Board: Scroll")} hint={bindings.shift === 'pan' ? SCROLL_HINT : SHIFT_SCROLL_NOTE}>
       {BOARD_SLOTS.map((slot) => {
         const action = bindings[slot];
         return (
@@ -563,7 +564,7 @@ function PdfScrollBindings() {
   const isDefault = sameScrollBindings(bindings, DEFAULT_SCROLL_BINDINGS);
 
   return (
-    <MatrixRow label="PDF: Scroll" hint={bindings.shift === 'pan' ? SCROLL_HINT : SHIFT_SCROLL_NOTE}>
+    <MatrixRow label={uiText("PDF: Scroll")} hint={bindings.shift === 'pan' ? SCROLL_HINT : SHIFT_SCROLL_NOTE}>
       {SCROLL_SLOTS.map((slot) => {
         const action = bindings[slot];
         return (
@@ -579,7 +580,7 @@ function PdfScrollBindings() {
         );
       })}
       {!isDefault && (
-        <button type="button" className="home-bindings-reset" onClick={() => save(DEFAULT_SCROLL_BINDINGS)} title="Reset PDF bindings to default">
+        <button type="button" className="home-bindings-reset" onClick={() => save(DEFAULT_SCROLL_BINDINGS)} title={uiText("Reset PDF bindings to default")}>
           ↺
         </button>
       )}
@@ -621,9 +622,7 @@ function ShiftScrollNote() {
   return (
     <div className="home-bindings-note" data-testid="home-shift-scroll-note">
       <span>{SHIFT_SCROLL_NOTE}</span>
-      <button type="button" className="home-bindings-note-btn" onClick={fix} data-testid="home-shift-scroll-fix">
-        Set Shift + Scroll to Pan
-      </button>
+      <button type="button" className="home-bindings-note-btn" onClick={fix} data-testid="home-shift-scroll-fix">{uiText("Set Shift + Scroll to Pan")}</button>
     </div>
   );
 }
@@ -633,9 +632,9 @@ function AutoSwitchToggle() {
   return (
     <label
       className="home-toggle-row"
-      title="When you activate a board tab, its linked PDF tab is also activated (and vice versa)."
+      title={uiText("When you activate a board tab, its linked PDF tab is also activated (and vice versa).")}
     >
-      <span>Auto-switch linked board ↔ PDF panel</span>
+      <span>{uiText("Auto-switch linked board ↔ PDF panel")}</span>
       <input
         type="checkbox"
         checked={enabled}
@@ -650,9 +649,9 @@ function AutoOpenPdfToggle() {
   return (
     <label
       className="home-toggle-row"
-      title="Open any PDF schematic that's been bound to a board automatically when the board opens."
+      title={uiText("Open any PDF schematic that's been bound to a board automatically when the board opens.")}
     >
-      <span>Auto-open bound PDFs with their boards</span>
+      <span>{uiText("Auto-open bound PDFs with their boards")}</span>
       <input
         type="checkbox"
         checked={autoPdf}
@@ -710,15 +709,15 @@ function HdrGlowCard() {
   return (
     <div className="ui-scale-full home-hdr-card" data-testid="home-hdr-card">
       <div className="ui-scale-full-label">
-        <span>HDR selection outline</span>
+        <span>{uiText("HDR selection outline")}</span>
         <span className={`ui-scale-full-readout${capable ? '' : ' home-hdr-readout-off'}`}>
-          {capable ? 'HDR detected' : 'no HDR detected'}
+          {capable ? uiText("HDR detected") : uiText("no HDR detected")}
         </span>
       </div>
       <div className="home-hdr-row">
         <div className="home-hdr-mockups" aria-hidden="true">
-          <HdrMockBoard label="now" hdr={false} rung={rung} />
-          <HdrMockBoard label="HDR" hdr={true} rung={rung} />
+          <HdrMockBoard label={uiText("now")} hdr={false} rung={rung} />
+          <HdrMockBoard label={uiText("HDR")} hdr={true} rung={rung} />
         </div>
         <div className="home-hdr-controls">
           <label className="home-hdr-toggle">
@@ -727,23 +726,20 @@ function HdrGlowCard() {
               checked={enabled}
               onChange={(e) => setGlobal('hdrFocusGlow', e.target.checked)}
             />
-            <span>Turn on</span>
+            <span>{uiText("Turn on")}</span>
           </label>
           <label className="home-hdr-slider">
             <input
               type="range" min={1} max={10} step={1} value={intensity}
               disabled={!enabled}
               onChange={(e) => setGlobal('hdrGlowIntensity', Number(e.target.value))}
-              aria-label="HDR outline intensity"
+              aria-label={uiText("HDR outline intensity")}
             />
             <span className="home-hdr-value">{intensity}</span>
           </label>
         </div>
       </div>
-      <div className="ui-scale-full-hint">
-        The selected part's outline is drawn brighter than white. If both boards look the
-        same, this screen has no HDR and the setting does nothing.
-      </div>
+      <div className="ui-scale-full-hint">{uiText("The selected part's outline is drawn brighter than white. If both boards look the same, this screen has no HDR and the setting does nothing.")}</div>
     </div>
   );
 }
@@ -797,9 +793,9 @@ function ThemeSelect() {
   return (
     <label
       className="home-toggle-row"
-      title="Board-side colour set: canvas background, board fill, outline / selection accent, plus any per-theme settings overrides. Interface chrome lives in the Accent / Background / Chrome pickers below."
+      title={uiText("Board-side colour set: canvas background, board fill, outline / selection accent, plus any per-theme settings overrides. Interface chrome lives in the Accent / Background / Chrome pickers below.")}
     >
-      <span>Board theme</span>
+      <span>{uiText("Board theme")}</span>
       <select
         className="home-theme-select"
         value={activeId}
@@ -850,10 +846,10 @@ function UiPickerRow({
         className="home-accent-input"
         value={eff}
         onChange={(e) => onChange(e.target.value.toLowerCase())}
-        aria-label={`${label} colour`}
+        aria-label={uiText`${label} colour`}
       />
       {presets && (
-        <div className="home-accent-swatches" role="listbox" aria-label={`${label} presets`}>
+        <div className="home-accent-swatches" role="listbox" aria-label={uiText`${label} presets`}>
           {presets.map((p) => {
             const active = p.hex.toLowerCase() === eff;
             return (
@@ -918,7 +914,7 @@ function InterfaceColorPickers() {
   return (
     <>
       <UiPickerRow
-        label="Accent"
+        label={uiText("Accent")}
         effective={overrides.accent ?? themeAccent}
         override={overrides.accent}
         onChange={(h) => themeStore.setAccent(h)}
@@ -928,7 +924,7 @@ function InterfaceColorPickers() {
         rowTooltip="Signal indicators: focus, active states, links. Pill colours and selection (yellow) are independent."
       />
       <UiPickerRow
-        label="Background"
+        label={uiText("Background")}
         effective={overrides.background ?? themeBg}
         override={overrides.background}
         onChange={(h) => themeStore.setBackground(h)}
@@ -937,7 +933,7 @@ function InterfaceColorPickers() {
         rowTooltip="Canvas + interactive surface tier. Drives --bg-primary; --bg-secondary cascades 6% lighter."
       />
       <UiPickerRow
-        label="Chrome"
+        label={uiText("Chrome")}
         effective={overrides.chrome ?? themeChrome}
         override={overrides.chrome}
         onChange={(h) => themeStore.setChrome(h)}
@@ -967,38 +963,32 @@ function LibraryStats() {
   if (databankStore.folderLibrarySupported || folderState.kind !== 'none') {
     if (folderState.kind === 'none') {
       return (
-        <p className="home-card-empty">
-          No library folder yet.{' '}
-          <FolderLibraryOpenButton className="home-settings-link">
-            Choose a folder →
-          </FolderLibraryOpenButton>
+        <p className="home-card-empty">{uiText("No library folder yet.")}{' '}
+          <FolderLibraryOpenButton className="home-settings-link">{uiText("Choose a folder →")}</FolderLibraryOpenButton>
         </p>
       );
     }
     return (
       <div className="home-stats">
         <div className="home-stats-row">
-          <span><strong>{compactNumber(stats?.boards ?? 0)}</strong> boards</span>
-          <span><strong>{compactNumber(stats?.pdfs ?? 0)}</strong> PDFs</span>
+          <span><strong>{compactNumber(stats?.boards ?? 0)}</strong>{uiText(" boards")}</span>
+          <span><strong>{compactNumber(stats?.pdfs ?? 0)}</strong>{uiText(" PDFs")}</span>
         </div>
-        <div className="home-stats-path" title={folderState.rootName}>
-          folder <code>{folderState.rootName}</code>
+        <div className="home-stats-path" title={folderState.rootName}>{uiText("folder ")}<code>{folderState.rootName}</code>
           {folderState.kind === 'detached' && (
             folderState.reason === 'permission'
               ? ' — needs permission again'
               : ' — index only until the folder is picked again'
           )}
         </div>
-        {scanStatus?.running && <div className="home-stats-scanning">Reading folder…</div>}
+        {scanStatus?.running && <div className="home-stats-scanning">{uiText("Reading folder…")}</div>}
       </div>
     );
   }
 
   if (!backendAvailable) {
     return (
-      <p className="home-card-empty">
-        Backend unreachable — library stats will appear once the BoardRipper server is back.
-      </p>
+      <p className="home-card-empty">{uiText("Backend unreachable — library stats will appear once the BoardRipper server is back.")}</p>
     );
   }
   const scanning = scanStatus?.running;
@@ -1006,28 +996,24 @@ function LibraryStats() {
   // the empty case has to be recognised by its counts, not by a null.
   if (!stats || (stats.boards + stats.pdfs === 0 && !scanning)) {
     return (
-      <p className="home-card-empty">
-        Library not indexed yet. Mount your boards under <code>/library</code>, then{' '}
-        <button type="button" className="home-settings-link" onClick={() => firstRunStore.show()}>
-          run the library setup →
-        </button>
+      <p className="home-card-empty">{uiText("Library not indexed yet. Mount your boards under ")}<code>/library</code>{uiText(", then")}{' '}
+        <button type="button" className="home-settings-link" onClick={() => firstRunStore.show()}>{uiText("run the library setup →")}</button>
       </p>
     );
   }
   return (
     <div className="home-stats">
       <div className="home-stats-row">
-        <span><strong>{compactNumber(stats.boards)}</strong> boards</span>
-        <span><strong>{compactNumber(stats.pdfs)}</strong> PDFs</span>
-        <span><strong>{compactNumber(stats.bindings)}</strong> bindings</span>
-        <span><strong>{compactNumber(pdfIndexStats?.pages ?? 0)}</strong> PDF pages indexed</span>
+        <span><strong>{compactNumber(stats.boards)}</strong>{uiText(" boards")}</span>
+        <span><strong>{compactNumber(stats.pdfs)}</strong>{uiText(" PDFs")}</span>
+        <span><strong>{compactNumber(stats.bindings)}</strong>{uiText(" bindings")}</span>
+        <span><strong>{compactNumber(pdfIndexStats?.pages ?? 0)}</strong>{uiText(" PDF pages indexed")}</span>
       </div>
       {libraryPath && (
-        <div className="home-stats-path" title={libraryPath}>
-          mounted at <code>{libraryPath}</code>
+        <div className="home-stats-path" title={libraryPath}>{uiText("mounted at ")}<code>{libraryPath}</code>
         </div>
       )}
-      {scanning && <div className="home-stats-scanning">Scan in progress…</div>}
+      {scanning && <div className="home-stats-scanning">{uiText("Scan in progress…")}</div>}
     </div>
   );
 }
@@ -1035,34 +1021,29 @@ function LibraryStats() {
 function QuickSettings() {
   const openSettings = useCallback(() => showSidebarTab('settings'), []);
   return (
-    <CollapsibleCard id="quick-settings" title="Quick settings">
+    <CollapsibleCard id="quick-settings" title={uiText("Quick settings")}>
       <div className="home-quick-section">
-        <h3 className="home-quick-section-title">
-          Pan / zoom bindings
-          <span className="home-quick-section-hint">click a pill to change what it does</span>
+        <h3 className="home-quick-section-title">{uiText("Pan / zoom bindings")}<span className="home-quick-section-hint">{uiText("click a pill to change what it does")}</span>
         </h3>
-        <div className="home-bindings-matrix" role="group" aria-label="Pan and zoom bindings">
+        <div className="home-bindings-matrix" role="group" aria-label={uiText("Pan and zoom bindings")}>
           <DragBindings />
           <ScrollBindings />
           <PdfScrollBindings />
           <ShiftScrollNote />
           <div className="home-bindings-foot">
-            <span className="home-bindings-foot-glyph" aria-hidden="true">↳</span>
-            Trackpad: two-finger scroll = mouse wheel · <strong>pinch always zooms</strong>
+            <span className="home-bindings-foot-glyph" aria-hidden="true">↳</span>{uiText("Trackpad: two-finger scroll = mouse wheel · ")}<strong>{uiText("pinch always zooms")}</strong>
           </div>
         </div>
         <button
           type="button"
           className="home-settings-link"
           onClick={() => welcomeStore.show()}
-          title="Open the interactive setup — demonstrate the gesture you want for each action and it sets the binding."
-        >
-          Set up by gesture (interactive) →
-        </button>
+          title={uiText("Open the interactive setup — demonstrate the gesture you want for each action and it sets the binding.")}
+        >{uiText("Set up by gesture (interactive) →")}</button>
       </div>
 
       <div className="home-quick-section">
-        <h3 className="home-quick-section-title">Behaviour</h3>
+        <h3 className="home-quick-section-title">{uiText("Behaviour")}</h3>
         <div className="home-toggle-stack">
           <AutoSwitchToggle />
           {!isLiteBuild() && <AutoOpenPdfToggle />}
@@ -1072,13 +1053,11 @@ function QuickSettings() {
       </div>
 
       <div className="home-quick-section">
-        <h3 className="home-quick-section-title">Library</h3>
+        <h3 className="home-quick-section-title">{uiText("Library")}</h3>
         <LibraryStats />
       </div>
 
-      <button type="button" className="home-settings-link" onClick={openSettings}>
-        Open full Settings →
-      </button>
+      <button type="button" className="home-settings-link" onClick={openSettings}>{uiText("Open full Settings →")}</button>
     </CollapsibleCard>
   );
 }
@@ -1089,8 +1068,8 @@ function QuickSettings() {
 
 function ShortcutList() {
   return (
-    <CollapsibleCard id="shortcuts" title="Keyboard shortcuts">
-      <p className="home-shortcut-hint">Press <kbd>?</kbd> anytime to bring this list up over your work.</p>
+    <CollapsibleCard id="shortcuts" title={uiText("Keyboard shortcuts")}>
+      <p className="home-shortcut-hint">{uiText("Press ")}<kbd>?</kbd>{uiText(" anytime to bring this list up over your work.")}</p>
       <div className="home-shortcut-grid">
         {CATEGORY_ORDER.map((cat) => {
           const items = shortcuts.filter((s) => s.category === cat && !s.hideInList);
@@ -1121,16 +1100,13 @@ function ShortcutList() {
 function Footer() {
   const state = useUpdateState();
   return (
-    <footer className="home-footer">
-      BoardRipper {state.current_version} · AGPL-3.0 ·{' '}
+    <footer className="home-footer">{uiText("BoardRipper ")}{state.current_version}{uiText(" · AGPL-3.0 ·")}{' '}
       <a
-        href="https://github.com/alexeyinwerp/boardripper"
+        href="https://github.com/yueqihe/BoardRipper/tree/feat/chinese-ui"
         target="_blank"
         rel="noreferrer"
         className="home-footer-link"
-      >
-        GitHub
-      </a>
+      >{uiText("GitHub")}</a>
     </footer>
   );
 }

@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 /**
  * Find part / Find net — the two search slots of the board ribbon, one
  * component parameterised by `kind`.
@@ -27,8 +28,8 @@ import type { SlotCtx } from '../slot-ctx';
 type Kind = 'parts' | 'nets';
 
 const META: Record<Kind, { placeholder: string; title: string; buttonId: string; inputId: string; Inner: typeof IconCpu }> = {
-  parts: { placeholder: 'Parts', title: 'Find part by name', buttonId: 'parts-search-btn', inputId: 'parts-filter-input', Inner: IconCpu },
-  nets:  { placeholder: 'Nets',  title: 'Find net by name',  buttonId: 'nets-search-btn',  inputId: 'nets-filter-input',  Inner: IconHierarchy },
+  parts: { placeholder: uiText("Parts"), title: uiText("Find part by name"), buttonId: 'parts-search-btn', inputId: 'parts-filter-input', Inner: IconCpu },
+  nets:  { placeholder: uiText("Nets"),  title: uiText("Find net by name"),  buttonId: 'nets-search-btn',  inputId: 'nets-filter-input',  Inner: IconHierarchy },
 };
 
 /** Magnifier with the searched thing inside the lens. */
@@ -91,8 +92,8 @@ export function FilterDropdown({ ctx, kind }: { ctx: SlotCtx; kind: Kind }) {
     return (
       <div className="overlay-dropdown-wrap">
         {collapsible
-          ? <button type="button" className="board-netlines-toggle" disabled title="No board loaded" data-testid={m.buttonId}><SearchGlyph Inner={m.Inner} /></button>
-          : <input className="overlay-filter-input board-netlines-toggle" type="text" placeholder={m.placeholder} disabled title="No board loaded" data-testid={m.inputId} />}
+          ? <button type="button" className="board-netlines-toggle" disabled title={uiText("No board loaded")} data-testid={m.buttonId}><SearchGlyph Inner={m.Inner} /></button>
+          : <input className="overlay-filter-input board-netlines-toggle" type="text" placeholder={m.placeholder} disabled title={uiText("No board loaded")} data-testid={m.inputId} />}
       </div>
     );
   }

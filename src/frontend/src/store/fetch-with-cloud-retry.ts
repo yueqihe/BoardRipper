@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Wraps fetch() to handle the backend's cloud-storage-aware 503 response.
  *
@@ -72,7 +73,7 @@ export async function fetchWithCloudRetry(
   const defaultRetry = opts.defaultRetrySeconds ?? DEFAULT_RETRY_SECONDS;
   const maxTotal = opts.maxTotalSeconds ?? DEFAULT_MAX_TOTAL_SECONDS;
   const start = performance.now();
-  const label = opts.label ?? 'fetch';
+  const label = opts.label ?? uiText("fetch");
 
   let attempt = 0;
   for (;;) {

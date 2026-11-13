@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Shared scene-building logic for both the main BoardRenderer and SettingsMockup.
  * Any visual change made here is automatically reflected in both places.
@@ -882,7 +883,7 @@ export function buildBoardScene(
     lastTick = now;
     if (dt < 1) return; // skip noise on instant phases
     void import('../store/load-progress-store').then(({ loadProgressStore }) => {
-      loadProgressStore.pushLog(`buildBoardScene: ${label} took ${dt.toFixed(0)}ms`);
+      loadProgressStore.pushLog(uiText`buildBoardScene: ${label} took ${dt.toFixed(0)}ms`);
     });
   };
   // `board` arrives pre-derived via `boardStore.board` (see

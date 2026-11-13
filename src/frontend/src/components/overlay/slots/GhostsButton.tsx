@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 import { IconGhost2, IconGhost2Filled } from '@tabler/icons-react';
 import { boardStore, type GhostMode } from '../../../store/board-store';
 import type { SlotCtx } from '../slot-ctx';
@@ -10,9 +11,9 @@ const MODE_INFO: Record<GhostMode, {
   icon: typeof IconGhost2;
   title: string;
 }> = {
-  off:    { icon: IconGhost2,       title: 'Hidden-side ghosts: off (click for ghosts)' },
-  ghosts: { icon: IconGhost2,       title: 'Hidden-side ghosts: ON (click for disco)' },
-  disco:  { icon: IconGhost2Filled, title: 'Disco: same-net parts pulse red on both sides (click to turn off)' },
+  off:    { icon: IconGhost2,       title: uiText("Hidden-side ghosts: off (click for ghosts)") },
+  ghosts: { icon: IconGhost2,       title: uiText("Hidden-side ghosts: ON (click for disco)") },
+  disco:  { icon: IconGhost2Filled, title: uiText("Disco: same-net parts pulse red on both sides (click to turn off)") },
 };
 
 export function GhostsButton({ ctx }: { ctx: SlotCtx }) {

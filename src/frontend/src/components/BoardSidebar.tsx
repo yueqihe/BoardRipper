@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import {
   IconPin, IconPinFilled, IconChevronRight, IconChevronDown,
@@ -192,7 +193,7 @@ export function BoardSidebar({ visible, tabId, requestedTab, onTabApplied }: Boa
         onPointerDown={onSbResizeDown}
         onPointerMove={onSbResizeMove}
         onPointerUp={onSbResizeUp}
-        title="Drag to resize"
+        title={uiText("Drag to resize")}
       />
       <div className="board-sidebar-header">
         {/* Same icon-tab cell as the Library and Settings strips: icons stay
@@ -202,48 +203,48 @@ export function BoardSidebar({ visible, tabId, requestedTab, onTabApplied }: Boa
             className={`library-tab icon-tab ${activeTab === 'info' ? 'active' : ''}`}
             data-board-tab="info"
             onClick={() => pickTab('info')}
-            data-title="Info"
-            aria-label="Info"
+            data-title={uiText("Info")}
+            aria-label={uiText("Info")}
           >
             <IconInfoCircle size={16} />
-            {activeTab === 'info' && <span className="icon-tab-caption">Info</span>}
+            {activeTab === 'info' && <span className="icon-tab-caption">{uiText("Info")}</span>}
           </button>
           <button
             className={`library-tab icon-tab ${activeTab === 'layers' ? 'active' : ''}`}
             data-board-tab="layers"
             onClick={() => pickTab('layers')}
-            data-title={hasLayers ? 'Layers' : 'View'}
-            aria-label={hasLayers ? 'Layers' : 'View'}
+            data-title={hasLayers ? uiText("Layers") : uiText("View")}
+            aria-label={hasLayers ? uiText("Layers") : uiText("View")}
           >
             {hasLayers ? <IconStack2 size={16} /> : <IconEye size={16} />}
-            {activeTab === 'layers' && <span className="icon-tab-caption">{hasLayers ? 'Layers' : 'View'}</span>}
+            {activeTab === 'layers' && <span className="icon-tab-caption">{hasLayers ? uiText("Layers") : uiText("View")}</span>}
           </button>
           <button
             className={`library-tab icon-tab ${activeTab === 'search' ? 'active' : ''}`}
             data-board-tab="search"
             onClick={() => pickTab('search')}
-            data-title="Search"
-            aria-label="Search"
+            data-title={uiText("Search")}
+            aria-label={uiText("Search")}
           >
             <IconSearch size={16} />
-            {activeTab === 'search' && <span className="icon-tab-caption">Search</span>}
+            {activeTab === 'search' && <span className="icon-tab-caption">{uiText("Search")}</span>}
           </button>
           {showRevisionsTab && (
             <button
               className={`library-tab icon-tab ${activeTab === 'revisions' ? 'active' : ''}`}
               data-board-tab="revisions"
               onClick={() => pickTab('revisions')}
-              aria-label="Revisions"
+              aria-label={uiText("Revisions")}
               data-title={
                 hasRevisions
-                  ? 'Multiple board revisions detected in this file'
+                  ? uiText("Multiple board revisions detected in this file")
                   : hasBomClusters
-                    ? 'BOM alternates / suspicious overlaps detected'
-                    : 'Suspicious overlapping components detected'
+                    ? uiText("BOM alternates / suspicious overlaps detected")
+                    : uiText("Suspicious overlapping components detected")
               }
             >
               <IconVersions size={16} />
-              {activeTab === 'revisions' && <span className="icon-tab-caption">Revisions</span>}
+              {activeTab === 'revisions' && <span className="icon-tab-caption">{uiText("Revisions")}</span>}
               {(hasGhosts || hasBomClusters) && <span className="tab-badge">!</span>}
             </button>
           )}
@@ -252,22 +253,22 @@ export function BoardSidebar({ visible, tabId, requestedTab, onTabApplied }: Boa
               className={`library-tab icon-tab ${activeTab === 'notes' ? 'active' : ''}`}
               data-board-tab="notes"
               onClick={() => pickTab('notes')}
-              aria-label="Notes"
-              data-title="Board notes"
+              aria-label={uiText("Notes")}
+              data-title={uiText("Board notes")}
             >
               <IconBook2 size={16} />
-              {activeTab === 'notes' && <span className="icon-tab-caption">Notes</span>}
+              {activeTab === 'notes' && <span className="icon-tab-caption">{uiText("Notes")}</span>}
             </button>
           )}
           <button
             className={`library-tab icon-tab ${activeTab === 'worklist' ? 'active' : ''}`}
             data-board-tab="worklist"
             onClick={() => pickTab('worklist')}
-            aria-label="Worklist"
-            data-title="Worklist"
+            aria-label={uiText("Worklist")}
+            data-title={uiText("Worklist")}
           >
             <IconChecklist size={16} />
-            {activeTab === 'worklist' && <span className="icon-tab-caption">Worklist</span>}
+            {activeTab === 'worklist' && <span className="icon-tab-caption">{uiText("Worklist")}</span>}
           </button>
         </div>
       </div>
@@ -342,20 +343,12 @@ function LayersTab({ tabId }: { tabId: number }) {
     <div className="panel-content layer-list" data-testid="layer-list">
       {board?.format === 'XZZ' && (
         <div className="fold-section">
-          <div className="fold-section-title">Boards and sides</div>
-          <p className="fold-section-desc">
-            XZZ <code>.pcb</code> files draw each board twice, top and bottom
-            side by side, and can pack several boards into one file. A pack
-            opens the way XZZ shows it, every half where the file draws it.
-            The folded view stacks each board&rsquo;s halves; which half is the
-            top comes from the copper when the file has traces, otherwise from
-            the exporter&rsquo;s layout. If a board comes out upside down, swap
-            its sides; the choice is remembered for this file.
-          </p>
+          <div className="fold-section-title">{uiText("Boards and sides")}</div>
+          <p className="fold-section-desc">{uiText("XZZ ")}<code>.pcb</code>{uiText(" files draw each board twice, top and bottom side by side, and can pack several boards into one file. A pack opens the way XZZ shows it, every half where the file draws it. The folded view stacks each board&rsquo;s halves; which half is the top comes from the copper when the file has traces, otherwise from the exporter&rsquo;s layout. If a board comes out upside down, swap its sides; the choice is remembered for this file.")}</p>
           {packBoards.length > 0 && (
             <div className="fold-boards">
               <div className="fold-boards-label">
-                {packBoards.length === 1 ? 'One board' : `${packBoards.length} boards`}
+                {packBoards.length === 1 ? uiText("One board") : uiText`${packBoards.length} boards`}
                 {board.foldComponents && ` from ${board.foldComponents.length} outline loops`}
               </div>
               <div className="fold-boards-list">
@@ -367,8 +360,8 @@ function LayersTab({ tabId }: { tabId: number }) {
                       checked={selectedBoardIndex === null}
                       onChange={() => boardStore.setSelectedBoardIndex(null)}
                     />
-                    <span className="fold-option-label">All boards</span>
-                    <span className="fold-option-hint">Render every board, folded, side by side.</span>
+                    <span className="fold-option-label">{uiText("All boards")}</span>
+                    <span className="fold-option-hint">{uiText("Render every board, folded, side by side.")}</span>
                   </label>
                 )}
                 {packBoards.map((pb, i) => {
@@ -390,18 +383,16 @@ function LayersTab({ tabId }: { tabId: number }) {
                       ) : <span className="fold-option-spacer" />}
                       <span className="fold-option-label">{boardNames[i]}</span>
                       <span className="fold-option-hint">
-                        {dims} · {source}{swapped ? ' · swapped' : ''}
+                        {dims} · {source}{swapped ? uiText(" · swapped") : ''}
                       </span>
                       {pb.fold && (
                         <button
                           type="button"
                           className={`fold-swap-btn${swapped ? ' active' : ''}`}
-                          title="Flip this board top ↔ bottom"
+                          title={uiText("Flip this board top ↔ bottom")}
                           disabled={foldMode !== 'suggested'}
                           onClick={() => boardStore.toggleBoardSideSwap(i)}
-                        >
-                          Swap sides
-                        </button>
+                        >{uiText("Swap sides")}</button>
                       )}
                     </div>
                   );
@@ -411,8 +402,7 @@ function LayersTab({ tabId }: { tabId: number }) {
           )}
           {packBoards.length === 0 && board.boardGroups && board.boardGroups.length > 1 && (
             <div className="fold-boards">
-              <div className="fold-boards-label">
-                Detected outline groups: {board.boardGroups.length}
+              <div className="fold-boards-label">{uiText("Detected outline groups: ")}{board.boardGroups.length}
               </div>
               <div className="fold-boards-list">
                 <label className="fold-option">
@@ -422,7 +412,7 @@ function LayersTab({ tabId }: { tabId: number }) {
                     checked={selectedBoardIndex === null}
                     onChange={() => boardStore.setSelectedBoardIndex(null)}
                   />
-                  <span className="fold-option-label">All</span>
+                  <span className="fold-option-label">{uiText("All")}</span>
                 </label>
                 {board.boardGroups.map((group, i) => (
                   <label key={i} className="fold-option">
@@ -432,7 +422,7 @@ function LayersTab({ tabId }: { tabId: number }) {
                       checked={selectedBoardIndex === i}
                       onChange={() => boardStore.setSelectedBoardIndex(i)}
                     />
-                    <span className="fold-option-label">Group {i + 1}</span>
+                    <span className="fold-option-label">{uiText("Group ")}{i + 1}</span>
                     <span className="fold-option-hint">C{group.components.join(', C')}</span>
                   </label>
                 ))}
@@ -440,9 +430,7 @@ function LayersTab({ tabId }: { tabId: number }) {
             </div>
           )}
           {packBoards.length === 0 && !board.foldInfo ? (
-            <p className="fold-section-desc">
-              One outline loop and no mirror-image halves — nothing to fold. Shown as stored.
-            </p>
+            <p className="fold-section-desc">{uiText("One outline loop and no mirror-image halves — nothing to fold. Shown as stored.")}</p>
           ) : (
           <div className="fold-resolution">
             <label className="fold-option">
@@ -452,9 +440,9 @@ function LayersTab({ tabId }: { tabId: number }) {
                 checked={foldMode === 'suggested'}
                 onChange={() => boardStore.setFoldMode('suggested')}
               />
-              <span className="fold-option-label">Folded</span>
+              <span className="fold-option-label">{uiText("Folded")}</span>
               <span className="fold-option-hint">
-                {board.foldInfo?.summary ?? (packBoards.length > 0 ? 'Each board with its bottom half folded onto the top — Top / Bottom switch sides' : 'No fold applied — rendered as-is')}
+                {board.foldInfo?.summary ?? (packBoards.length > 0 ? uiText("Each board with its bottom half folded onto the top — Top / Bottom switch sides") : uiText("No fold applied — rendered as-is"))}
               </span>
             </label>
             <label className="fold-option">
@@ -464,11 +452,11 @@ function LayersTab({ tabId }: { tabId: number }) {
                 checked={foldMode === 'all-sides'}
                 onChange={() => boardStore.setFoldMode('all-sides')}
               />
-              <span className="fold-option-label">{packBoards.length > 0 ? 'XZZ layout' : 'Show all sides'}</span>
+              <span className="fold-option-label">{packBoards.length > 0 ? uiText("XZZ layout") : uiText("Show all sides")}</span>
               <span className="fold-option-hint">
                 {packBoards.length > 0
-                  ? 'Every half where the file draws it, as XZZ shows it — Top / Bottom show and hide the halves.'
-                  : 'The file\u2019s raw layout, both halves of every board, no mirroring.'}
+                  ? uiText("Every half where the file draws it, as XZZ shows it — Top / Bottom show and hide the halves.")
+                  : uiText("The file’s raw layout, both halves of every board, no mirroring.")}
               </span>
             </label>
           </div>
@@ -477,7 +465,7 @@ function LayersTab({ tabId }: { tabId: number }) {
       )}
       {layerStates.length > 0 && (
         <div className="layer-list-header">
-          <span>{layerStates.length} layers</span>
+          <span>{layerStates.length}{uiText(" layers")}</span>
         </div>
       )}
 
@@ -486,27 +474,24 @@ function LayersTab({ tabId }: { tabId: number }) {
         <button
           className={`visibility-toggle ${showTraces ? '' : 'off'}`}
           onClick={() => boardStore.toggleTraces()}
-          title={showTraces ? 'Hide traces' : 'Show traces'}
+          title={showTraces ? uiText("Hide traces") : uiText("Show traces")}
         >
-          <span className="toggle-check">{showTraces ? '■' : '□'}</span> Traces
-        </button>
+          <span className="toggle-check">{showTraces ? '■' : '□'}</span>{uiText(" Traces")}</button>
         {board?.vias && board.vias.length > 0 && (
           <button
             className={`visibility-toggle ${showVias ? '' : 'off'}`}
             onClick={() => boardStore.toggleVias()}
-            title={showVias ? 'Hide vias' : 'Show vias'}
+            title={showVias ? uiText("Hide vias") : uiText("Show vias")}
           >
-            <span className="toggle-check">{showVias ? '■' : '□'}</span> Vias
-          </button>
+            <span className="toggle-check">{showVias ? '■' : '□'}</span>{uiText(" Vias")}</button>
         )}
         {board?.silkscreen && board.silkscreen.length > 0 && (
           <button
             className={`visibility-toggle ${showSilkscreen ? '' : 'off'}`}
             onClick={() => boardStore.toggleSilkscreen()}
-            title={showSilkscreen ? 'Hide silkscreen' : 'Show silkscreen'}
+            title={showSilkscreen ? uiText("Hide silkscreen") : uiText("Show silkscreen")}
           >
-            <span className="toggle-check">{showSilkscreen ? '■' : '□'}</span> Silkscreen
-          </button>
+            <span className="toggle-check">{showSilkscreen ? '■' : '□'}</span>{uiText(" Silkscreen")}</button>
         )}
         {/* Pad + copper-drop overlays render whenever the parser supplies
             board.pads (TVW, Allegro, XZZ). The pad layer sits below the
@@ -518,19 +503,17 @@ function LayersTab({ tabId }: { tabId: number }) {
           <button
             className={`visibility-toggle ${showPads ? '' : 'off'}`}
             onClick={() => boardStore.togglePads()}
-            title={showPads ? 'Hide copper pads' : 'Show copper pads'}
+            title={showPads ? uiText("Hide copper pads") : uiText("Show copper pads")}
           >
-            <span className="toggle-check">{showPads ? '■' : '□'}</span> Pads
-          </button>
+            <span className="toggle-check">{showPads ? '■' : '□'}</span>{uiText(" Pads")}</button>
         )}
         {board?.pads && board.pads.some(p => p.attached === false) && (
           <button
             className={`visibility-toggle ${showCopperDrops ? '' : 'off'}`}
             onClick={() => boardStore.toggleCopperDrops()}
-            title={showCopperDrops ? 'Hide standalone GND/power copper drops' : 'Show standalone GND/power copper drops'}
+            title={showCopperDrops ? uiText("Hide standalone GND/power copper drops") : uiText("Show standalone GND/power copper drops")}
           >
-            <span className="toggle-check">{showCopperDrops ? '■' : '□'}</span> Copper drops
-          </button>
+            <span className="toggle-check">{showCopperDrops ? '■' : '□'}</span>{uiText(" Copper drops")}</button>
         )}
         {/* Pin numbers and net names are global render settings (same as
             Settings ▸ Board ▸ Pins); surfaced here because on a diode-value map
@@ -539,20 +522,18 @@ function LayersTab({ tabId }: { tabId: number }) {
           className={`visibility-toggle ${showPinNumbers && !labelsForcedOff ? '' : 'off'}`}
           onClick={() => renderSettingsStore.applyGlobal({ ...renderSettingsStore.globalSnapshot(), showPinNumbers: !showPinNumbers })}
           title={labelsForcedOff
-            ? 'Hidden by diode-only mode — click the diode row to leave it'
-            : showPinNumbers ? 'Hide pin-number labels' : 'Show pin-number labels'}
+            ? uiText("Hidden by diode-only mode — click the diode row to leave it")
+            : showPinNumbers ? uiText("Hide pin-number labels") : uiText("Show pin-number labels")}
         >
-          <span className="toggle-check">{showPinNumbers ? '■' : '□'}</span> Pin numbers
-        </button>
+          <span className="toggle-check">{showPinNumbers ? '■' : '□'}</span>{uiText(" Pin numbers")}</button>
         <button
           className={`visibility-toggle ${showNetNames && !labelsForcedOff ? '' : 'off'}`}
           onClick={() => renderSettingsStore.applyGlobal({ ...renderSettingsStore.globalSnapshot(), showNetNames: !showNetNames })}
           title={labelsForcedOff
-            ? 'Hidden by diode-only mode — click the diode row to leave it'
-            : showNetNames ? 'Hide net-name labels on pins' : 'Show net-name labels on pins'}
+            ? uiText("Hidden by diode-only mode — click the diode row to leave it")
+            : showNetNames ? uiText("Hide net-name labels on pins") : uiText("Show net-name labels on pins")}
         >
-          <span className="toggle-check">{showNetNames ? '■' : '□'}</span> Net names
-        </button>
+          <span className="toggle-check">{showNetNames ? '■' : '□'}</span>{uiText(" Net names")}</button>
         {hasDiodeData && (
           <button
             className={`visibility-toggle ${showDiodeValues ? '' : 'off'}`}
@@ -560,32 +541,31 @@ function LayersTab({ tabId }: { tabId: number }) {
             title={diodeModeTitle(diodeMode(rsettings))}
           >
             <span className="toggle-check">{showDiodeValues ? '■' : '□'}</span>{' '}
-            {labelsForcedOff ? 'Diode values only' : 'Diode values'}
+            {labelsForcedOff ? uiText("Diode values only") : uiText("Diode values")}
           </button>
         )}
         {board?.surfaces && board.surfaces.length > 0 && (
           <button
             className={`visibility-toggle ${showSurfaces ? '' : 'off'}`}
             onClick={() => boardStore.toggleSurfaces()}
-            title={showSurfaces ? 'Hide copper-fill polygons (ground planes, power pours)' : 'Show copper-fill polygons (ground planes, power pours)'}
+            title={showSurfaces ? uiText("Hide copper-fill polygons (ground planes, power pours)") : uiText("Show copper-fill polygons (ground planes, power pours)")}
           >
-            <span className="toggle-check">{showSurfaces ? '■' : '□'}</span> Copper fills
-          </button>
+            <span className="toggle-check">{showSurfaces ? '■' : '□'}</span>{uiText(" Copper fills")}</button>
         )}
         <div className="visibility-toggle-group">
           <div className="visibility-toggle-row">
             <button
               className={`visibility-toggle ${showComponents ? '' : 'off'}`}
               onClick={() => boardStore.toggleComponents()}
-              title={showComponents ? 'Hide all components' : 'Show all components'}
+              title={showComponents ? uiText("Hide all components") : uiText("Show all components")}
             >
               <span className="toggle-check">{showComponents ? '■' : '□'}</span>
-              <span className="toggle-label">Components</span>
+              <span className="toggle-label">{uiText("Components")}</span>
             </button>
             <button
               className="toggle-collapse"
               onClick={() => setComponentsExpanded(!componentsExpanded)}
-              title={componentsExpanded ? 'Collapse' : 'Expand'}
+              title={componentsExpanded ? uiText("Collapse") : uiText("Expand")}
             >
               {componentsExpanded ? '▾' : '▸'}
             </button>
@@ -596,52 +576,43 @@ function LayersTab({ tabId }: { tabId: number }) {
                 className={`visibility-toggle sub ${showComponents && showPins ? '' : 'off'}`}
                 onClick={() => boardStore.togglePins()}
                 disabled={!showComponents}
-                title={showPins ? 'Hide pins' : 'Show pins'}
+                title={showPins ? uiText("Hide pins") : uiText("Show pins")}
               >
-                <span className="toggle-check">{showPins ? '■' : '□'}</span> Pins
-              </button>
+                <span className="toggle-check">{showPins ? '■' : '□'}</span>{uiText(" Pins")}</button>
               <button
                 className={`visibility-toggle sub ${showComponents && showOutlines ? '' : 'off'}`}
                 onClick={() => boardStore.toggleOutlines()}
                 disabled={!showComponents}
-                title={showOutlines ? 'Hide outlines' : 'Show outlines'}
+                title={showOutlines ? uiText("Hide outlines") : uiText("Show outlines")}
               >
-                <span className="toggle-check">{showOutlines ? '■' : '□'}</span> Outlines
-              </button>
+                <span className="toggle-check">{showOutlines ? '■' : '□'}</span>{uiText(" Outlines")}</button>
               <button
                 className={`visibility-toggle sub ${showComponents && showLabels ? '' : 'off'}`}
                 onClick={() => boardStore.toggleLabels()}
                 disabled={!showComponents}
-                title={showLabels ? 'Hide labels' : 'Show labels'}
+                title={showLabels ? uiText("Hide labels") : uiText("Show labels")}
               >
-                <span className="toggle-check">{showLabels ? '■' : '□'}</span> Labels
-              </button>
+                <span className="toggle-check">{showLabels ? '■' : '□'}</span>{uiText(" Labels")}</button>
             </div>
           )}
           {hiddenParts.length > 0 && (
             <div className="hidden-parts-row" title={hiddenParts.join(', ')}>
-              <span className="hidden-parts-label">Hidden parts ({hiddenParts.length})</span>
+              <span className="hidden-parts-label">{uiText("Hidden parts (")}{hiddenParts.length})</span>
               <button
                 className="hidden-parts-restore"
                 onClick={() => boardStore.unhideAllParts(tabId)}
-                title={`Restore: ${hiddenParts.join(', ')}`}
-              >
-                Restore all
-              </button>
+                title={uiText`Restore: ${hiddenParts.join(', ')}`}
+              >{uiText("Restore all")}</button>
             </div>
           )}
         </div>
       </div>
 
       {tab?.butterfly && layerStates.length > 0 && (
-        <div className="layer-list-hint" data-testid="layers-butterfly-hint">
-          Copper layers are hidden while Butterfly is on
-        </div>
+        <div className="layer-list-hint" data-testid="layers-butterfly-hint">{uiText("Copper layers are hidden while Butterfly is on")}</div>
       )}
       {layerStates.length > 1 && (
-        <div className="layer-list-hint">
-          Click a layer to bump it on top · pin one to keep it there
-        </div>
+        <div className="layer-list-hint">{uiText("Click a layer to bump it on top · pin one to keep it there")}</div>
       )}
       <div className="layer-list-container">
         {layerStates.map((layer, idx) => {
@@ -661,12 +632,12 @@ function LayersTab({ tabId }: { tabId: number }) {
                 isPinned ? 'layer-pinned' : '',
               ].join(' ')}
               onClick={() => boardStore.selectLayer(idx)}
-              title="Click to bump this layer on top"
+              title={uiText("Click to bump this layer on top")}
             >
               <button
                 className={`layer-visibility ${layer.visible ? 'on' : 'off'}`}
                 onClick={(e) => { e.stopPropagation(); boardStore.toggleLayer(idx); }}
-                title={layer.visible ? 'Hide layer' : 'Show layer'}
+                title={layer.visible ? uiText("Hide layer") : uiText("Show layer")}
               >
                 {layer.visible ? '●' : '○'}
               </button>
@@ -676,13 +647,13 @@ function LayersTab({ tabId }: { tabId: number }) {
                 value={colorToHex(layer.color)}
                 onClick={(e) => e.stopPropagation()}
                 onChange={(e) => boardStore.setLayerColor(idx, hexToColor(e.target.value))}
-                title="Change layer color"
+                title={uiText("Change layer color")}
               />
               <span className="layer-name">{layer.name}</span>
               <button
                 className={`layer-pin ${isPinned ? 'pinned' : ''}`}
                 onClick={(e) => { e.stopPropagation(); boardStore.fixateLayer(idx); }}
-                title={isPinned ? 'Unpin — stop keeping this layer on top' : 'Pin this layer on top'}
+                title={isPinned ? uiText("Unpin — stop keeping this layer on top") : uiText("Pin this layer on top")}
                 aria-pressed={isPinned}
               >
                 {isPinned ? <IconPinFilled size={14} stroke={2} /> : <IconPin size={14} stroke={2} />}
@@ -698,7 +669,7 @@ function LayersTab({ tabId }: { tabId: number }) {
 function NotesTab({ tabId }: { tabId: number }) {
   const { tabs } = useBoardStore();
   const tab = tabs.find(t => t.id === tabId);
-  if (!tab?.board) return <div className="panel-empty">No board loaded</div>;
+  if (!tab?.board) return <div className="panel-empty">{uiText("No board loaded")}</div>;
   return <BoardNotesTab board={tab.board} highlightedNet={tab.selection?.highlightedNet ?? null} />;
 }
 
@@ -715,7 +686,7 @@ function InfoTab({ tabId }: { tabId: number }) {
   const bomClusterSelections: ReadonlyMap<string, string> =
     tab?.bomClusterSelections ?? EMPTY_BOM_SELECTIONS;
 
-  if (!board) return <div className="panel-empty">No board loaded</div>;
+  if (!board) return <div className="panel-empty">{uiText("No board loaded")}</div>;
 
   return (
     <ComponentInfoBody
@@ -753,7 +724,7 @@ function RevisionsTab({ tabId }: { tabId: number }) {
   const hasGhosts = (ghosts?.length ?? 0) > 0;
   const hasBomClusters = (bomClusters?.length ?? 0) > 0;
   if (!hasRevisions && !hasGhosts && !hasBomClusters) {
-    return <div className="panel-empty">Nothing to report</div>;
+    return <div className="panel-empty">{uiText("Nothing to report")}</div>;
   }
 
   return (
@@ -761,10 +732,9 @@ function RevisionsTab({ tabId }: { tabId: number }) {
       {hasRevisions && revisions && (
         <>
           <div className="revisions-header">
-            <div className="revisions-title">Multiple revisions</div>
+            <div className="revisions-title">{uiText("Multiple revisions")}</div>
             <div className="revisions-subtitle" title={fileName}>
-              {revisions.length} revisions detected in this file
-            </div>
+              {revisions.length}{uiText(" revisions detected in this file")}</div>
           </div>
 
           <div className="revisions-list">
@@ -784,8 +754,7 @@ function RevisionsTab({ tabId }: { tabId: number }) {
                   <div className="revision-meta">
                     <div className="revision-label">{rev.label}</div>
                     <div className="revision-stats">
-                      {rev.componentCount} components
-                      {!isActive && (added > 0 || removed > 0) && (
+                      {rev.componentCount}{uiText(" components")}{!isActive && (added > 0 || removed > 0) && (
                         <span className="revision-diff">
                           {added > 0 && <span className="diff-add"> +{added}</span>}
                           {removed > 0 && <span className="diff-rem"> −{removed}</span>}
@@ -798,33 +767,24 @@ function RevisionsTab({ tabId }: { tabId: number }) {
             })}
           </div>
 
-          <div className="revisions-help">
-            Some CAD exports accumulate every prior revision of the board into the
-            same file. Switch revisions to compare layouts. The last revision is
-            the canonical one for this file.
-          </div>
+          <div className="revisions-help">{uiText("Some CAD exports accumulate every prior revision of the board into the same file. Switch revisions to compare layouts. The last revision is the canonical one for this file.")}</div>
         </>
       )}
 
       {hasGhosts && ghosts && (
         <div className="ghosts-section">
           <div className="ghosts-header">
-            <div className="ghosts-title">⚠ Suspicious overlaps</div>
+            <div className="ghosts-title">{uiText("⚠ Suspicious overlaps")}</div>
             <div className="ghosts-subtitle">
-              {ghosts.length} component{ghosts.length === 1 ? '' : 's'} overlap
-              another part with a superset of the same nets — likely stale
-              refdes left from an earlier revision. The strikethrough side
-              gets hidden when the toggle below is on; click ⇄ to swap if the
-              detector picked the wrong side.
-            </div>
+              {ghosts.length}{uiText(" component")}{ghosts.length === 1 ? '' : uiText("plural.s")}{uiText(" overlap another part with a superset of the same nets — likely stale refdes left from an earlier revision. The strikethrough side gets hidden when the toggle below is on; click ⇄ to swap if the detector picked the wrong side.")}</div>
             <button
               className={`ghost-hide-toggle ${hideGhosts ? 'on' : ''}`}
               onClick={() => boardStore.toggleHideGhosts()}
               title={hideGhosts
-                ? 'Show all overlap parts (currently hiding strikethrough side)'
-                : 'Hide the strikethrough side of every pair from the board'}
+                ? uiText("Show all overlap parts (currently hiding strikethrough side)")
+                : uiText("Hide the strikethrough side of every pair from the board")}
             >
-              {hideGhosts ? '◉ Hiding strikethrough' : '○ Hide strikethrough side'}
+              {hideGhosts ? uiText("◉ Hiding strikethrough") : uiText("○ Hide strikethrough side")}
             </button>
           </div>
           <div className="ghosts-list">
@@ -843,8 +803,8 @@ function RevisionsTab({ tabId }: { tabId: number }) {
                       boardStore.focusPart(staleName);
                     }}
                     title={hideGhosts
-                      ? `Show & focus ${staleName} (currently hidden)`
-                      : `Focus ${staleName} — will be hidden when toggle is on`}
+                      ? uiText`Show & focus ${staleName} (currently hidden)`
+                      : uiText`Focus ${staleName} — will be hidden when toggle is on`}
                   >
                     {staleName}
                   </button>
@@ -852,50 +812,41 @@ function RevisionsTab({ tabId }: { tabId: number }) {
                     className="ghost-swap"
                     onClick={() => boardStore.swapGhostPair(g.partIndex, g.dominatorIndex)}
                     title={swapped
-                      ? 'Swap back to the auto-detected role (smaller part as stale)'
-                      : 'Swap which side is treated as the stale one for this pair'}
+                      ? uiText("Swap back to the auto-detected role (smaller part as stale)")
+                      : uiText("Swap which side is treated as the stale one for this pair")}
                   >
                     ⇄
                   </button>
                   <button
                     className="ghost-name ghost-keep"
                     onClick={() => boardStore.focusPart(keepName)}
-                    title={`Focus ${keepName} — kept on the board`}
+                    title={uiText`Focus ${keepName} — kept on the board`}
                   >
                     {keepName}
                   </button>
-                  <span className="ghost-distance">{Math.round(g.distance)} mils</span>
+                  <span className="ghost-distance">{Math.round(g.distance)}{uiText(" mils")}</span>
                 </div>
               );
             })}
           </div>
-          <div className="revisions-help">
-            The auto-detector picks the smaller part of each overlap as the
-            stale one (strikethrough). Click ⇄ on a row to flip that choice
-            when you know which is really absent. The toggle above hides the
-            strikethrough side of every pair from the rendered scene.
-          </div>
+          <div className="revisions-help">{uiText("The auto-detector picks the smaller part of each overlap as the stale one (strikethrough). Click ⇄ on a row to flip that choice when you know which is really absent. The toggle above hides the strikethrough side of every pair from the rendered scene.")}</div>
         </div>
       )}
 
       {hasBomClusters && bomClusters && (
         <div className="bom-clusters-section">
           <div className="ghosts-header">
-            <div className="ghosts-title">⇄ BOM alternates</div>
+            <div className="ghosts-title">{uiText("⇄ BOM alternates")}</div>
             <div className="ghosts-subtitle">
-              {bomClusters.length} site{bomClusters.length === 1 ? '' : 's'} where same-role parts overlap
-              and share connectivity — only one member of each cluster is
-              fitted per BOM variant. The toggle below shows every member
-              (X-ray) instead of just the chosen primary.
-            </div>
+              {bomClusters.length}{uiText(" site")}{bomClusters.length === 1 ? '' : uiText("plural.s")}{uiText(" where same-role parts overlap and share connectivity — only one member of each cluster is fitted per BOM variant. The toggle below shows every member (X-ray) instead of just the chosen primary.")}</div>
             <button
               className={`ghost-hide-toggle ${showBomAlternates ? 'on' : ''}`}
               onClick={() => boardStore.toggleShowBomAlternates()}
               title={showBomAlternates
-                ? 'Show only the chosen primary per cluster (currently showing all members)'
-                : 'Show every cluster member overlapping (X-ray view)'}
+                ? uiText("Show only the chosen primary per cluster (currently showing all members)")
+                : uiText("Show every cluster member overlapping (X-ray view)")}
             >
-              {showBomAlternates ? '◉ Showing all alternates' : '○ Hide alternates (default)'}
+              {showBomAlternates ? uiText("◉ Showing all alternates") : uiText("○ Hide alternates (default)")}
             </button>
           </div>
           <div className="ghosts-list">
@@ -905,7 +856,7 @@ function RevisionsTab({ tabId }: { tabId: number }) {
               const reasonLabel = bomReasonLabel(c.reason);
               return (
                 <div key={sig} className="ghost-item bom-cluster-item" style={{ flexWrap: 'wrap', gap: 4 }}>
-                  <span style={{ fontSize: 11, color: '#888', minWidth: 60 }} title={`Auto-pick reason: ${reasonLabel}`}>
+                  <span style={{ fontSize: 11, color: '#888', minWidth: 60 }} title={uiText`Auto-pick reason: ${reasonLabel}`}>
                     {c.memberRefdes.length}× ({reasonLabel})
                   </span>
                   {c.memberRefdes.map(refdes => {
@@ -923,8 +874,8 @@ function RevisionsTab({ tabId }: { tabId: number }) {
                           }
                         }}
                         title={isChosen
-                          ? `${refdes} is the active primary — click to focus`
-                          : `Click to make ${refdes} the active primary`}
+                          ? uiText`${refdes} is the active primary — click to focus`
+                          : uiText`Click to make ${refdes} the active primary`}
                       >
                         {isChosen ? '●' : '○'} {refdes}
                       </button>
@@ -934,12 +885,7 @@ function RevisionsTab({ tabId }: { tabId: number }) {
               );
             })}
           </div>
-          <div className="revisions-help">
-            BoardRipper auto-picks one member per cluster as the primary using
-            shape-suffixed device names → lowest refdes → largest footprint
-            (≈88% accurate across observed CAD files). Click any non-primary
-            refdes to override the pick for that cluster.
-          </div>
+          <div className="revisions-help">{uiText("BoardRipper auto-picks one member per cluster as the primary using shape-suffixed device names → lowest refdes → largest footprint (≈88% accurate across observed CAD files). Click any non-primary refdes to override the pick for that cluster.")}</div>
         </div>
       )}
     </div>
@@ -996,7 +942,7 @@ function NetComponentsSublist({ board, pinIndices }: NetComponentsSublistProps) 
           <span className="result-pin-id">{c.firstPinId}</span>
           <span className="result-name">{c.name}</span>
           <span className={`badge badge-${c.side}`}>{c.side}</span>
-          <span className="result-pins">{c.count} pin{c.count === 1 ? '' : 's'}</span>
+          <span className="result-pins">{c.count}{uiText(" pin")}{c.count === 1 ? '' : uiText("plural.s")}</span>
         </div>
       ))}
     </div>
@@ -1036,7 +982,7 @@ function PartNetsSublist({ part }: { part: Part }) {
         >
           <span className="result-pin-id">{firstPinId}</span>
           <span className="result-name">{net}</span>
-          <span className="result-pins">{count} pin{count === 1 ? '' : 's'}</span>
+          <span className="result-pins">{count}{uiText(" pin")}{count === 1 ? '' : uiText("plural.s")}</span>
         </div>
       ))}
     </div>
@@ -1201,7 +1147,7 @@ function SearchTab({ tabId }: { tabId: number }) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  if (!board) return <div className="panel-empty">No board loaded</div>;
+  if (!board) return <div className="panel-empty">{uiText("No board loaded")}</div>;
 
   const totalResults = matchedParts.length + matchedNets.length;
 
@@ -1212,13 +1158,13 @@ function SearchTab({ tabId }: { tabId: number }) {
           ref={inputRef}
           type="text"
           className="search-tab-input"
-          placeholder="Search components or nets..."
+          placeholder={uiText("Search components or nets...")}
           value={query}
           onChange={(e) => { onQueryChange(e.target.value); setShowSuggestions(true); }}
           onFocus={() => setShowSuggestions(true)}
         />
         {query && (
-          <button className="search-tab-clear" onClick={() => { onQueryChange(''); setShowSuggestions(false); }} title="Clear">×</button>
+          <button className="search-tab-clear" onClick={() => { onQueryChange(''); setShowSuggestions(false); }} title={uiText("Clear")}>×</button>
         )}
         {showSuggestions && suggestions.length > 0 && (
           <div className="search-tab-suggestions" ref={suggestionsRef}>
@@ -1236,18 +1182,18 @@ function SearchTab({ tabId }: { tabId: number }) {
       </div>
 
       <div className="search-tab-results">
-        {query && <div className="search-results-summary">{totalResults} results for &quot;{query}&quot;</div>}
+        {query && <div className="search-results-summary">{totalResults}{uiText(" results for \"")}{query}&quot;</div>}
 
           {/* Components section */}
           <div className="search-section">
             <button className="search-section-header" onClick={() => setComponentsOpen(!componentsOpen)}>
               <span className="search-section-arrow">{componentsOpen ? <IconChevronDown size={18} /> : <IconChevronRight size={18} />}</span>
-              <span className="search-section-title">Components</span>
+              <span className="search-section-title">{uiText("Components")}</span>
               <span className="search-section-count">{matchedParts.length}</span>
             </button>
             {componentsOpen && (
               <div className="search-section-body">
-                {matchedParts.length === 0 && <div className="search-section-empty">No matching components</div>}
+                {matchedParts.length === 0 && <div className="search-section-empty">{uiText("No matching components")}</div>}
                 {shownParts.map((part) => {
                   const isExpanded = expandedPart === part.name;
                   const isPinned = pinnedRefdes.has(part.name);
@@ -1263,14 +1209,14 @@ function SearchTab({ tabId }: { tabId: number }) {
                         <span className="net-item-arrow">{isExpanded ? <IconChevronDown size={18} /> : <IconChevronRight size={18} />}</span>
                         <span className="result-name">{part.name}</span>
                         <span className={`badge badge-${part.side}`}>{part.side}</span>
-                        <span className="result-pins">{part.pins.length} pins</span>
+                        <span className="result-pins">{part.pins.length}{uiText(" pins")}</span>
                         <button
                           className={`search-pin-btn ${isPinned ? 'pinned' : ''}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             worklistStore.pushRefdesToActive(part.name);
                           }}
-                          title={isPinned ? 'Already in the active worklist' : 'Add to current worklist'}
+                          title={isPinned ? uiText("Already in the active worklist") : uiText("Add to current worklist")}
                         >
                           {isPinned ? <IconPinFilled size={14} /> : <IconPin size={14} />}
                         </button>
@@ -1280,9 +1226,7 @@ function SearchTab({ tabId }: { tabId: number }) {
                   );
                 })}
                 {matchedParts.length > shownParts.length && (
-                  <div className="search-section-overflow">
-                    Showing {shownParts.length} of {matchedParts.length} — refine the search to narrow.
-                  </div>
+                  <div className="search-section-overflow">{uiText("Showing ")}{shownParts.length}{uiText(" of ")}{matchedParts.length}{uiText(" — refine the search to narrow.")}</div>
                 )}
               </div>
             )}
@@ -1292,12 +1236,12 @@ function SearchTab({ tabId }: { tabId: number }) {
           <div className="search-section">
             <button className="search-section-header" onClick={() => setNetsOpen(!netsOpen)}>
               <span className="search-section-arrow">{netsOpen ? <IconChevronDown size={18} /> : <IconChevronRight size={18} />}</span>
-              <span className="search-section-title">Nets</span>
+              <span className="search-section-title">{uiText("Nets")}</span>
               <span className="search-section-count">{matchedNets.length}</span>
             </button>
             {netsOpen && (
               <div className="search-section-body">
-                {matchedNets.length === 0 && <div className="search-section-empty">No matching nets</div>}
+                {matchedNets.length === 0 && <div className="search-section-empty">{uiText("No matching nets")}</div>}
                 {shownNets.map(([name, net]) => {
                   const upper = name.toUpperCase();
                   const skipExpand = upper.includes('GND') || isNcNet(upper, renderSettingsStore.settings.ncNetPatterns);
@@ -1329,7 +1273,7 @@ function SearchTab({ tabId }: { tabId: number }) {
                             e.stopPropagation();
                             worklistStore.pushNetToActive(name);
                           }}
-                          title={isPinned ? 'Already in the active worklist' : 'Add to current worklist'}
+                          title={isPinned ? uiText("Already in the active worklist") : uiText("Add to current worklist")}
                         >
                           {isPinned ? <IconPinFilled size={14} /> : <IconPin size={14} />}
                         </button>
@@ -1341,9 +1285,7 @@ function SearchTab({ tabId }: { tabId: number }) {
                   );
                 })}
                 {matchedNets.length > shownNets.length && (
-                  <div className="search-section-overflow">
-                    Showing {shownNets.length} of {matchedNets.length} — refine the search to narrow.
-                  </div>
+                  <div className="search-section-overflow">{uiText("Showing ")}{shownNets.length}{uiText(" of ")}{matchedNets.length}{uiText(" — refine the search to narrow.")}</div>
                 )}
               </div>
             )}

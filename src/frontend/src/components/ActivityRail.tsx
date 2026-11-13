@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Activity rail — the 46px icon column that replaces the sidebar's text tab
  * strip. A second VIEW over the module state in Sidebar.utils.ts; it owns no
@@ -74,7 +75,7 @@ export function ActivityRail() {
     const active = id === activeTab;
     const badge: RailBadge | undefined = badges[id];
     const title = active
-      ? (collapsed ? `${label} · click to show` : `${label} · click to hide`)
+      ? (collapsed ? uiText`${label} · click to show` : uiText`${label} · click to hide`)
       : label;
     return (
       <button
@@ -113,7 +114,7 @@ export function ActivityRail() {
         className={`activity-rail activity-rail-${side}${captions ? '' : ' activity-rail-nocap'}`}
         role="tablist"
         aria-orientation="vertical"
-        aria-label="Sidebar"
+        aria-label={uiText("Sidebar")}
         data-testid="activity-rail"
         data-collapsed={collapsed ? 'true' : 'false'}
         style={{ order: side === 'left' ? -1 : 3 }}
@@ -133,9 +134,9 @@ export function ActivityRail() {
         <button
           type="button"
           className="activity-rail-item activity-rail-foot" 
-          aria-label="Auto-hide panel"
+          aria-label={uiText("Auto-hide panel")}
           aria-pressed={autoHide}
-          data-title={`Auto-hide · ${autoHide ? 'on' : 'off'}`}
+          data-title={uiText`Auto-hide · ${autoHide ? 'on' : 'off'}`}
           data-testid="rail-autohide-toggle"
           onClick={() => { setSidebarAutoHide(!autoHide); closeMenu(); }}
         >
@@ -148,9 +149,9 @@ export function ActivityRail() {
         <button
           type="button"
           className={`activity-rail-item activity-rail-status${statusHidden ? '' : ' on'}`}
-          aria-label="Status bar"
+          aria-label={uiText("Status bar")}
           aria-pressed={!statusHidden}
-          data-title={`Status bar · ${statusHidden ? 'off' : 'on'}`}
+          data-title={uiText`Status bar · ${statusHidden ? 'off' : 'on'}`}
           data-testid="rail-status-toggle"
           onClick={() => { toggleStatusBar(); closeMenu(); }}
         >
@@ -165,12 +166,12 @@ export function ActivityRail() {
           ariaLabel="Sidebar options"
           testId="activity-rail-menu"
           items={[
-            { label: side === 'left' ? 'Move sidebar to right' : 'Move sidebar to left', onSelect: flipSidebarSide },
-            { kind: 'check', label: 'Show captions', checked: captions, onSelect: () => setSidebarCaptions(!captions) },
-            { kind: 'check', label: 'Auto-hide sidebar', checked: autoHide, testId: 'rail-menu-autohide',
-              hint: 'The panel opens over the board instead of pushing it, and hides again when you click into the board',
+            { label: side === 'left' ? uiText("Move sidebar to right") : uiText("Move sidebar to left"), onSelect: flipSidebarSide },
+            { kind: 'check', label: uiText("Show captions"), checked: captions, onSelect: () => setSidebarCaptions(!captions) },
+            { kind: 'check', label: uiText("Auto-hide sidebar"), checked: autoHide, testId: 'rail-menu-autohide',
+              hint: uiText("The panel opens over the board instead of pushing it, and hides again when you click into the board"),
               onSelect: () => setSidebarAutoHide(!autoHide) },
-            { label: collapsed ? `Show ${TAB_LABELS[activeTab]}` : 'Hide sidebar', onSelect: toggleSidebar },
+            { label: collapsed ? uiText`Show ${TAB_LABELS[activeTab]}` : uiText("Hide sidebar"), onSelect: toggleSidebar },
           ]}
         />
       )}

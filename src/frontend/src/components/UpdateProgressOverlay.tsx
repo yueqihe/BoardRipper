@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Centered modal shown while a self-update is restarting the container.
  *
@@ -66,15 +67,13 @@ function UpdateProgressActive() {
     <div className="update-progress-overlay" role="alertdialog" aria-modal="true" aria-labelledby="update-progress-title">
       <div className="update-progress-modal">
         <div className="update-progress-spinner" aria-hidden="true" />
-        <h2 id="update-progress-title">Update in progress</h2>
-        <p>BoardRipper is restarting on the new version.</p>
-        <p className="update-progress-note">
-          Page reloads automatically when the new container responds. <span className="update-progress-elapsed">Elapsed: {elapsed}s</span>
+        <h2 id="update-progress-title">{uiText("Update in progress")}</h2>
+        <p>{uiText("BoardRipper is restarting on the new version.")}</p>
+        <p className="update-progress-note">{uiText("Page reloads automatically when the new container responds. ")}<span className="update-progress-elapsed">{uiText("Elapsed: ")}{elapsed}s</span>
         </p>
         {tailEntries.length > 0 && (
           <div className="update-progress-modal-log-wrap">
-            <div className="update-progress-modal-log-label">
-              Progress log{allEntries.length > tailEntries.length ? ` (last ${tailEntries.length} of ${allEntries.length})` : ` (${tailEntries.length})`}
+            <div className="update-progress-modal-log-label">{uiText("Progress log")}{allEntries.length > tailEntries.length ? uiText` (last ${tailEntries.length} of ${allEntries.length})` : ` (${tailEntries.length})`}
             </div>
             <ol className="update-progress-modal-log">
               {tailEntries.map((entry, i) => (
@@ -86,7 +85,7 @@ function UpdateProgressActive() {
             </ol>
           </div>
         )}
-        <p className="update-progress-version">From <code>{fromVersion}</code></p>
+        <p className="update-progress-version">{uiText("From ")}<code>{fromVersion}</code></p>
       </div>
     </div>
   );

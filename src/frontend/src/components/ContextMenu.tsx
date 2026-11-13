@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import React, { useEffect, useRef, useSyncExternalStore, useState } from 'react';
 import { addWatermarkTerm } from '../store/pdf-filter-actions';
 import { IconCopy, IconWorld, IconPin, IconPinFilled, IconShieldPlus, IconSearch } from '@tabler/icons-react';
@@ -311,9 +312,9 @@ export function ContextMenu() {
     contextMenuStore.hide();
     try {
       await copyText(value);
-      boardStore.addToast(`Copied '${value}'`, 'info');
+      boardStore.addToast(uiText`Copied '${value}'`, 'info');
     } catch (err) {
-      boardStore.addToast(`Copy failed: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      boardStore.addToast(uiText`Copy failed: ${err instanceof Error ? err.message : String(err)}`, 'error');
     }
   };
 
@@ -333,10 +334,10 @@ export function ContextMenu() {
     // Shared with the PDF filter menu: also switches the filter on and pushes
     // the list to the backend indexer.
     if (!addWatermarkTerm(term)) {
-      boardStore.addToast(`"${term}" is already a watermark term`, 'info');
+      boardStore.addToast(uiText`"${term}" is already a watermark term`, 'info');
       return;
     }
-    boardStore.addToast(`Added "${term}" to watermark filter — reparsing`, 'info');
+    boardStore.addToast(uiText`Added "${term}" to watermark filter — reparsing`, 'info');
   };
 
   /** Toggle "hide this part" — the override stays per-tab and survives derive
@@ -350,8 +351,8 @@ export function ContextMenu() {
     // reach it again — without feedback the part is just "gone". Toast with
     // Undo + point at the Layers-tab restore row.
     if (!wasHidden) {
-      boardStore.addToast(`Hidden '${refdes}' — restore via Layers tab`, 'info', {
-        label: 'Undo',
+      boardStore.addToast(uiText`Hidden '${refdes}' — restore via Layers tab`, 'info', {
+        label: uiText("Undo"),
         run: () => boardStore.setPartOverride(refdes, null),
       });
     }
@@ -373,20 +374,20 @@ export function ContextMenu() {
     const wl = worklistStore.activeWorklist;
     if (wl?.entries.some(e => e.refdes === refdes)) {
       worklistStore.removeEntry(wl.id, refdes);
-      boardStore.addToast(`Removed '${refdes}' from ${wl.name}`, 'info');
+      boardStore.addToast(uiText`Removed '${refdes}' from ${wl.name}`, 'info');
       return;
     }
     const r = worklistStore.pushRefdesToActive(refdes);
     if (!r) {
-      boardStore.addToast(`Could not add '${refdes}' to worklist (no active board?)`, 'error');
+      boardStore.addToast(uiText`Could not add '${refdes}' to worklist (no active board?)`, 'error');
       return;
     }
     openBoardSidebarTab('worklist');
     const worklistName = worklistStore.activeWorklist?.name ?? 'worklist';
     if (r.added > 0) {
-      boardStore.addToast(`Added '${refdes}' to ${worklistName}`, 'info');
+      boardStore.addToast(uiText`Added '${refdes}' to ${worklistName}`, 'info');
     } else {
-      boardStore.addToast(`'${refdes}' already in ${worklistName}`, 'info');
+      boardStore.addToast(uiText`'${refdes}' already in ${worklistName}`, 'info');
     }
   };
 
@@ -397,20 +398,20 @@ export function ContextMenu() {
     const wl = worklistStore.activeWorklist;
     if (wl?.netEntries?.some(e => e.netName === netName)) {
       worklistStore.removeNetEntry(wl.id, netName);
-      boardStore.addToast(`Removed '${netName}' from ${wl.name}`, 'info');
+      boardStore.addToast(uiText`Removed '${netName}' from ${wl.name}`, 'info');
       return;
     }
     const r = worklistStore.pushNetToActive(netName);
     if (!r) {
-      boardStore.addToast(`Could not add '${netName}' to worklist (no active board?)`, 'error');
+      boardStore.addToast(uiText`Could not add '${netName}' to worklist (no active board?)`, 'error');
       return;
     }
     openBoardSidebarTab('worklist');
     const worklistName = worklistStore.activeWorklist?.name ?? 'worklist';
     if (r.added > 0) {
-      boardStore.addToast(`Added '${netName}' to ${worklistName}`, 'info');
+      boardStore.addToast(uiText`Added '${netName}' to ${worklistName}`, 'info');
     } else {
-      boardStore.addToast(`'${netName}' already in ${worklistName}`, 'info');
+      boardStore.addToast(uiText`'${netName}' already in ${worklistName}`, 'info');
     }
   };
 
@@ -443,8 +444,8 @@ export function ContextMenu() {
           <button
             className={`ctxmenu-chip-action${actions.worklistLit ? ' is-lit' : ''}`}
             title={actions.worklistLit
-              ? `'${value}' is in the active worklist — click to remove`
-              : `Add '${value}' to the active worklist`}
+              ? uiText`'${value}' is in the active worklist — click to remove`
+              : uiText`Add '${value}' to the active worklist`}
             data-testid={kind === 'net' ? 'qa-worklist-net' : 'qa-worklist-part'}
             data-lit={actions.worklistLit ? '1' : '0'}
             onClick={(e) => { e.stopPropagation(); onWorklistClick(value); }}
@@ -456,7 +457,7 @@ export function ContextMenu() {
         )}
         <button
           className="ctxmenu-chip-value"
-          title={`Copy '${value}'`}
+          title={uiText`Copy '${value}'`}
           data-testid={`qa-copy-${kind}`}
           onClick={(e) => { e.stopPropagation(); void copyValue(value); }}
         >
@@ -466,7 +467,7 @@ export function ContextMenu() {
         {actions.search && (
           <button
             className="ctxmenu-chip-action"
-            title={`Search '${value}' on the web`}
+            title={uiText`Search '${value}' on the web`}
             data-testid={`qa-search-${kind}`}
             onClick={(e) => { e.stopPropagation(); searchValue(value); }}
           >
@@ -476,7 +477,7 @@ export function ContextMenu() {
         {actions.findInPdf && (
           <button
             className="ctxmenu-chip-action"
-            title={`Find '${value}' in this PDF`}
+            title={uiText`Find '${value}' in this PDF`}
             data-testid="qa-find-pdf"
             onClick={actions.findInPdf}
           >
@@ -628,16 +629,16 @@ export function ContextMenu() {
           <div
             className={`context-menu-item${isBack ? ' context-menu-item-active' : ''}`}
             onClick={() => onTogglePartSendToBack(componentName)}
-            title="Skip drawing the body fill for this part so smaller components beneath stay visible. Border and pins still render."
+            title={uiText("Skip drawing the body fill for this part so smaller components beneath stay visible. Border and pins still render.")}
           >
-            {isBack ? `✓ Send '${componentName}' to back` : `Send '${componentName}' to back`}
+            {isBack ? uiText`✓ Send '${componentName}' to back` : uiText`Send '${componentName}' to back`}
           </div>
           <div
             className={`context-menu-item${isHidden ? ' context-menu-item-active' : ''}`}
             onClick={() => onTogglePartHidden(componentName)}
-            title="Remove this part from the board view (filter only — does not delete from file)."
+            title={uiText("Remove this part from the board view (filter only — does not delete from file).")}
           >
-            {isHidden ? `✓ Hide '${componentName}'` : `Hide '${componentName}'`}
+            {isHidden ? uiText`✓ Hide '${componentName}'` : uiText`Hide '${componentName}'`}
           </div>
           <div className="context-menu-separator" />
         </React.Fragment>
@@ -654,18 +655,15 @@ export function ContextMenu() {
       return (
         <>
           {partVisibilityItems}
-          <div className="context-menu-item disabled">
-            Search &apos;{componentName}&apos; in PDF (none open)
-          </div>
+          <div className="context-menu-item disabled">{uiText("Search '")}{componentName}{uiText("' in PDF (none open)")}</div>
           {componentName.trim() && (
             <>
               <div className="context-menu-separator" />
               <div
                 className="context-menu-item context-menu-search-donors"
                 onClick={doSearchAllDonors}
-                title={`Search all donor PDFs for '${componentName}'`}
-              >
-                Search all donors for &apos;{componentName}&apos;
+                title={uiText`Search all donor PDFs for '${componentName}'`}
+              >{uiText("Search all donors for '")}{componentName}&apos;
               </div>
             </>
           )}
@@ -762,9 +760,9 @@ export function ContextMenu() {
             <div
               key={`cmp:${tab.id}`}
               className="context-menu-item disabled"
-              title={`${tab.fileName} has no ${componentName}`}
+              title={uiText`${tab.fileName} has no ${componentName}`}
             >
-              {label} — no {componentName}
+              {label}{uiText(" — no ")}{componentName}
             </div>
           );
         }
@@ -773,7 +771,7 @@ export function ContextMenu() {
             key={`cmp:${tab.id}`}
             className="context-menu-item"
             data-testid="compare-pins-entry"
-            title={`Compare ${componentName} pin by pin against ${tab.fileName}`}
+            title={uiText`Compare ${componentName} pin by pin against ${tab.fileName}`}
             onClick={(e) => {
               e.stopPropagation();
               openPartCompare(
@@ -783,27 +781,24 @@ export function ContextMenu() {
               contextMenuStore.hide();
             }}
           >
-            {label} — {componentName} · {here?.pins.length ?? '?'} ↔ {there.pins.length} pins
-          </div>
+            {label} — {componentName} · {here?.pins.length ?? '?'} ↔ {there.pins.length}{uiText(" pins")}</div>
         );
       });
       sections.push(
         <React.Fragment key="compare-pins">
           <div className="context-menu-separator" />
-          <div className="context-menu-group-header">Compare pins</div>
+          <div className="context-menu-group-header">{uiText("Compare pins")}</div>
           {rows}
           <div
             className="context-menu-item"
             data-testid="compare-pins-open"
-            title="Open Part comparison with this component on one side"
+            title={uiText("Open Part comparison with this component on one side")}
             onClick={(e) => {
               e.stopPropagation();
               openPartCompare({ tabId: activeTab.id, partName: componentName }, null);
               contextMenuStore.hide();
             }}
-          >
-            Compare &apos;{componentName}&apos; with…
-          </div>
+          >{uiText("Compare '")}{componentName}{uiText("' with…")}</div>
         </React.Fragment>,
       );
     }
@@ -816,9 +811,8 @@ export function ContextMenu() {
           <div
             className="context-menu-item context-menu-search-donors"
             onClick={doSearchAllDonors}
-            title={`Search all donor PDFs for '${state.componentName}'`}
-          >
-            Search all donors for &apos;{state.componentName}&apos;
+            title={uiText`Search all donor PDFs for '${state.componentName}'`}
+          >{uiText("Search all donors for '")}{state.componentName}&apos;
           </div>
         </React.Fragment>,
       );
@@ -831,7 +825,7 @@ export function ContextMenu() {
   // Only one query available: the text item under the cursor.
   const renderPdfBody = () => {
     if (!state.query) {
-      return <div className="context-menu-item disabled">No text at this point</div>;
+      return <div className="context-menu-item disabled">{uiText("No text at this point")}</div>;
     }
 
     // Watermark-filter shortcut. Always shown above the donor-search groups
@@ -844,14 +838,14 @@ export function ContextMenu() {
         className={`context-menu-item${alreadyWatermark ? ' disabled' : ''}`}
         onClick={alreadyWatermark ? undefined : onAddWatermarkTerm}
         title={alreadyWatermark
-          ? 'This text is already a watermark term'
-          : 'Hide every occurrence of this text in every open PDF (reparses)'}
+          ? uiText("This text is already a watermark term")
+          : uiText("Hide every occurrence of this text in every open PDF (reparses)")}
       >
         <IconShieldPlus size={14} stroke={1.8} />
         <span style={{ marginLeft: 6 }}>
           {alreadyWatermark
-            ? `Watermark filter already includes "${state.query}"`
-            : `Hide as watermark — "${state.query}"`}
+            ? uiText`Watermark filter already includes "${state.query}"`
+            : uiText`Hide as watermark — "${state.query}"`}
         </span>
       </div>
     );
@@ -905,9 +899,8 @@ export function ContextMenu() {
           <div
             className="context-menu-item context-menu-search-donors"
             onClick={doSearchAllDonors}
-            title={`Search all donor PDFs for '${state.query}'`}
-          >
-            Search all donors for &apos;{state.query}&apos;
+            title={uiText`Search all donor PDFs for '${state.query}'`}
+          >{uiText("Search all donors for '")}{state.query}&apos;
           </div>
         </React.Fragment>,
       );

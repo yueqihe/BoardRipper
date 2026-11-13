@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { lookupBoard } from './apple-boards';
 import { log } from './log-store';
 import { Emitter } from './emitter';
@@ -178,17 +179,17 @@ export const DEFAULT_AUTOBIND_RULES: AutoBindRules = {
 };
 
 export const AUTOBIND_RULE_LABEL: Record<string, string> = {
-  exact: 'same name',
-  number: 'board number in the PDF name',
-  fuzzy: 'similar name',
-  lone: 'only PDF in the folder',
-  legacy: 'auto-matched before rules had names',
+  exact: uiText("same name"),
+  number: uiText("board number in the PDF name"),
+  fuzzy: uiText("similar name"),
+  lone: uiText("only PDF in the folder"),
+  legacy: uiText("auto-matched before rules had names"),
 };
 
 export const AUTOBIND_RADIUS_LABEL: Record<number, string> = {
-  0: 'same folder',
-  1: 'share a parent folder',
-  2: 'share a grandparent folder',
+  0: uiText("same folder"),
+  1: uiText("share a parent folder"),
+  2: uiText("share a grandparent folder"),
 };
 
 export interface AutoBindCandidate {
@@ -1234,13 +1235,13 @@ class DatabankStore extends Emitter {
     // _appendFiles, yielding the main thread between batches so the search
     // input remains responsive.
     if (signature) {
-      libraryLoadStore.setPhase('cache', 'Checking local cache…');
+      libraryLoadStore.setPhase('cache', uiText("Checking local cache…"));
       const meta = cachedMeta;
       if (meta && meta.signature === signature) {
         log.scan.log(`Library cache hit (${meta.total} files, sig ${signature}, chunked)`);
         this._resetFilesForStream();
         libraryLoadStore.advance(0, meta.total);
-        libraryLoadStore.setPhase('streaming', 'Restoring from cache…');
+        libraryLoadStore.setPhase('streaming', uiText("Restoring from cache…"));
         // SYNC callback only — see streamChunks doc-comment. The whole walk
         // runs inside one IDB tx; any await here would auto-commit it and
         // silently truncate the cache restore at chunkSize files. The
@@ -1278,7 +1279,7 @@ class DatabankStore extends Emitter {
       const ok = await this._streamFilesFromNetwork(signature, t0);
       if (!ok) {
         log.scan.warn('library load: stream path failed — falling back to bulk API (GET /api/databank/files)');
-        libraryLoadStore.setPhase('streaming', 'Retrying via bulk API…');
+        libraryLoadStore.setPhase('streaming', uiText("Retrying via bulk API…"));
         await this._fetchFilesBulk(signature, t0);
       }
     }
@@ -1293,7 +1294,7 @@ class DatabankStore extends Emitter {
    *  stream on slow links, and the auto-fallback when the stream fails. */
   private async _fetchFilesBulk(signature: string | null, startedAt: number): Promise<void> {
     this._resetFilesForStream();
-    libraryLoadStore.setPhase('streaming', 'Loading library (bulk API)…');
+    libraryLoadStore.setPhase('streaming', uiText("Loading library (bulk API)…"));
     try {
       const res = await fetch('/api/databank/files');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1324,7 +1325,7 @@ class DatabankStore extends Emitter {
    *  wall-clock, logged verbosely for the Debug panel. */
   private async _streamFilesFromNetwork(signature: string | null, startedAt: number): Promise<boolean> {
     this._resetFilesForStream();
-    libraryLoadStore.setPhase('streaming', 'Streaming files…');
+    libraryLoadStore.setPhase('streaming', uiText("Streaming files…"));
 
     let total = 0;
     let bytes = 0;
@@ -1397,7 +1398,7 @@ class DatabankStore extends Emitter {
       return false;
     }
 
-    libraryLoadStore.setPhase('finalizing', 'Indexing…');
+    libraryLoadStore.setPhase('finalizing', uiText("Indexing…"));
     this._finalizeFiles(serverSig);
     libraryLoadStore.advance(this._files.length, this._files.length);
     libraryLoadStore.finish();
@@ -2448,12 +2449,12 @@ class DatabankStore extends Emitter {
     const trackProgress = file.file_type === 'board' && !opts?.quiet;
     if (trackProgress) {
       loadProgressStore.start(file.filename, file.size);
-      loadProgressStore.setPhase('Downloading', hasBackend()
-        ? `Backend → browser via /api/files/path (${(file.size / 1024 / 1024).toFixed(2)} MB)`
-        : 'Reading from local library mount (Electron IPC)');
+      loadProgressStore.setPhase(uiText("Downloading"), hasBackend()
+        ? uiText`Backend → browser via /api/files/path (${(file.size / 1024 / 1024).toFixed(2)} MB)`
+        : uiText("Reading from local library mount (Electron IPC)"));
     }
     if (this.folderMode) {
-      if (trackProgress) loadProgressStore.setPhase('Reading', `Local folder "${this._folderState.kind === 'none' ? '' : this._folderState.rootName}"`);
+      if (trackProgress) loadProgressStore.setPhase(uiText("Reading"), uiText`Local folder "${this._folderState.kind === 'none' ? '' : this._folderState.rootName}"`);
       // A reload keeps the index but not the access, and which kind of
       // access is missing depends on how the folder arrived:
       //
@@ -2471,12 +2472,12 @@ class DatabankStore extends Emitter {
         else if (this._folderRepick) await this._folderRepick();
       }
       const local = await folderLibrary.getFile(file);
-      if (trackProgress) loadProgressStore.pushLog(`Read ${local.size.toLocaleString()} bytes from the local folder`);
+      if (trackProgress) loadProgressStore.pushLog(uiText`Read ${local.size.toLocaleString()} bytes from the local folder`);
       return local;
     }
     if (!hasBackend()) {
       const result = await window.electronAPI!.readLibraryFile(file.path);
-      if (trackProgress) loadProgressStore.pushLog(`Read ${result.buffer.byteLength.toLocaleString()} bytes from Electron`);
+      if (trackProgress) loadProgressStore.pushLog(uiText`Read ${result.buffer.byteLength.toLocaleString()} bytes from Electron`);
       return new File([result.buffer], result.name, { lastModified: result.lastModified });
     }
     const res = await fetchWithCloudRetry(
@@ -2489,7 +2490,7 @@ class DatabankStore extends Emitter {
           // self-dismisses after a few seconds so the user doesn't get
           // a stack of them on long retries.
           if (attempt === 2) {
-            boardStore.addToast(`Downloading "${file.filename}" from cloud storage…`, 'info');
+            boardStore.addToast(uiText`Downloading "${file.filename}" from cloud storage…`, 'info');
           }
         },
       },
@@ -2537,7 +2538,7 @@ class DatabankStore extends Emitter {
     } else {
       buffer = await res.arrayBuffer();
     }
-    if (trackProgress) loadProgressStore.pushLog(`Downloaded ${buffer.byteLength.toLocaleString()} bytes`);
+    if (trackProgress) loadProgressStore.pushLog(uiText`Downloaded ${buffer.byteLength.toLocaleString()} bytes`);
     return new File([buffer], file.filename, { lastModified: file.mod_time * 1000 });
   }
 

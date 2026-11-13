@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /** Resize Mode — direct-manipulation sizing.
  *
  *  When enabled, a plain click on the board opens a popup with the handles
@@ -36,21 +37,21 @@ export interface ResizeControlDef {
 
 /** Registry of every control Resize Mode can show, keyed by setting key. */
 export const CONTROLS: Record<string, ResizeControlDef> = {
-  pinSizeScale:    { key: 'pinSizeScale',    label: 'Pin size',        unit: '×',  min: 0.3, max: 4,  step: 0.1, hint: 'Drawn radius of every pin & pad.' },
-  pinNumberScale:  { key: 'pinNumberScale',  label: 'Pin numbers',     unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showPinNumbers', hint: 'Click the name or thumb to show/hide; drag to size.' },
-  netLabelScale:   { key: 'netLabelScale',   label: 'Net names',       unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showNetNames', hint: 'Click the name or thumb to show/hide; drag to size.' },
-  diodeValueScale: { key: 'diodeValueScale', label: 'Diode values',    unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showDiodeValues', hint: 'Click the name or thumb to show/hide; drag to size (diode-mode boards).' },
-  partLabelScale:  { key: 'partLabelScale',  label: 'Component names', unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showPartLabels', hint: 'Click the name or thumb to show/hide; drag to size.' },
-  partBorderWidth: { key: 'partBorderWidth', label: 'Part outline',    unit: 'px', min: 0.1, max: 10, step: 0.1, hint: 'Stroke thickness of part outlines.' },
-  boardFillAlpha:  { key: 'boardFillAlpha',  label: 'Board opacity',   unit: '',   min: 0,   max: 1,  step: 0.05, hint: 'Opacity of the board fill (0 = transparent).' },
-  selectedLabelMinPx: { key: 'selectedLabelMinPx', label: 'Selected label floor', unit: 'px', min: 0, max: 30, step: 1, hint: 'Min on-screen size for a selected part’s labels.' },
-  selectedLabelOtherScale: { key: 'selectedLabelOtherScale', label: 'Other pins of selected part', unit: '×', min: 0.3, max: 1, step: 0.05, hint: 'Fraction of the floor for the selected part’s pins that are not the selected or hovered pin.' },
-  selectedLabelLodRelax: { key: 'selectedLabelLodRelax', label: 'Selected label LOD', unit: '×', min: 0.1, max: 1, step: 0.05, hint: 'Lower = selected labels stay visible when zoomed out further.' },
-  netLineWidth: { key: 'netLineWidth', label: 'Net line width',   unit: 'px', min: 0.5, max: 5, step: 0.5, hint: 'Thickness of the highlighted-net connection lines.' },
-  netLineAlpha: { key: 'netLineAlpha', label: 'Net line opacity', unit: '',   min: 0,   max: 1, step: 0.05, hint: 'Opacity of the net connection lines.' },
-  netLineColor: { key: 'netLineColor', label: 'Net line color',   unit: '',   min: 0,   max: 0xffffff, step: 1, type: 'color', hint: 'Color of the primary net’s connection lines.' },
-  netHighlightGrow:  { key: 'netHighlightGrow',  label: 'Highlight size',    unit: '', min: 0, max: 20, step: 0.5, hint: 'Diameter of the yellow selection highlight ring.' },
-  netHighlightAlpha: { key: 'netHighlightAlpha', label: 'Highlight opacity', unit: '', min: 0, max: 1,  step: 0.05, hint: 'Opacity of the yellow selection highlight.' },
+  pinSizeScale:    { key: 'pinSizeScale',    label: uiText("Pin size"),        unit: '×',  min: 0.3, max: 4,  step: 0.1, hint: uiText("Drawn radius of every pin & pad.") },
+  pinNumberScale:  { key: 'pinNumberScale',  label: uiText("Pin numbers"),     unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showPinNumbers', hint: uiText("Click the name or thumb to show/hide; drag to size.") },
+  netLabelScale:   { key: 'netLabelScale',   label: uiText("Net names"),       unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showNetNames', hint: uiText("Click the name or thumb to show/hide; drag to size.") },
+  diodeValueScale: { key: 'diodeValueScale', label: uiText("Diode values"),    unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showDiodeValues', hint: uiText("Click the name or thumb to show/hide; drag to size (diode-mode boards).") },
+  partLabelScale:  { key: 'partLabelScale',  label: uiText("Component names"), unit: '×',  min: 0.3, max: 4,  step: 0.1, onKey: 'showPartLabels', hint: uiText("Click the name or thumb to show/hide; drag to size.") },
+  partBorderWidth: { key: 'partBorderWidth', label: uiText("Part outline"),    unit: 'px', min: 0.1, max: 10, step: 0.1, hint: uiText("Stroke thickness of part outlines.") },
+  boardFillAlpha:  { key: 'boardFillAlpha',  label: uiText("Board opacity"),   unit: '',   min: 0,   max: 1,  step: 0.05, hint: uiText("Opacity of the board fill (0 = transparent).") },
+  selectedLabelMinPx: { key: 'selectedLabelMinPx', label: uiText("Selected label floor"), unit: 'px', min: 0, max: 30, step: 1, hint: uiText("Min on-screen size for a selected part’s labels.") },
+  selectedLabelOtherScale: { key: 'selectedLabelOtherScale', label: uiText("Other pins of selected part"), unit: '×', min: 0.3, max: 1, step: 0.05, hint: uiText("Fraction of the floor for the selected part’s pins that are not the selected or hovered pin.") },
+  selectedLabelLodRelax: { key: 'selectedLabelLodRelax', label: uiText("Selected label LOD"), unit: '×', min: 0.1, max: 1, step: 0.05, hint: uiText("Lower = selected labels stay visible when zoomed out further.") },
+  netLineWidth: { key: 'netLineWidth', label: uiText("Net line width"),   unit: 'px', min: 0.5, max: 5, step: 0.5, hint: uiText("Thickness of the highlighted-net connection lines.") },
+  netLineAlpha: { key: 'netLineAlpha', label: uiText("Net line opacity"), unit: '',   min: 0,   max: 1, step: 0.05, hint: uiText("Opacity of the net connection lines.") },
+  netLineColor: { key: 'netLineColor', label: uiText("Net line color"),   unit: '',   min: 0,   max: 0xffffff, step: 1, type: 'color', hint: uiText("Color of the primary net’s connection lines.") },
+  netHighlightGrow:  { key: 'netHighlightGrow',  label: uiText("Highlight size"),    unit: '', min: 0, max: 20, step: 0.5, hint: uiText("Diameter of the yellow selection highlight ring.") },
+  netHighlightAlpha: { key: 'netHighlightAlpha', label: uiText("Highlight opacity"), unit: '', min: 0, max: 1,  step: 0.05, hint: uiText("Opacity of the yellow selection highlight.") },
 };
 
 /** Group → the ordered list of control keys it shows. */
@@ -62,10 +63,10 @@ export const GROUPS: Record<ResizeGroup, (keyof RenderSettings)[]> = {
 };
 
 const GROUP_TITLE: Record<ResizeGroup, string> = {
-  pin: 'Pin',
-  part: 'Component',
-  netline: 'Net line',
-  board: 'Board',
+  pin: uiText("Pin"),
+  part: uiText("Component"),
+  netline: uiText("Net line"),
+  board: uiText("Board"),
 };
 
 export interface ResizePopupState {

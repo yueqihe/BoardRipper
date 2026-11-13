@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Scroll-wheel bindings for both viewers — the one place that knows what a
  * modifier + wheel does.
@@ -137,12 +138,12 @@ export const isMacPlatform: boolean =
 
 /** Human label per slot, shared by every editor so they cannot drift. */
 export const SLOT_LABEL: Record<ScrollSlot, string> = {
-  bare: 'Scroll',
-  shift: 'Shift + Scroll',
-  meta: isMacPlatform ? '⌘ + Scroll' : 'Ctrl + Scroll',
+  bare: uiText("Scroll"),
+  shift: uiText("Shift + Scroll"),
+  meta: isMacPlatform ? uiText("⌘ + Scroll") : uiText("Ctrl + Scroll"),
 };
 
-export const ACTION_LABEL: Record<ScrollAction, string> = { zoom: 'Zoom', pan: 'Pan', switch: 'Page' };
+export const ACTION_LABEL: Record<ScrollAction, string> = { zoom: uiText("Zoom"), pan: uiText("Pan"), switch: uiText("Page") };
 export const ACTION_COLOR: Record<ScrollAction, string> = { zoom: '#00d4ff', pan: '#ffd93d', switch: '#ff6b9d' };
 
 /** Shown beside a Shift slot bound to anything but Pan (issue #40). */

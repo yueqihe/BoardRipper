@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useDatabank } from '../hooks/useDatabank';
 import { ensureDatabaseEditorPanel } from '../store/dockview-api';
 import { ResistorColorTool } from './tools/ResistorColorTool';
@@ -10,18 +11,18 @@ import { PartCompareTool } from './tools/PartCompareTool';
 import { setActiveTool, useActiveTool, type ToolId } from './tools/tools-nav';
 
 const CALCULATORS: { id: ToolId; name: string; hint: string }[] = [
-  { id: 'resistor', name: 'Resistor color-band', hint: '4 / 5 / 6-band to ohms' },
-  { id: 'smd', name: 'SMD resistor code', hint: '103, 4R7, 01C to ohms' },
-  { id: 'capacitor', name: 'Capacitor converter', hint: 'convert pF / nF / µF' },
+  { id: 'resistor', name: 'Resistor color-band', hint: uiText("4 / 5 / 6-band to ohms") },
+  { id: 'smd', name: 'SMD resistor code', hint: uiText("103, 4R7, 01C to ohms") },
+  { id: 'capacitor', name: 'Capacitor converter', hint: uiText("convert pF / nF / µF") },
 ];
 
 /** Title shown in the back link for tools that are not calculators. */
 const TOOL_TITLES: Record<ToolId, string> = {
-  resistor: 'Resistor color-band',
-  smd: 'SMD resistor code',
-  capacitor: 'Capacitor converter',
-  worklists: 'Worklists',
-  partcompare: 'Part comparison',
+  resistor: uiText("Resistor color-band"),
+  smd: uiText("SMD resistor code"),
+  capacitor: uiText("Capacitor converter"),
+  worklists: uiText("Worklists"),
+  partcompare: uiText("Part comparison"),
 };
 
 export function ToolsPanel() {
@@ -35,8 +36,7 @@ export function ToolsPanel() {
           className="tools-back"
           data-testid="tools-back"
           onClick={() => setActiveTool(null)}
-        >
-          ← Tools / {TOOL_TITLES[activeTool]}
+        >{uiText("← Tools / ")}{TOOL_TITLES[activeTool]}
         </button>
         <div className="tools-tool-body">
           {activeTool === 'resistor' && <ResistorColorTool />}
@@ -51,7 +51,7 @@ export function ToolsPanel() {
 
   return (
     <div className="tools-panel" data-testid="tools-panel">
-      <div className="tools-group-label">Calculators</div>
+      <div className="tools-group-label">{uiText("Calculators")}</div>
       {CALCULATORS.map(c => (
         <button
           key={c.id}
@@ -66,15 +66,13 @@ export function ToolsPanel() {
         </button>
       ))}
 
-      <div className="tools-group-label">Workbench</div>
+      <div className="tools-group-label">{uiText("Workbench")}</div>
       <button
         className="tools-entry"
         data-testid="tools-entry-partcompare"
         onClick={() => setActiveTool('partcompare')}
       >
-        <span className="tools-entry-text">
-          Part comparison
-          <small>one component&apos;s pinout across two open boards</small>
+        <span className="tools-entry-text">{uiText("Part comparison")}<small>{uiText("one component's pinout across two open boards")}</small>
         </span>
       </button>
       <button
@@ -82,9 +80,7 @@ export function ToolsPanel() {
         data-testid="tools-entry-worklists"
         onClick={() => setActiveTool('worklists')}
       >
-        <span className="tools-entry-text">
-          Worklists
-          <small>every worklist stored on this device</small>
+        <span className="tools-entry-text">{uiText("Worklists")}<small>{uiText("every worklist stored on this device")}</small>
         </span>
       </button>
       {backendAvailable && (
@@ -93,13 +89,13 @@ export function ToolsPanel() {
           data-testid="tools-entry-dbeditor"
           onClick={ensureDatabaseEditorPanel}
         >
-          <span className="tools-entry-text">Database Editor</span>
-          <span className="tools-entry-status">opens panel</span>
+          <span className="tools-entry-text">{uiText("Database Editor")}</span>
+          <span className="tools-entry-status">{uiText("opens panel")}</span>
         </button>
       )}
       <div className="tools-entry tools-entry-soon" aria-disabled="true">
-        <span className="tools-entry-text">Wiki</span>
-        <span className="tools-entry-status">soon</span>
+        <span className="tools-entry-text">{uiText("Wiki")}</span>
+        <span className="tools-entry-status">{uiText("soon")}</span>
       </div>
     </div>
   );

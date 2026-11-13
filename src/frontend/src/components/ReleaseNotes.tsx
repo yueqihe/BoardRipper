@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * ReleaseNotes — the single renderer for a manifest's `notes` payload.
  *
@@ -40,7 +41,7 @@ export function ReleaseNotes({ notes, maxLines }: ReleaseNotesProps) {
           className="release-notes-toggle"
           onClick={() => setExpanded(v => !v)}
         >
-          {clipped ? `Show all (${lines.length} lines)` : 'Show less'}
+          {clipped ? uiText`Show all (${lines.length} lines)` : uiText("Show less")}
         </button>
       )}
     </div>

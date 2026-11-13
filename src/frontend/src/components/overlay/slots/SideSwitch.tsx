@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 /**
  * Side — the control a repair session touches most, so it leads the ribbon
  * and keeps its words. Click to show a side; Shift-click for both. The
@@ -21,16 +22,16 @@ export function SideSwitch({ ctx }: { ctx: SlotCtx }) {
   // The flip-axis toggle sits between the halves while its slot is on.
   const showAxis = useRenderSettings().overlayLayout.some(s => s.id === 'sideFlipAxis' && s.visible);
   return (
-    <div className="overlay-seg" role="group" aria-label="Board side" data-testid="side-switch">
+    <div className="overlay-seg" role="group" aria-label={uiText("Board side")} data-testid="side-switch">
       <button
         type="button"
         className={`overlay-seg-btn${uiTop ? ' active' : ''}`}
         data-testid="side-top"
         aria-pressed={uiTop}
-        title={`Top side · ${tip}`}
+        title={uiText`Top side · ${tip}`}
         onClick={(e) => boardStore.selectTop(e.shiftKey)}
       >
-        <IconStackFront size={15} stroke={1.9} /><span className="overlay-seg-lbl">Top</span>
+        <IconStackFront size={15} stroke={1.9} /><span className="overlay-seg-lbl">{uiText("Top")}</span>
       </button>
       {showAxis && <FlipAxisButton ctx={ctx} />}
       <button
@@ -38,10 +39,10 @@ export function SideSwitch({ ctx }: { ctx: SlotCtx }) {
         className={`overlay-seg-btn${uiBottom ? ' active' : ''}`}
         data-testid="side-bottom"
         aria-pressed={uiBottom}
-        title={`Bottom side · ${tip}`}
+        title={uiText`Bottom side · ${tip}`}
         onClick={(e) => boardStore.selectBottom(e.shiftKey)}
       >
-        <IconStackBack size={15} stroke={1.9} /><span className="overlay-seg-lbl">Bottom</span>
+        <IconStackBack size={15} stroke={1.9} /><span className="overlay-seg-lbl">{uiText("Bottom")}</span>
       </button>
     </div>
   );

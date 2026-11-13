@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useRef, useEffect, useCallback, useState, useMemo, useSyncExternalStore, useId } from 'react';
 import type { IDockviewPanelProps } from 'dockview-react';
 import { usePdfDoc } from '../hooks/usePdfStore';
@@ -3905,7 +3906,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
       return (
         <div className="pdf-viewer pdf-empty" data-testid="pdf-load-state" data-phase="failed">
           <div className="pdf-load-state">
-            <span className="pdf-load-title">Could not open <span translate="no">{pdfFileName}</span></span>
+            <span className="pdf-load-title">{uiText("Could not open ")}<span translate="no">{pdfFileName}</span></span>
             {load.error && <span className="pdf-load-detail">{load.error}</span>}
           </div>
         </div>
@@ -3919,7 +3920,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
             <span className="pdf-load-title" translate="no">{pdfFileName}</span>
             <span className="pdf-load-detail">{`${PDF_LOAD_PHASE_TEXT[load?.phase ?? 'reading']}…`}</span>
           </div>
-        ) : <span>No PDF loaded.</span>}
+        ) : <span>{uiText("No PDF loaded.")}</span>}
       </div>
     );
   }
@@ -3927,7 +3928,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
   if (error) {
     return (
       <div className="pdf-viewer pdf-empty">
-        <span style={{ color: '#ff6666' }}>PDF error: {error}</span>
+        <span style={{ color: '#ff6666' }}>{uiText("PDF error: ")}{error}</span>
       </div>
     );
   }
@@ -3989,8 +3990,8 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
             className={`pdf-toolbar-btn${rotation !== 0 ? ' active' : ''}`}
             onClick={() => { pdfStore.switchTo(pdfFileName); pdfStore.rotate(pdfFileName, 'cw'); }}
             title={rotation === 0
-              ? 'Rotate page 90° clockwise (Q/E or ⌘←/→)'
-              : `Rotated ${rotation}° — click to rotate further (Q/E or ⌘←/→)`}
+              ? uiText("Rotate page 90° clockwise (Q/E or ⌘←/→)")
+              : uiText`Rotated ${rotation}° — click to rotate further (Q/E or ⌘←/→)`}
           >
             <IconRotateClockwise size={14} />
           </button>
@@ -3999,8 +4000,8 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
             className={`pdf-toolbar-btn${mirror ? ' active' : ''}`}
             onClick={() => { pdfStore.switchTo(pdfFileName); pdfStore.toggleMirror(pdfFileName); }}
             title={mirror
-              ? 'Mirrored horizontally — click to un-mirror (⌘↑)'
-              : 'Mirror horizontally — flip left↔right (⌘↑)'}
+              ? uiText("Mirrored horizontally — click to un-mirror (⌘↑)")
+              : uiText("Mirror horizontally — flip left↔right (⌘↑)")}
           >
             <IconSwitchHorizontal size={14} />
           </button>
@@ -4011,10 +4012,10 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
               onClick={() => { if (rotation !== 0) return; pdfStore.switchTo(pdfFileName); pdfStore.togglePageMode(pdfFileName); }}
               disabled={rotation !== 0}
               title={rotation !== 0
-                ? 'Rotated pages are always shown one at a time'
+                ? uiText("Rotated pages are always shown one at a time")
                 : (pageMode === 'single'
-                    ? 'Single page — click for continuous scroll'
-                    : 'Continuous scroll — click for single page')}
+                    ? uiText("Single page — click for continuous scroll")
+                    : uiText("Continuous scroll — click for single page"))}
             >
               {singlePageMode ? <IconFile size={14} /> : <IconFileStack size={14} />}
             </button>
@@ -4030,8 +4031,8 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
                 type="text"
                 className="pdf-search-input"
                 data-pdf-file={pdfFileName}
-                placeholder="Search (multi-term: 10UF 25V)"
-                title="Enter / ↓ / Cmd+F — next match. Shift+Enter / ↑ / Shift+Cmd+F — previous match."
+                placeholder={uiText("Search (multi-term: 10UF 25V)")}
+                title={uiText("Enter / ↓ / Cmd+F — next match. Shift+Enter / ↑ / Shift+Cmd+F — previous match.")}
                 defaultValue={searchQuery}
                 // On focus the whole list shows whatever the field holds (Preview's
                 // magnifier menu); typing then filters it.
@@ -4089,13 +4090,13 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
             </form>
             {matches.length > 0 ? (
               <>
-                <button className="pdf-search-nav-btn" onClick={() => { pdfStore.switchTo(pdfFileName); pdfStore.prevMatch(); }} title="Previous match">&#9650;</button>
+                <button className="pdf-search-nav-btn" onClick={() => { pdfStore.switchTo(pdfFileName); pdfStore.prevMatch(); }} title={uiText("Previous match")}>&#9650;</button>
                 <span className="pdf-search-counter">
                   {matchGroupCount > 0
                     ? `${activeGroupIndex + 1}/${matchGroupCount}`
                     : `${activeMatchIndex + 1}/${matches.length}`}
                 </span>
-                <button className="pdf-search-nav-btn" onClick={() => { pdfStore.switchTo(pdfFileName); pdfStore.nextMatch(); }} title="Next match">&#9660;</button>
+                <button className="pdf-search-nav-btn" onClick={() => { pdfStore.switchTo(pdfFileName); pdfStore.nextMatch(); }} title={uiText("Next match")}>&#9660;</button>
               </>
             ) : searchQuery && !textExtracting ? (
               // Zero results: say so instead of showing nothing, and offer the
@@ -4104,19 +4105,17 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
                 <span className="pdf-search-counter">0/0</span>
                 <button
                   className="pdf-search-nav-btn pdf-search-library-btn"
-                  title={`No matches here — search all library PDFs for "${searchQuery}"`}
+                  title={uiText`No matches here — search all library PDFs for "${searchQuery}"`}
                   onClick={() => {
                     databankStore.requestPdfSearch(searchQuery, 'all');
                     showSidebarTab('library');
                   }}
-                >
-                  Library&nbsp;⌕
-                </button>
+                >{uiText("Library ⌕")}</button>
               </>
             ) : null}
           </div>
           {recentsOpen && pdfRecents.length > 0 && (
-            <div className="pdf-search-recents" data-testid="pdf-search-recents" role="listbox" aria-label="Recent searches">
+            <div className="pdf-search-recents" data-testid="pdf-search-recents" role="listbox" aria-label={uiText("Recent searches")}>
               {pdfRecents.map((text, i) => (
                 <div
                   key={text}
@@ -4136,12 +4135,10 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
             </div>
           )}
           {lookupHint && (
-            <div className="pdf-lookup-hint">
-              Double-click <b>{lookupHint}</b> to search
-            </div>
+            <div className="pdf-lookup-hint">{uiText("Double-click ")}<b>{lookupHint}</b>{uiText(" to search")}</div>
           )}
           {showNavHint && !recentsOpen && (
-            <div className="pdf-nav-hint">Enter / ↑↓ to navigate results</div>
+            <div className="pdf-nav-hint">{uiText("Enter / ↑↓ to navigate results")}</div>
           )}
           {isMultiTerm && (
             <div className="pdf-multiterm-dropdown">
@@ -4164,7 +4161,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
                 <span>{multiTermXGap}x</span>
               </div>
               <span className="pdf-multiterm-hint">
-                {matchGroupCount > 0 ? `${matchGroupCount} groups` : 'no matches'}
+                {matchGroupCount > 0 ? uiText`${matchGroupCount} groups` : uiText("no matches")}
               </span>
             </div>
           )}
@@ -4174,7 +4171,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
           <button
             className="pdf-toolbar-btn pdf-bookmark-add"
             onClick={handleAddBookmark}
-            title="Bookmark current view"
+            title={uiText("Bookmark current view")}
           >
             <IconBookmarkPlus size={14} />
           </button>
@@ -4197,7 +4194,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
                 onDoubleClick={() => handleBookmarkDblClick(bm.id)}
                 onContextMenu={e => handleBookmarkRightClick(e, bm.id)}
                 onMouseDown={e => handleBookmarkMiddleClick(e, bm.id)}
-                title={`Page ${bm.page} @ ${Math.round(bm.zoom * 100)}%\nClick: go | Dbl-click: update | Right-click: delete | Opt/Middle-click: rename`}
+                title={uiText`Page ${bm.page} @ ${Math.round(bm.zoom * 100)}%\nClick: go | Dbl-click: update | Right-click: delete | Opt/Middle-click: rename`}
               >
                 {bm.label}
               </button>
@@ -4222,7 +4219,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
           <button
             className="pdf-toolbar-btn pdf-zoom-group"
             onClick={handleFitWidth}
-            title="Fit to page width (Space)"
+            title={uiText("Fit to page width (Space)")}
           >
             <IconArrowAutofitWidth size={14} />
             <span className="pdf-zoom-info" ref={zoomInfoRef} translate="no">{`${Math.round(zoomRef.current * 100)}%`}</span>
@@ -4231,14 +4228,14 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
       </div>
 
       {textExtracting && (
-        <div className="pdf-text-extract-bar" title={`Indexing text: ${Math.round(textExtractProgress * 100)}%`}>
+        <div className="pdf-text-extract-bar" title={uiText`Indexing text: ${Math.round(textExtractProgress * 100)}%`}>
           <div className="pdf-text-extract-fill" style={{ width: `${textExtractProgress * 100}%` }} />
         </div>
       )}
       {textExtracting && (
         <div className="pdf-text-extract-chip" data-testid="pdf-text-extract-chip"
-             title="Search and lookups find what has been indexed so far">
-          {`Indexing text ${Math.round(textExtractProgress * 100)} %`}
+             title={uiText("Search and lookups find what has been indexed so far")}>
+          {uiText`Indexing text ${Math.round(textExtractProgress * 100)} %`}
         </div>
       )}
       {load?.phase === 'rendering' && (
@@ -4330,7 +4327,7 @@ export function PdfViewerPanel(props: IDockviewPanelProps<{ pdfFileName?: string
         onDoubleClick={handleTextDblClick}
         onContextMenu={handleContextMenu}
       />
-        {glyphLoading && <div className="pdf-glyph-loading">Parsing fonts...</div>}
+        {glyphLoading && <div className="pdf-glyph-loading">{uiText("Parsing fonts...")}</div>}
         <div
           ref={wrapperRef}
           className="pdf-page-wrapper"

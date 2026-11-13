@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /** A page that outlives its build. Every chunk name carries a content hash,
  *  so when the server is updated under an open tab (a container update, a
  *  dev redeploy to :1234) the next lazy import asks for a file that no longer
@@ -17,9 +18,9 @@ export function installStaleBuildGuard() {
     if (told) return;
     told = true;
     boardStore.addToast(
-      'BoardRipper was updated on the server while this tab was open. Reload to continue.',
+      uiText("BoardRipper was updated on the server while this tab was open. Reload to continue."),
       'error',
-      { label: 'Reload', run: () => location.reload() },
+      { label: uiText("Reload"), run: () => location.reload() },
       600_000,
     );
   });

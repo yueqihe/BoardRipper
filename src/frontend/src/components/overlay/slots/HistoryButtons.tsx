@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 /**
  * History ‹ › — Preview's Go ▸ Back / Forward for the board ribbon. A touch
  * screen has no ⌘, so this is where a tablet walks the timeline; on a desktop
@@ -35,7 +36,7 @@ function useHoldMenu(dir: -1 | 1) {
   const onClick = useCallback((step: () => void) => { if (fired.current) { fired.current = false; return; } step(); }, []);
   const onContextMenu = useCallback((e: React.MouseEvent) => { e.preventDefault(); cancel(); open(e.clientX, e.clientY); }, [cancel, open]);
   const items = (): QuickMenuItem[] => {
-    const out: QuickMenuItem[] = [{ kind: 'header', label: dir < 0 ? 'Back to' : 'Forward to' }];
+    const out: QuickMenuItem[] = [{ kind: 'header', label: dir < 0 ? uiText("Back to") : uiText("Forward to") }];
     const { entries, cursor, layers } = navHistoryStore;
     for (let i = cursor + dir, n = 0; i >= 0 && i < entries.length && n < MENU_DEPTH; i += dir) {
       const e = entries[i];
@@ -43,7 +44,7 @@ function useHoldMenu(dir: -1 | 1) {
       n++;
       out.push({ label: e.label || e.place?.fileName || '…', disabled: !entryReachable(e), testId: `history-menu-${e.id}`, onSelect: () => historyJumpTo(e.id) });
     }
-    if (out.length === 1) out.push({ label: 'Nothing this way', disabled: true, onSelect: () => {} });
+    if (out.length === 1) out.push({ label: uiText("Nothing this way"), disabled: true, onSelect: () => {} });
     return out;
   };
   return { menu, close: () => setMenu(null), onPointerDown, onPointerUp: cancel, onPointerLeave: cancel, onClick, onContextMenu, items };
@@ -62,14 +63,14 @@ export function HistoryButtons() {
   const back = useHoldMenu(-1);
   const fwd = useHoldMenu(1);
   return (
-    <div className="overlay-seg overlay-history" role="group" aria-label="History" data-testid="history-nav">
+    <div className="overlay-seg overlay-history" role="group" aria-label={uiText("History")} data-testid="history-nav">
       <button
         type="button"
         className="overlay-seg-btn overlay-history-btn"
         data-testid="history-back"
         disabled={!canBack}
-        title={`Back${prev ? ` to ${prev.label}` : ''} · ${formatShortcut('historyBack')} · hold for the list`}
-        aria-label="Back"
+        title={uiText`Back${prev ? ` to ${prev.label}` : ''} · ${formatShortcut('historyBack')} · hold for the list`}
+        aria-label={uiText("Back")}
         onPointerDown={back.onPointerDown}
         onPointerUp={back.onPointerUp}
         onPointerLeave={back.onPointerLeave}
@@ -83,8 +84,8 @@ export function HistoryButtons() {
         className="overlay-seg-btn overlay-history-btn"
         data-testid="history-forward"
         disabled={!canForward}
-        title={`Forward${next ? ` to ${next.label}` : ''} · ${formatShortcut('historyForward')} · hold for the list`}
-        aria-label="Forward"
+        title={uiText`Forward${next ? ` to ${next.label}` : ''} · ${formatShortcut('historyForward')} · hold for the list`}
+        aria-label={uiText("Forward")}
         onPointerDown={fwd.onPointerDown}
         onPointerUp={fwd.onPointerUp}
         onPointerLeave={fwd.onPointerLeave}

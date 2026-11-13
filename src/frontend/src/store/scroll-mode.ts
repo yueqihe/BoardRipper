@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useSyncExternalStore } from 'react';
 import { renderSettingsStore } from './render-settings';
 import {
@@ -44,7 +45,7 @@ export function scrollSwapTooltip(surface: 'board' | 'pdf' = 'pdf'): string {
   const name = (a: ScrollAction) => ACTION_LABEL[a];
   const bareNext = b.bare === 'pan' ? 'Zoom' : 'Pan';
   return `${SLOT_LABEL.bare}: ${name(b.bare)} · ${SLOT_LABEL.shift}: ${name(b.shift)} · ${SLOT_LABEL.meta}: ${name(b.meta)}`
-    + ` — click to switch Scroll to ${bareNext}`;
+    + uiText` — click to switch Scroll to ${bareNext}`;
 }
 
 /**

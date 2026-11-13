@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Interface scaling slider — exposes themeStore.scale to the user.
  * Used in two places:
@@ -63,7 +64,7 @@ export function InterfaceScaleSlider() {
   return (
     <div className="ui-scale-full">
       <div className="ui-scale-full-label">
-        <span>Interface scale</span>
+        <span>{uiText("Interface scale")}</span>
         <span className="ui-scale-full-readout">{formatPct(display)}</span>
       </div>
       <div className="ui-scale-full-controls">
@@ -80,14 +81,10 @@ export function InterfaceScaleSlider() {
           onKeyUp={commit}
           onBlur={commit}
           onDoubleClick={onReset}
-          aria-label="Interface scale"
+          aria-label={uiText("Interface scale")}
         />
       </div>
-      <div className="ui-scale-full-hint">
-        Scales the whole interface: panels, toolbar, dialogs and this page. The board
-        and the PDF keep their resolution. Applied when you release the slider.
-        Double-click the slider to go back to 100%.
-      </div>
+      <div className="ui-scale-full-hint">{uiText("Scales the whole interface: panels, toolbar, dialogs and this page. The board and the PDF keep their resolution. Applied when you release the slider. Double-click the slider to go back to 100%.")}</div>
     </div>
   );
 }

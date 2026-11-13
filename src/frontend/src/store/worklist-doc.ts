@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * The worklist as a document of its own — what is stored on the server, in
  * the desktop app's `worklists/` folder and in the lite build's IndexedDB
@@ -242,7 +243,7 @@ export function docsFromLegacy(rec: LegacyBoardRecord, boardOf: (fileName: strin
       } else {
         (doc.messages ??= []).push({
           id: `mig_${m.id}`, role: 'agent', at: m.requestedAt ?? t,
-          text: `Measurement (${m.kind}) on ${m.target}: ${m.value ? `${m.value} ${m.unit ?? ''}`.trim() : m.prompt}`,
+          text: uiText`Measurement (${m.kind}) on ${m.target}: ${m.value ? `${m.value} ${m.unit ?? ''}`.trim() : m.prompt}`,
         });
       }
     }

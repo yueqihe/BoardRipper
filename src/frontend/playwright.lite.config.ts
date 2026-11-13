@@ -29,6 +29,7 @@ export default defineConfig({
       port: DEV_PORT,
       reuseExistingServer: true,
       timeout: 20000,
+      env: { BR_DEFAULT_LANGUAGE: 'en' },
     },
     {
       // Builds first, then serves the bundle — generous timeout for tsc+vite.
@@ -36,6 +37,7 @@ export default defineConfig({
       port: DIST_PORT,
       reuseExistingServer: true,
       timeout: 240000,
+      env: { BR_DEFAULT_LANGUAGE: 'en' },
     },
   ],
 });

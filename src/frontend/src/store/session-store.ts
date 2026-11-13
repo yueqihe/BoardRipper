@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { boardStore } from './board-store';
 import { boardCache } from './board-cache';
 import { pdfStore } from './pdf-store';
@@ -182,10 +183,10 @@ export async function restoreSession(session: SavedSession): Promise<void> {
   }
 
   if (opened > 0 && unavailable.length === 0) {
-    boardStore.addToast(`Reopened ${opened} item${opened > 1 ? 's' : ''} from your last session`, 'info');
+    boardStore.addToast(uiText`Reopened ${opened} item${opened > 1 ? uiText('plural.s') : ''} from your last session`, 'info');
   } else if (unavailable.length > 0) {
     boardStore.addToast(
-      `Reopened ${opened} · ${unavailable.length} unavailable (re-drop): ${unavailable.slice(0, 3).join(', ')}${unavailable.length > 3 ? '…' : ''}`,
+      uiText`Reopened ${opened} · ${unavailable.length} unavailable (re-drop): ${unavailable.slice(0, 3).join(', ')}${unavailable.length > 3 ? '…' : ''}`,
       'error',
     );
   }

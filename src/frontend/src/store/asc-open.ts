@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Open a split `.asc` boardview as one board.
  *
@@ -66,7 +67,7 @@ export async function loadBoardWithAscSiblings(clicked: File, src: AscFolderSour
   await boardStore.loadFiles(files);
   if (files.length > 1) {
     boardStore.addToast(
-      `Opened ${files.length} .asc sections as one board: ${files.map(f => f.name).join(', ')}`,
+      uiText`Opened ${files.length} .asc sections as one board: ${files.map(f => f.name).join(', ')}`,
       'info',
     );
   }

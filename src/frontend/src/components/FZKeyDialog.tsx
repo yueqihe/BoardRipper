@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Modal that prompts the user to provide the RC6 key needed to decrypt
  * encrypted ASUS `.fz` — or ASRock `.cae` — boardview files.
@@ -58,34 +59,22 @@ function FZKeyDialogBody() {
   return (
     <div className="library-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="fz-key-title">
       <div className="library-modal library-modal-wide">
-        <div className="library-modal-title" id="fz-key-title">{label} decryption key required</div>
+        <div className="library-modal-title" id="fz-key-title">{label}{uiText(" decryption key required")}</div>
         <div className="library-modal-filename">
-          {label} boardview files are RC6-encrypted. BoardRipper does not ship the key —
-          {kind === 'fz'
-            ? ' fetch it from a public mirror or paste it from any source you trust.'
-            : ' paste it from any source you trust. This one has no public mirror here, and no parity fingerprint to check it against, so it is accepted on structure and proven when a file actually decrypts with it.'}
+          {label}{uiText(" boardview files are RC6-encrypted. BoardRipper does not ship the key —")}{kind === 'fz'
+            ? uiText(" fetch it from a public mirror or paste it from any source you trust.")
+            : uiText(" paste it from any source you trust. This one has no public mirror here, and no parity fingerprint to check it against, so it is accepted on structure and proven when a file actually decrypts with it.")}
           {hasKey && ' A key is already stored.'}
         </div>
 
         <details>
-          <summary style={{ cursor: 'pointer', fontSize: 11, color: 'var(--text-secondary)' }}>
-            Why isn't the key bundled?
-          </summary>
-          <div className="library-modal-filename" style={{ marginTop: 6 }}>
-            Anti-circumvention laws in some jurisdictions — DMCA §1201 in the US,
-            InfoSoc Directive Art. 6 / CDSM in the EU — restrict the distribution
-            of tools that decrypt protected files, even for repair or
-            interoperability. Upstream OpenBoardView takes the same position
-            (<code>FZFile::getBuiltinKey()</code> returns empty). The key is
-            mirrored publicly on GitHub; retrieving and using it is the user's
-            decision, not BoardRipper's. BoardRipper makes no legal claim to
-            the key and provides no warranty for its use.
-          </div>
+          <summary style={{ cursor: 'pointer', fontSize: 11, color: 'var(--text-secondary)' }}>{uiText("Why isn't the key bundled?")}</summary>
+          <div className="library-modal-filename" style={{ marginTop: 6 }}>{uiText("Anti-circumvention laws in some jurisdictions — DMCA §1201 in the US, InfoSoc Directive Art. 6 / CDSM in the EU — restrict the distribution of tools that decrypt protected files, even for repair or interoperability. Upstream OpenBoardView takes the same position (")}<code>FZFile::getBuiltinKey()</code>{uiText(" returns empty). The key is mirrored publicly on GitHub; retrieving and using it is the user's decision, not BoardRipper's. BoardRipper makes no legal claim to the key and provides no warranty for its use.")}</div>
         </details>
 
 
         {kind === 'fz' && <div className="library-modal-field">
-          <span>Fetch from a public GitHub mirror (tries {FZ_KEY_SOURCES.length} in order)</span>
+          <span>{uiText("Fetch from a public GitHub mirror (tries ")}{FZ_KEY_SOURCES.length}{uiText(" in order)")}</span>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               type="button"
@@ -94,21 +83,21 @@ function FZKeyDialogBody() {
               disabled={busy}
               style={{ padding: '4px 12px', borderRadius: 3, cursor: busy ? 'not-allowed' : 'pointer', fontSize: 12 }}
             >
-              {busy ? 'Fetching…' : 'Fetch'}
+              {busy ? uiText("Fetching…") : uiText("Fetch")}
             </button>
             {FZ_KEY_SOURCES.map((s, i) => (
               <a key={s.url} href={s.url} target="_blank" rel="noreferrer noopener" style={{ fontSize: 11, color: 'var(--accent)' }}>
-                {i === 0 ? 'primary' : `mirror ${i + 1}`}
+                {i === 0 ? uiText("primary") : uiText`mirror ${i + 1}`}
               </a>
             ))}
           </div>
         </div>}
 
         <div className="library-modal-field">
-          <span>{kind === 'fz' ? 'Or paste' : 'Paste'} 44 hex words (0x… tokens, any whitespace)</span>
+          <span>{kind === 'fz' ? uiText("Or paste") : uiText("Paste")}{uiText(" 44 hex words (0x… tokens, any whitespace)")}</span>
           <textarea
             spellCheck={false}
-            placeholder="0x25d8d248 0xe1502405 0x56b5d486 0x69213fe0&#10;…44 words total…"
+            placeholder={uiText("0x25d8d248 0xe1502405 0x56b5d486 0x69213fe0&#10;…44 words total…")}
             value={pasted}
             onChange={(e) => setPasted(e.target.value)}
           />
@@ -119,16 +108,12 @@ function FZKeyDialogBody() {
 
         <div className="library-modal-actions">
           {hasKey && (
-            <button type="button" onClick={() => { fzKeyStore.clearKey(kind); setInfo('Stored key cleared.'); }} disabled={busy}>
-              Clear stored
-            </button>
+            <button type="button" onClick={() => { fzKeyStore.clearKey(kind); setInfo('Stored key cleared.'); }} disabled={busy}>{uiText("Clear stored")}</button>
           )}
           <button type="button" onClick={() => fzKeyStore.closeDialog()} disabled={busy}>
-            {hasKey ? 'Close' : 'Cancel'}
+            {hasKey ? uiText("Close") : uiText("Cancel")}
           </button>
-          <button type="button" className="library-modal-save" onClick={onSave} disabled={busy || pasted.trim().length === 0}>
-            Validate & save
-          </button>
+          <button type="button" className="library-modal-save" onClick={onSave} disabled={busy || pasted.trim().length === 0}>{uiText("Validate & save")}</button>
         </div>
       </div>
     </div>

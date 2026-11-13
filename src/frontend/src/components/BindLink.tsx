@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useState, useRef, useEffect } from 'react';
 import { uiZoom } from '../store/ui-zoom';
 import { createPortal } from 'react-dom';
@@ -123,9 +124,7 @@ export function BindLink({ boundNames, options, onToggle, title, primaryLabel, u
       <div
         className="bind-link-option bind-link-clear"
         onClick={handleClear}
-      >
-        (none)
-      </div>
+      >{uiText("(none)")}</div>
       {options.map(name => {
         const isBound = boundNames.includes(name);
         return (
@@ -149,9 +148,7 @@ export function BindLink({ boundNames, options, onToggle, title, primaryLabel, u
           className="bind-link-option bind-link-clear"
           data-testid="bind-link-pdf-clear"
           onClick={(e) => { e.stopPropagation(); secondary.onToggle(null); }}
-        >
-          (none)
-        </div>
+        >{uiText("(none)")}</div>
         {secondary.options.map(name => {
           const isBound = secondary.boundNames.includes(name);
           return (
@@ -177,7 +174,7 @@ export function BindLink({ boundNames, options, onToggle, title, primaryLabel, u
         ref={btnRef}
         className={`bind-link-btn ${linked ? 'bound' : ''}`}
         onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
-        title={title ?? (linked ? `Linked: ${boundNames.join(', ')}` : 'Not linked')}
+        title={title ?? (linked ? uiText`Linked: ${boundNames.join(', ')}` : uiText("Not linked"))}
       >
         {linked ? <IconLink size={16} stroke={2} /> : <IconLinkOff size={16} stroke={2} />}
         {!linked && unlinkedLabel && (

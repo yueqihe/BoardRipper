@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 /**
  * The board transforms that moved down from the app toolbar in v0.39:
  * Butterfly (both sides side by side), rotate left / right, PCB traces, and
@@ -22,7 +23,7 @@ export function ButterflyButton({ ctx }: { ctx: SlotCtx }) {
       className={`board-netlines-toggle${on ? ' active' : ''}`}
       data-testid="butterfly-btn"
       aria-pressed={on}
-      title="Butterfly · both sides side by side"
+      title={uiText("Butterfly · both sides side by side")}
       onClick={() => boardStore.toggleButterfly()}
     >
       <IconFlipHorizontal size={16} />
@@ -33,7 +34,7 @@ export function ButterflyButton({ ctx }: { ctx: SlotCtx }) {
 export function RotateCcwButton() {
   return (
     <button type="button" className="board-netlines-toggle" data-testid="rotate-ccw"
-      title={`Rotate left 90° (${formatShortcut('rotateCCW')})`} onClick={() => boardStore.rotateCCW()}>
+      title={uiText`Rotate left 90° (${formatShortcut('rotateCCW')})`} onClick={() => boardStore.rotateCCW()}>
       <IconRotate size={16} />
     </button>
   );
@@ -42,7 +43,7 @@ export function RotateCcwButton() {
 export function RotateCwButton() {
   return (
     <button type="button" className="board-netlines-toggle" data-testid="rotate-cw"
-      title={`Rotate right 90° (${formatShortcut('rotateCW')})`} onClick={() => boardStore.rotateCW()}>
+      title={uiText`Rotate right 90° (${formatShortcut('rotateCW')})`} onClick={() => boardStore.rotateCW()}>
       <IconRotateClockwise size={16} />
     </button>
   );
@@ -57,7 +58,7 @@ export function TracesButton({ ctx }: { ctx: SlotCtx }) {
   if (t.butterfly) {
     return (
       <button type="button" className="board-netlines-toggle" data-testid="traces-btn" disabled
-        aria-pressed={false} title="PCB traces are hidden while Butterfly is on">
+        aria-pressed={false} title={uiText("PCB traces are hidden while Butterfly is on")}>
         <IconRoute size={16} />
       </button>
     );
@@ -68,7 +69,7 @@ export function TracesButton({ ctx }: { ctx: SlotCtx }) {
       className={`board-netlines-toggle${t.showTraces ? ' active' : ''}`}
       data-testid="traces-btn"
       aria-pressed={t.showTraces}
-      title={t.showTraces ? 'PCB traces: shown' : 'PCB traces: hidden'}
+      title={t.showTraces ? uiText("PCB traces: shown") : uiText("PCB traces: hidden")}
       onClick={() => boardStore.toggleTraces()}
     >
       <IconRoute size={16} />
@@ -91,7 +92,7 @@ export function TransformMenuButton({ ctx }: { ctx: SlotCtx }) {
         data-testid="transform-menu"
         aria-haspopup="menu"
         aria-expanded={!!menu}
-        title="More transforms: 180°, mirror, flip axis"
+        title={uiText("More transforms: 180°, mirror, flip axis")}
         onClick={(e) => {
           const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
           setMenu(menu ? null : { x: r.left, y: r.bottom + 4 });
@@ -107,15 +108,15 @@ export function TransformMenuButton({ ctx }: { ctx: SlotCtx }) {
           ariaLabel="More transforms"
           testId="transform-menu-popup"
           items={[
-            { kind: 'header', label: 'Transform' },
-            { label: 'Rotate 180°', testId: 'transform-rotate-180', onSelect: () => boardStore.rotate180() },
-            { label: 'Mirror horizontally', testId: 'transform-mirror-h', hint: formatShortcut('mirrorBoard'), onSelect: () => boardStore.flipHorizontal() },
-            { label: 'Mirror vertically', testId: 'transform-mirror-v', onSelect: () => boardStore.flipVertical() },
+            { kind: 'header', label: uiText("Transform") },
+            { label: uiText("Rotate 180°"), testId: 'transform-rotate-180', onSelect: () => boardStore.rotate180() },
+            { label: uiText("Mirror horizontally"), testId: 'transform-mirror-h', hint: formatShortcut('mirrorBoard'), onSelect: () => boardStore.flipHorizontal() },
+            { label: uiText("Mirror vertically"), testId: 'transform-mirror-v', onSelect: () => boardStore.flipVertical() },
             { kind: 'sep' },
-            { kind: 'header', label: 'Flip axis' },
-            { kind: 'check', label: 'Vertical', checked: screenVertical, testId: 'transform-flip-vertical',
+            { kind: 'header', label: uiText("Flip axis") },
+            { kind: 'check', label: uiText("Vertical"), checked: screenVertical, testId: 'transform-flip-vertical',
               onSelect: () => { if (!screenVertical) boardStore.toggleFlipAxis(); } },
-            { kind: 'check', label: 'Horizontal', checked: !screenVertical, testId: 'transform-flip-horizontal',
+            { kind: 'check', label: uiText("Horizontal"), checked: !screenVertical, testId: 'transform-flip-horizontal',
               onSelect: () => { if (screenVertical) boardStore.toggleFlipAxis(); } },
           ]}
         />
@@ -143,7 +144,7 @@ export function FlipAxisButton({ ctx }: { ctx: SlotCtx }) {
       className="overlay-seg-btn overlay-seg-axis"
       data-testid="flip-axis-btn"
       data-axis={vertical ? 'vertical' : 'horizontal'}
-      title={`Flip axis: ${vertical ? 'vertical' : 'horizontal'} — click for ${vertical ? 'horizontal' : 'vertical'}`}
+      title={uiText`Flip axis: ${vertical ? 'vertical' : 'horizontal'} — click for ${vertical ? 'horizontal' : 'vertical'}`}
       onClick={() => boardStore.toggleFlipAxis()}
     >
       <Icon size={16} />

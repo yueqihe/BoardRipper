@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Input gesture recognizer — classifies wheel/pointer input and maps a
  * demonstrated gesture onto BoardRipper's pan/zoom settings.
@@ -74,10 +75,10 @@ export interface GestureVerdict {
 
 export function deltaModeLabel(mode: number): string {
   switch (mode) {
-    case 0: return 'pixel';
-    case 1: return 'line';
-    case 2: return 'page';
-    default: return `mode ${mode}`;
+    case 0: return uiText("pixel");
+    case 1: return uiText("line");
+    case 2: return uiText("page");
+    default: return uiText`mode ${mode}`;
   }
 }
 
@@ -89,9 +90,9 @@ function modifierOf(e: { shiftKey: boolean; metaKey: boolean }): GestureModifier
 
 function modifierLabel(m: GestureModifier): string {
   switch (m) {
-    case 'shift': return 'Shift + ';
-    case 'meta': return 'Cmd/Ctrl + ';
-    case 'ctrl': return 'Ctrl + ';
+    case 'shift': return uiText("Shift + ");
+    case 'meta': return uiText("Cmd/Ctrl + ");
+    case 'ctrl': return uiText("Ctrl + ");
     case 'none': return '';
   }
 }
@@ -157,7 +158,7 @@ export class WheelGestureClassifier {
         verdict: {
           device: 'trackpad-pinch',
           modifier: 'ctrl',
-          label: 'Trackpad pinch',
+          label: uiText("Trackpad pinch"),
           reasons,
           confident: true,
         },
@@ -196,7 +197,7 @@ export class WheelGestureClassifier {
 
     const device: GestureDevice = this.burstIsWheel ? 'mouse-wheel' : 'trackpad-swipe';
     const modifier = modifierOf(e);
-    const deviceLabel = device === 'mouse-wheel' ? 'mouse wheel' : 'trackpad swipe';
+    const deviceLabel = device === 'mouse-wheel' ? uiText("mouse wheel") : uiText("trackpad swipe");
 
     return {
       sample,
@@ -225,7 +226,7 @@ export function classifyPointerDrag(s: PointerSample): GestureVerdict {
   return {
     device: 'drag',
     modifier,
-    label: `${modifierLabel(modifier)}${buttonName}-drag (${s.pointerType})`,
+    label: uiText`${modifierLabel(modifier)}${buttonName}-drag (${s.pointerType})`,
     reasons,
     confident,
   };
@@ -497,7 +498,7 @@ function recommendPdf(action: Action, device: GestureDevice, modifier: GestureMo
     return { ok: false, summary: 'Unsupported modifier for PDF scroll binding.' };
   }
   const next = assignPdfSlot(currentPdf, slot, pdfAction);
-  const slotLabel = slot === 'bare' ? 'Bare scroll' : slot === 'shift' ? 'Shift+scroll' : 'Cmd/Ctrl+scroll';
+  const slotLabel = slot === 'bare' ? uiText("Bare scroll") : slot === 'shift' ? uiText("Shift+scroll") : uiText("Cmd/Ctrl+scroll");
   return {
     ok: true,
     summary: `${slotLabel} will ${action.toUpperCase()} the PDF.`,

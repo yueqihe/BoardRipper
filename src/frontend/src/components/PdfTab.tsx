@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useCallback, useRef, useSyncExternalStore } from 'react';
 import type { IDockviewPanelHeaderProps } from 'dockview-react';
 import { useBoardStore } from '../hooks/useBoardStore';
@@ -126,15 +127,15 @@ export function PdfTab(props: IDockviewPanelHeaderProps<{ pdfFileName?: string }
             unlinkedLabel="Link board…"
             fixedDropdown
             title={boundBoardTabs.length > 0
-              ? `Board: ${boundBoardTabs.map(t => t.fileName).join(', ')} — click to manage`
-              : 'Link this PDF to a boardview'}
+              ? uiText`Board: ${boundBoardTabs.map(t => t.fileName).join(', ')} — click to manage`
+              : uiText("Link this PDF to a boardview")}
             headerItem={boardTabNames.length > 0 ? {
-              label: 'auto switch boardview',
+              label: uiText("auto switch boardview"),
               checked: autoSwitchLinked,
               onChange: setAutoSwitchLinked,
             } : undefined}
             secondary={{
-              label: 'Cross-link PDF',
+              label: uiText("Cross-link PDF"),
               boundNames: linkedDoc ? [linkedDoc] : [],
               options: otherPdfs,
               onToggle: handleLinkPdf,

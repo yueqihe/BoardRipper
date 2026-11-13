@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Pure (browser-free) serialization for the worklist clipboard format.
  *
@@ -48,7 +49,7 @@ export interface ClipWorklist {
   nets: ClipNet[];
 }
 
-const MEAS_LABEL: Record<MeasKind, string> = { voltage: 'V', diode: 'Diode', resistance: 'Ω' };
+const MEAS_LABEL: Record<MeasKind, string> = { voltage: 'V', diode: uiText("Diode"), resistance: 'Ω' };
 const LABEL_MEAS: Record<string, MeasKind> = { V: 'voltage', Diode: 'diode', 'Ω': 'resistance' };
 const PART_MARKS = new Set<WorklistMark>(['replaced', 'reworked', 'cleaned']);
 const NET_MARKS = new Set<NetWorklistMark>(['short', 'solved', 'absent']);

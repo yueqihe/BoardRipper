@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Per-file board-load progress overlay.
  *
@@ -108,19 +109,19 @@ export function LoadProgressOverlay() {
         <button
           style={closeBtnStyle}
           onClick={() => loadProgressStore.dismiss()}
-          title="Dismiss"
-          aria-label="Dismiss load-progress overlay"
+          title={uiText("Dismiss")}
+          aria-label={uiText("Dismiss load-progress overlay")}
         >
           ✕
         </button>
         <h3 id="load-progress-title" style={{ margin: '0 1.5rem 0.25rem 0', fontSize: '13px' }}>
-          {failed ? '✕ Load failed' : '⟳ Loading board'}
+          {failed ? uiText("✕ Load failed") : uiText("⟳ Loading board")}
         </h3>
         <div style={{ color: '#bbb', marginBottom: '0.25rem', wordBreak: 'break-all' }}>
           <code style={{ fontSize: '11px' }} translate="no">{state.fileName ?? ''}</code>
           <span>{state.fileSize != null && state.fileSize > 0 ? ` — ${fmtBytes(state.fileSize)}` : ''}</span>
         </div>
-        <div style={{ color: '#888', marginBottom: '0.5rem' }}>Elapsed: {fmtMs(total)}</div>
+        <div style={{ color: '#888', marginBottom: '0.5rem' }}>{uiText("Elapsed: ")}{fmtMs(total)}</div>
 
         <ol style={{ margin: 0, padding: '0 0 0 1rem', listStyle: 'none', maxHeight: '180px', overflowY: 'auto' }}>
           {state.phases.map((p, i) => (
@@ -144,8 +145,7 @@ export function LoadProgressOverlay() {
 
         {state.log.length > 0 && (
           <details style={{ marginTop: '0.5rem' }}>
-            <summary style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }}>
-              Log ({state.log.length})
+            <summary style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }}>{uiText("Log (")}{state.log.length})
             </summary>
             <ol style={{ margin: '0.25rem 0 0', padding: '0 0 0 1rem', listStyle: 'none', maxHeight: '120px', overflowY: 'auto', color: '#999', fontSize: '11px' }}>
               {state.log.slice(-10).map((entry, i) => (

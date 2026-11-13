@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Board quality preset — four buttons that each write several render
  * settings at once (`store/quality-preset.ts`). Start page, beside the
@@ -31,12 +32,12 @@ export function QualityPresetCard() {
   return (
     <div className="ui-scale-full home-quality-card" data-testid="quality-preset-card">
       <div className="ui-scale-full-label">
-        <span>Board quality</span>
-        <span className="ui-scale-full-readout" translate="no" title="Board render resolution and frame-rate cap on this device">
+        <span>{uiText("Board quality")}</span>
+        <span className="ui-scale-full-readout" translate="no" title={uiText("Board render resolution and frame-rate cap on this device")}>
           {readout}
         </span>
       </div>
-      <div className="home-quality-buttons" role="radiogroup" aria-label="Board quality preset">
+      <div className="home-quality-buttons" role="radiogroup" aria-label={uiText("Board quality preset")}>
         {QUALITY_PRESETS.map((p) => (
           <button
             key={p.id}
@@ -53,9 +54,9 @@ export function QualityPresetCard() {
         ))}
       </div>
       <div className="ui-scale-full-hint">
-        <span>{preset ? preset.hint : 'Custom — settings were changed by hand in Settings ▸ Rendering.'}</span>
+        <span>{preset ? preset.hint : uiText("Custom — settings were changed by hand in Settings ▸ Rendering.")}</span>
         {isTouchPrimary() && current !== 'fast' && current !== 'fastest' && (
-          <span> If boards stutter on this tablet, try Fast.</span>
+          <span>{uiText(" If boards stutter on this tablet, try Fast.")}</span>
         )}
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { log } from './log-store';
 import { Emitter } from './emitter';
 import {
@@ -561,14 +562,14 @@ const DEFAULT_NET_COLOR_RULES: NetColorRule[] = [
  *  outline-only (the old no-connect rendering). */
 export const DEFAULT_PIN_GROUPS: PinGroup[] = [
   {
-    id: 'power', label: 'Power', outlineOnly: false,
+    id: 'power', label: uiText("Power"), outlineOnly: false,
     rules: [
       { id: 'power-v',  keywords: 'VCC, 3VA, VDD, VSG, 3VS, 5VS', color: '#dd3333' },
       { id: 'power-pp', keywords: 'PP',                           color: '#dd6633' },
     ],
   },
   {
-    id: 'ground', label: 'Ground', outlineOnly: false,
+    id: 'ground', label: uiText("Ground"), outlineOnly: false,
     rules: [
       // Separate / analog grounds get the lighter shade. Listed BEFORE the
       // main GND rule because substring matching would otherwise let AGND fall
@@ -578,7 +579,7 @@ export const DEFAULT_PIN_GROUPS: PinGroup[] = [
     ],
   },
   {
-    id: 'datalines', label: 'Datalines', outlineOnly: false,
+    id: 'datalines', label: uiText("Datalines"), outlineOnly: false,
     rules: [
       { id: 'serial', keywords: 'I2C, SPI, SDA, SCL, SPMI, UART, SMB', color: '#d96bb0' },
       { id: 'pci',    keywords: 'PCI',                                 color: '#3a7bd5' },
@@ -586,14 +587,14 @@ export const DEFAULT_PIN_GROUPS: PinGroup[] = [
     ],
   },
   {
-    id: 'logical', label: 'Logical', outlineOnly: false,
+    id: 'logical', label: uiText("Logical"), outlineOnly: false,
     rules: [
       { id: 'enable', keywords: 'EN, RESET, RST, SW#', color: '#3aa6a0' },
       { id: 'onoff',  keywords: 'ONOFF',               color: '#9a6bd9' },
     ],
   },
   {
-    id: 'misc', label: 'Misc', outlineOnly: true,
+    id: 'misc', label: uiText("Misc"), outlineOnly: true,
     rules: [
       { id: 'nc', keywords: 'NC, NC_*, NO CONNECT, N/C', color: '#555555' },
     ],
@@ -676,7 +677,7 @@ export function migrateToPinGroups(s: Partial<RenderSettings>): PinGroup[] {
   const custom = (s.netColorRules ?? []).filter(r => r.enabled && !legacyDefaults.has(r.pattern.toUpperCase()));
   if (custom.length) {
     groups.splice(groups.length - 1, 0, {
-      id: 'custom-legacy', label: 'Custom', outlineOnly: false,
+      id: 'custom-legacy', label: uiText("Custom"), outlineOnly: false,
       rules: custom.map((r, i) => ({ id: `legacy-${i}`, keywords: r.pattern, color: r.color })),
     });
   }
@@ -819,17 +820,17 @@ export const DEFAULTS: RenderSettings = {
   ncNetPatterns: ['NC', 'NC_*', 'N/C', 'NO CONNECT'],
 
   partTypes: [
-    { id: 'resistor',  label: 'Resistor',   prefixes: ['R', 'PR', 'PH'],       color: '#222222', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: true },
-    { id: 'capacitor', label: 'Capacitor',  prefixes: ['C', 'PC'],             color: '#9a5a35', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'inductor',  label: 'Inductor',   prefixes: ['L', 'PL', 'B'],        color: '#7a7a7a', padShape: 'natural', bodyShape: 'square',  hidden: false, hierarchyBridge: true },
-    { id: 'diode',     label: 'Diode',      prefixes: ['D', 'PD', 'Z', 'PZ'],  color: '#2255aa', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: true },
-    { id: 'crystal',   label: 'Crystal',    prefixes: ['Y', 'X'],              color: '#e2ee00', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'transistor', label: 'Transistor', prefixes: ['Q', 'PQ'],             color: '#0d6b55', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'ic',        label: 'IC',         prefixes: ['U', 'PU'],             color: '#5a2090', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'connector', label: 'Connector',  prefixes: ['J', 'SW'],             color: '#2a5080', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'fuse',      label: 'Fuse',       prefixes: ['F'],                   color: '#efefef', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'testpoint', label: 'Test Point', prefixes: ['TP'],                  color: '#4a9060', padShape: 'round',   bodyShape: 'natural', hidden: false, hierarchyBridge: false },
-    { id: 'shield',    label: 'Shield',     prefixes: ['SH', 'MEC'],           color: '#3a3a3a', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'resistor',  label: uiText("Resistor"),   prefixes: ['R', 'PR', 'PH'],       color: '#222222', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: true },
+    { id: 'capacitor', label: uiText("Capacitor"),  prefixes: ['C', 'PC'],             color: '#9a5a35', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'inductor',  label: uiText("Inductor"),   prefixes: ['L', 'PL', 'B'],        color: '#7a7a7a', padShape: 'natural', bodyShape: 'square',  hidden: false, hierarchyBridge: true },
+    { id: 'diode',     label: uiText("Diode"),      prefixes: ['D', 'PD', 'Z', 'PZ'],  color: '#2255aa', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: true },
+    { id: 'crystal',   label: uiText("Crystal"),    prefixes: ['Y', 'X'],              color: '#e2ee00', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'transistor', label: uiText("Transistor"), prefixes: ['Q', 'PQ'],             color: '#0d6b55', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'ic',        label: uiText("IC"),         prefixes: ['U', 'PU'],             color: '#5a2090', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'connector', label: uiText("Connector"),  prefixes: ['J', 'SW'],             color: '#2a5080', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'fuse',      label: uiText("Fuse"),       prefixes: ['F'],                   color: '#efefef', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'testpoint', label: uiText("Test Point"), prefixes: ['TP'],                  color: '#4a9060', padShape: 'round',   bodyShape: 'natural', hidden: false, hierarchyBridge: false },
+    { id: 'shield',    label: uiText("Shield"),     prefixes: ['SH', 'MEC'],           color: '#3a3a3a', padShape: 'natural', bodyShape: 'natural', hidden: false, hierarchyBridge: false },
   ],
   hierarchyDepth: 2,
 
@@ -1581,7 +1582,7 @@ function loadFromStorage(): RenderSettings {
         for (const t of result.partTypes) {
           if (t.id === 'mosfet') {
             t.id = 'transistor';
-            if (t.label === 'MOSFET') t.label = 'Transistor';
+            if (t.label === 'MOSFET') t.label = uiText("Transistor");
           }
           // Migration: hierarchyBridge added with the Connections feature.
           // Backfill from the matching default (resistors on, rest off);

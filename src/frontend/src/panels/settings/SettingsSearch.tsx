@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { searchSettings, hasIndexEntryFor, getSectionForField, type MatchResult, type SearchSectionId } from './search-index';
 
@@ -119,23 +120,23 @@ export function SettingsSearchBar() {
         ref={inputRef}
         type="text"
         className="settings-search-input"
-        placeholder="Search settings  ( / to focus )"
+        placeholder={uiText("Search settings  ( / to focus )")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={onKey}
-        aria-label="Search settings"
+        aria-label={uiText("Search settings")}
       />
       {active && (
         <>
           <span className="settings-search-count" aria-live="polite">
-            {matches.total === 0 ? 'no match' : matches.total === 1 ? '1 match' : `${matches.total} matches`}
+            {matches.total === 0 ? uiText("no match") : matches.total === 1 ? uiText("1 match") : uiText`${matches.total} matches`}
           </span>
           <button
             type="button"
             className="settings-search-clear"
             onClick={() => { clear(); inputRef.current?.focus(); }}
-            title="Clear search (Esc)"
-            aria-label="Clear search"
+            title={uiText("Clear search (Esc)")}
+            aria-label={uiText("Clear search")}
           >
             ✕
           </button>

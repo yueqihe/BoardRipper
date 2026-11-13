@@ -1,3 +1,4 @@
+import { uiText } from './i18n';
 import { useCallback, useState, useRef, useEffect, useSyncExternalStore } from 'react';
 import {
   DockviewReact,
@@ -55,22 +56,22 @@ const getToasts = () => boardStore.toasts;
 // (an uncaught exception would otherwise unmount the entire React tree).
 const components: Record<string, React.FC<IDockviewPanelProps>> = {
   boardViewer: (props) => (
-    <PanelErrorBoundary label="Board Viewer">
+    <PanelErrorBoundary label={uiText("Board Viewer")}>
       <BoardViewerPanel {...props} />
     </PanelErrorBoundary>
   ),
   pdfViewer: (props) => (
-    <PanelErrorBoundary label="PDF Viewer">
+    <PanelErrorBoundary label={uiText("PDF Viewer")}>
       <PdfViewerPanel {...props} />
     </PanelErrorBoundary>
   ),
   databaseEditor: (props) => (
-    <PanelErrorBoundary label="Database Editor">
+    <PanelErrorBoundary label={uiText("Database Editor")}>
       <DatabaseEditorPanel {...props} />
     </PanelErrorBoundary>
   ),
   worklist: () => (
-    <PanelErrorBoundary label="Worklist">
+    <PanelErrorBoundary label={uiText("Worklist")}>
       <WorklistPanel />
     </PanelErrorBoundary>
   ),
@@ -170,9 +171,9 @@ function App() {
   useEffect(() => {
     if (consumeTextFastGraduationNotice()) {
       boardStore.addToast(
-        'Board text rendering was updated — the new fast mode is now on. The previous renderer is available under Settings › Performance & Debug › "Text fast mode".',
+        uiText("Board text rendering was updated — the new fast mode is now on. The previous renderer is available under Settings › Performance & Debug › \"Text fast mode\"."),
         'info',
-        { label: 'Open Settings', run: () => showSidebarTab('settings') },
+        { label: uiText("Open Settings"), run: () => showSidebarTab('settings') },
         20_000,
       );
     }
@@ -240,9 +241,9 @@ function App() {
       const ok = await databankStore.adoptDroppedFolder(droppedFolder);
       if (ok) {
         showSidebarTab('library');
-        boardStore.addToast(`Library folder: ${databankStore.libraryPath}`, 'info');
+        boardStore.addToast(uiText`Library folder: ${databankStore.libraryPath}`, 'info');
       } else {
-        boardStore.addToast('Could not read that folder.', 'error');
+        boardStore.addToast(uiText("Could not read that folder."), 'error');
       }
       return;
     }
@@ -256,11 +257,11 @@ function App() {
       if (!isElectron() && !isLiteBuild() && isUpdateBundle(file.name)) {
         const sizeMiB = (file.size / (1024 * 1024)).toFixed(1);
         const ok = window.confirm(
-          `Install update bundle?\n\n` +
-          `File: ${file.name}\n` +
-          `Size: ${sizeMiB} MiB\n\n` +
-          `The container will verify the bundle's signature, ` +
-          `apply the update, and restart. The browser will reload after ~30 s.`
+          uiText("Install update bundle?\n\n") +
+          uiText`File: ${file.name}\n` +
+          uiText`Size: ${sizeMiB} MiB\n\n` +
+          uiText("The container will verify the bundle's signature, ") +
+          uiText("apply the update, and restart. The browser will reload after ~30 s.")
         );
         if (ok) await updateStore.applyBundle(file);
         return;
@@ -269,9 +270,9 @@ function App() {
         // Friendly redirect — same directory ships both files and the
         // alphabetised listing puts the image first.
         boardStore.addToast(
-          `'${file.name}' is the Docker image tarball, not the drop-to-update bundle. ` +
-          `Download 'boardripper-update-v*.tar' (or the 'latest-update.tar' alias) from the ` +
-          `releases directory and drop that instead.`,
+          uiText`'${file.name}' is the Docker image tarball, not the drop-to-update bundle. ` +
+          uiText("Download 'boardripper-update-v*.tar' (or the 'latest-update.tar' alias) from the ") +
+          uiText("releases directory and drop that instead."),
           'error',
         );
         return;
@@ -294,8 +295,8 @@ function App() {
       const shown = skipped.slice(0, 3).join(', ');
       const more = skipped.length > 3 ? ` (+${skipped.length - 3} more)` : '';
       boardStore.addToast(
-        `Ignored ${skipped.length === 1 ? 'unsupported file' : `${skipped.length} unsupported files`}: ` +
-        `${shown}${more}. BoardRipper opens boardview files and PDFs.`,
+        uiText`Ignored ${skipped.length === 1 ? 'unsupported file' : `${skipped.length} unsupported files`}: ` +
+        uiText`${shown}${more}. BoardRipper opens boardview files and PDFs.`,
         'error',
       );
     }
@@ -303,7 +304,7 @@ function App() {
     if (libraryOnly) {
       const all = [...boardFiles, ...pdfFiles];
       if (all.length === 0) return;
-      boardStore.addToast(`Adding ${all.length} file${all.length === 1 ? '' : 's'} to the library…`, 'info');
+      boardStore.addToast(uiText`Adding ${all.length} file${all.length === 1 ? '' : uiText('plural.s')} to the library…`, 'info');
       await saveDroppedToIncoming(all);
       return;
     }
@@ -388,7 +389,7 @@ function App() {
           orders itself to the outer edge (-1 left / 3 right). */}
       <div className="app-body">
         {sidebarRail && sidebarStage !== 'hidden' && (
-          <PanelErrorBoundary label="Activity rail">
+          <PanelErrorBoundary label={uiText("Activity rail")}>
             <ActivityRail />
           </PanelErrorBoundary>
         )}
@@ -399,12 +400,12 @@ function App() {
                 className={`sidebar-toggle collapsed sidebar-toggle-${sidebarSide}`}
                 style={{ order: sidebarSide === 'left' ? 0 : 2 }}
                 onClick={cycleSidebar}
-                title="Show sidebar"
+                title={uiText("Show sidebar")}
               >
                 {sidebarSide === 'left' ? '▶' : '◀'}
               </button>
             )}
-            <PanelErrorBoundary label="Sidebar">
+            <PanelErrorBoundary label={uiText("Sidebar")}>
               <Sidebar />
             </PanelErrorBoundary>
             <div className="dockview-container" style={{ order: sidebarSide === 'left' ? 1 : 0 }}>
@@ -458,27 +459,19 @@ function App() {
           <div
             className={`drop-overlay-content${dropZone === 'open' ? ' active' : ''}`}
             data-testid="drop-zone-open"
-          >
-            Open
-            <div className="drop-overlay-hint">open and parse every file</div>
+          >{uiText("Open")}<div className="drop-overlay-hint">{uiText("open and parse every file")}</div>
           </div>
           <div
             ref={libraryZoneEl}
             className={`drop-overlay-content${dropZone === 'library' ? ' active' : ''}`}
             data-testid="drop-zone-library"
-          >
-            Add to library only
-            <div className="drop-overlay-hint">copy into incoming/, open nothing</div>
+          >{uiText("Add to library only")}<div className="drop-overlay-hint">{uiText("copy into incoming/, open nothing")}</div>
           </div>
         </div>
       )}
       {dragOver && !dropMany && (
         <div className="drop-overlay" data-testid="drop-overlay">
-          <div className="drop-overlay-content">
-            Drop board files, PDFs, or an update bundle
-            <div className="drop-overlay-hint">
-              boards · pdfs · boardripper-update-v*.tar · latest-update.tar · *.brupdate
-            </div>
+          <div className="drop-overlay-content">{uiText("Drop board files, PDFs, or an update bundle")}<div className="drop-overlay-hint">{uiText("boards · pdfs · boardripper-update-v*.tar · latest-update.tar · *.brupdate")}</div>
           </div>
         </div>
       )}

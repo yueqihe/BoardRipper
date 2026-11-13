@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Sidebar state, persistence, and external API.
  *
@@ -50,11 +51,11 @@ export interface SidebarTabDef {
  *  server-backed library, but it does have the local-folder one
  *  (`store/folder-library.ts`), which fills the same panel. */
 export const TABS: readonly SidebarTabDef[] = [
-  { id: 'library',  label: 'Library',  icon: IconBooks,      group: 'top' },
-  { id: 'history',  label: 'History',  icon: IconHistory,    group: 'top' },
-  { id: 'tools',    label: 'Tools',    icon: IconCalculator, group: 'top' },
-  { id: 'debug',    label: 'Debug',    icon: IconBug,        group: 'bottom' },
-  { id: 'settings', label: 'Settings', icon: IconSettings,   group: 'bottom' },
+  { id: 'library',  label: uiText("Library"),  icon: IconBooks,      group: 'top' },
+  { id: 'history',  label: uiText("History"),  icon: IconHistory,    group: 'top' },
+  { id: 'tools',    label: uiText("Tools"),    icon: IconCalculator, group: 'top' },
+  { id: 'debug',    label: uiText("Debug"),    icon: IconBug,        group: 'bottom' },
+  { id: 'settings', label: uiText("Settings"), icon: IconSettings,   group: 'bottom' },
 ] as SidebarTabDef[];
 
 export const TAB_LABELS: Readonly<Record<SidebarTab, string>> = Object.fromEntries(

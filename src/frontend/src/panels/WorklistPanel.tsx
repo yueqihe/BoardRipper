@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Worklist panel — the list a repair actually runs on.
  *
@@ -61,13 +62,13 @@ const MARK_ICON: Record<WorklistMark, ComponentType<{ size?: number; stroke?: nu
   cleaned: IconSparkles,
 };
 const MARK_SHORT_LABEL: Record<WorklistMark, string> = {
-  none: 'No mark', replaced: 'Replaced', reworked: 'Reworked', cleaned: 'Cleaned',
+  none: uiText("No mark"), replaced: uiText("Replaced"), reworked: uiText("Reworked"), cleaned: uiText("Cleaned"),
 };
 const MARK_TITLE: Record<WorklistMark, string> = {
-  none: 'No mark. Click to set Replaced. Cycle: Replaced → Reworked → Cleaned → no mark. Shift-click cycles backwards.',
-  replaced: 'Replaced. Click to advance to Reworked. Shift-click to clear.',
-  reworked: 'Reworked. Click to advance to Cleaned. Shift-click to go back to Replaced.',
-  cleaned: 'Cleaned. Click to clear. Shift-click to go back to Reworked.',
+  none: uiText("No mark. Click to set Replaced. Cycle: Replaced → Reworked → Cleaned → no mark. Shift-click cycles backwards."),
+  replaced: uiText("Replaced. Click to advance to Reworked. Shift-click to clear."),
+  reworked: uiText("Reworked. Click to advance to Cleaned. Shift-click to go back to Replaced."),
+  cleaned: uiText("Cleaned. Click to clear. Shift-click to go back to Reworked."),
 };
 // 'none' stays muted so an unmarked row reads as "not yet touched" instead of
 // glowing in the canvas-side amber.
@@ -82,13 +83,13 @@ const NET_MARK_ICON: Record<NetWorklistMark, ComponentType<{ size?: number; stro
   none: null, short: IconAlertTriangle, solved: IconCheck, absent: IconUnlink,
 };
 const NET_MARK_SHORT_LABEL: Record<NetWorklistMark, string> = {
-  none: 'No mark', short: 'Short', solved: 'Solved', absent: 'Absent',
+  none: uiText("No mark"), short: uiText("Short"), solved: uiText("Solved"), absent: uiText("Absent"),
 };
 const NET_MARK_TITLE: Record<NetWorklistMark, string> = {
-  none: 'No mark. Click to set Short. Cycle: Short → Solved → Absent → no mark. Shift-click cycles backwards.',
-  short: 'Short. Click to advance to Solved. Shift-click to clear.',
-  solved: 'Solved. Click to advance to Absent. Shift-click to go back to Short.',
-  absent: 'Absent (net not present / not reaching). Click to clear. Shift-click to go back to Solved.',
+  none: uiText("No mark. Click to set Short. Cycle: Short → Solved → Absent → no mark. Shift-click cycles backwards."),
+  short: uiText("Short. Click to advance to Solved. Shift-click to clear."),
+  solved: uiText("Solved. Click to advance to Absent. Shift-click to go back to Short."),
+  absent: uiText("Absent (net not present / not reaching). Click to clear. Shift-click to go back to Solved."),
 };
 const NET_MARK_BTN_COLOR: Record<NetWorklistMark, string> = {
   none: 'var(--text-secondary)',
@@ -102,7 +103,7 @@ async function copyToClipboard(text: string, summary: string): Promise<void> {
     await copyText(text);
     boardStore.addToast(summary, 'info');
   } catch (e) {
-    boardStore.addToast(`Copy failed: ${e instanceof Error ? e.message : String(e)}`, 'error');
+    boardStore.addToast(uiText`Copy failed: ${e instanceof Error ? e.message : String(e)}`, 'error');
   }
 }
 
@@ -115,21 +116,21 @@ async function importFromClipboard(): Promise<void> {
   try {
     text = await navigator.clipboard.readText();
   } catch (e) {
-    boardStore.addToast(`Clipboard read failed: ${e instanceof Error ? e.message : String(e)}`, 'error');
+    boardStore.addToast(uiText`Clipboard read failed: ${e instanceof Error ? e.message : String(e)}`, 'error');
     return;
   }
-  if (!text.trim()) { boardStore.addToast('Clipboard is empty.', 'error'); return; }
+  if (!text.trim()) { boardStore.addToast(uiText("Clipboard is empty."), 'error'); return; }
   const r = worklistStore.importFromText(text);
   if (!r) {
-    boardStore.addToast('Clipboard does not look like a worklist. First line must be -[name]-.', 'error');
+    boardStore.addToast(uiText("Clipboard does not look like a worklist. First line must be -[name]-."), 'error');
     return;
   }
   const missing = r.parts - r.resolved;
   const netSuffix = r.nets > 0 ? `, ${r.nets} net${r.nets === 1 ? '' : 's'}` : '';
   boardStore.addToast(
     missing > 0
-      ? `Imported "${r.created}": ${r.resolved}/${r.parts} parts found on this board (${missing} missing)${netSuffix}.`
-      : `Imported "${r.created}" (${r.parts} part${r.parts === 1 ? '' : 's'}${netSuffix}).`,
+      ? uiText`Imported "${r.created}": ${r.resolved}/${r.parts} parts found on this board (${missing} missing)${netSuffix}.`
+      : uiText`Imported "${r.created}" (${r.parts} part${r.parts === 1 ? '' : uiText('plural.s')}${netSuffix}).`,
     'info',
   );
 }
@@ -145,7 +146,7 @@ export function WorklistPanel() {
   useEffect(() => { void worklistStore.syncToActiveTab(); }, [activeTabId]);
 
   if (!hasBoard) {
-    return <div className="wl-empty">Open a board to begin worklisting. Worklists themselves are in Tools ▸ Worklists.</div>;
+    return <div className="wl-empty">{uiText("Open a board to begin worklisting. Worklists themselves are in Tools ▸ Worklists.")}</div>;
   }
 
   return (
@@ -156,18 +157,16 @@ export function WorklistPanel() {
       {sel.count > 0 && (
         <section className="wl-band">
           <div className="wl-band-head">
-            <span style={{ fontWeight: 600 }}>Cyan selection</span>
+            <span style={{ fontWeight: 600 }}>{uiText("Cyan selection")}</span>
             <span className="wl-pill">{sel.count}</span>
             <button
               className="wl-hl"
               style={{ marginLeft: 'auto' }}
               onClick={() => { if (activeTabId != null) selectionSetStore.clear(activeTabId); }}
-              title="Clear the cyan canvas highlight + connection glow (parts stay on the board, worklist untouched)"
-            >Clear</button>
+              title={uiText("Clear the cyan canvas highlight + connection glow (parts stay on the board, worklist untouched)")}
+            >{uiText("Clear")}</button>
           </div>
-          <div className="wl-band-sub">
-            Loaded by multi-select on the canvas. Visual only — has no effect on the worklist contents.
-          </div>
+          <div className="wl-band-sub">{uiText("Loaded by multi-select on the canvas. Visual only — has no effect on the worklist contents.")}</div>
         </section>
       )}
 
@@ -244,10 +243,9 @@ function WorklistSuggestions({ tabId, summaries, loadedId, onCreated }: {
   if (suggestions.length === 0) {
     return (
       <div className="wl-sugg empty" data-testid="worklist-suggestions" data-count="0">
-        <span className="wl-sugg-title">{loadedId ? 'No other worklists for this board' : 'No worklists for this board yet'}</span>
+        <span className="wl-sugg-title">{loadedId ? uiText("No other worklists for this board") : uiText("No worklists for this board yet")}</span>
         <button type="button" className="wl-act" data-testid="worklist-suggest-new" onClick={create}>
-          <IconPlus size={13} stroke={1.9} />New worklist
-        </button>
+          <IconPlus size={13} stroke={1.9} />{uiText("New worklist")}</button>
       </div>
     );
   }
@@ -259,11 +257,10 @@ function WorklistSuggestions({ tabId, summaries, loadedId, onCreated }: {
         <button type="button" className="wl-sugg-toggle" data-testid="worklist-suggest-toggle"
           aria-expanded={expanded} onClick={() => setOpen(!expanded)}>
           {expanded ? <IconChevronDown size={13} stroke={2} /> : <IconChevronRight size={13} stroke={2} />}
-          <span className="wl-sugg-title">{`${n} matching worklist${n === 1 ? '' : 's'}`}</span>
+          <span className="wl-sugg-title">{uiText`${n} matching worklist${n === 1 ? '' : uiText('plural.s')}`}</span>
         </button>
         <button type="button" className="wl-act" data-testid="worklist-suggest-new" onClick={create}>
-          <IconPlus size={13} stroke={1.9} />New
-        </button>
+          <IconPlus size={13} stroke={1.9} />{uiText("New")}</button>
       </div>
       {expanded && (
         <div className="wl-sugg-list">
@@ -279,18 +276,16 @@ function WorklistSuggestions({ tabId, summaries, loadedId, onCreated }: {
                   </div>
                   <div className="wl-sugg-sub">
                     {`${sizeLine(w)} · ${age(w.updatedAt)}`}
-                    {s.byTag && <span className="why">{` · tag “${s.via}”`}</span>}
-                    {!s.byTag && s.weight < 3 && <span className="why">{` · matches ${s.key.what}`}</span>}
+                    {s.byTag && <span className="why">{uiText` · tag “${s.via}”`}</span>}
+                    {!s.byTag && s.weight < 3 && <span className="why">{uiText` · matches ${s.key.what}`}</span>}
                   </div>
                 </div>
                 {here
-                  ? <span className="wl-sugg-here">open</span>
+                  ? <span className="wl-sugg-here">{uiText("open")}</span>
                   : (
                     <button type="button" className="wl-hl" data-testid="worklist-suggestion-open"
                       onClick={() => worklistStore.loadOnTab(tabId, w.id)}
-                      title="Load this worklist on this board (for this session; it stays attributed to its own board name)">
-                      Open
-                    </button>
+                      title={uiText("Load this worklist on this board (for this session; it stays attributed to its own board name)")}>{uiText("Open")}</button>
                   )}
               </div>
             );
@@ -342,7 +337,7 @@ function WorklistFinder({ summaries, loadedId, onCreated }: {
   const create = () => {
     const name = q.trim();
     const made = worklistStore.createWorklist(name || undefined);
-    if (!made) { boardStore.addToast('Could not create worklist.', 'error'); return; }
+    if (!made) { boardStore.addToast(uiText("Could not create worklist."), 'error'); return; }
     if (!name) onCreated(made.id);   // no name typed → open the header in edit
     close();
   };
@@ -354,12 +349,12 @@ function WorklistFinder({ summaries, loadedId, onCreated }: {
         className="wl-find"
         data-testid="worklist-find"
         onClick={() => setOpen(true)}
-        title="Find or switch worklist"
+        title={uiText("Find or switch worklist")}
       >
         <IconSearch size={13} stroke={1.9} />
-        <span className="cur">{active ? active.name : 'All worklists'}</span>
+        <span className="cur">{active ? active.name : uiText("All worklists")}</span>
         {active && <span className="n">{active.parts + active.nets}</span>}
-        <span className="more">{summaries.length > (active ? 1 : 0) ? `search ${summaries.length}` : ''}</span>
+        <span className="more">{summaries.length > (active ? 1 : 0) ? uiText`search ${summaries.length}` : ''}</span>
       </button>
     );
   }
@@ -372,7 +367,7 @@ function WorklistFinder({ summaries, loadedId, onCreated }: {
           ref={inputRef}
           className="wl-find-input"
           data-testid="worklist-find-input"
-          placeholder="Search worklists — name, board or tag"
+          placeholder={uiText("Search worklists — name, board or tag")}
           value={q}
           onChange={e => setQ(e.target.value)}
           onKeyDown={e => {
@@ -382,7 +377,7 @@ function WorklistFinder({ summaries, loadedId, onCreated }: {
         />
       </div>
       <div className="wl-results" data-testid="worklist-results">
-        {hits.length === 0 && <div className="wl-nohit">{q.trim() ? `No worklist matches “${q.trim()}”.` : 'No worklists yet.'}</div>}
+        {hits.length === 0 && <div className="wl-nohit">{q.trim() ? uiText`No worklist matches “${q.trim()}”.` : uiText("No worklists yet.")}</div>}
         {hits.map(h => (
           <button
             key={h.id}
@@ -400,16 +395,14 @@ function WorklistFinder({ summaries, loadedId, onCreated }: {
       <div className="wl-acts">
         <button type="button" className="wl-act" data-testid="worklist-new" onClick={create}>
           <IconPlus size={13} stroke={1.9} />
-          <span>{q.trim() ? `New worklist “${q.trim()}”` : 'New worklist'}</span>
+          <span>{q.trim() ? uiText`New worklist “${q.trim()}”` : uiText("New worklist")}</span>
         </button>
         <button type="button" className="wl-act" data-testid="worklist-paste"
           onClick={() => { void importFromClipboard(); close(); }}>
-          <IconClipboardText size={13} stroke={1.9} />Paste a worklist
-        </button>
+          <IconClipboardText size={13} stroke={1.9} />{uiText("Paste a worklist")}</button>
         <button type="button" className="wl-act link" data-testid="worklist-all"
           onClick={() => { showSidebarTab('tools'); setActiveTool('worklists'); close(); }}>
-          <IconList size={13} stroke={1.9} />All worklists…
-        </button>
+          <IconList size={13} stroke={1.9} />{uiText("All worklists…")}</button>
       </div>
     </div>
   );
@@ -531,19 +524,19 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
             }}
           />
         ) : (
-          <button type="button" className="wl-name" onClick={startRename} title="Click to rename">
+          <button type="button" className="wl-name" onClick={startRename} title={uiText("Click to rename")}>
             {activeWorklist.name}
           </button>
         )}
         {stepKeys.length > 0 && (
-          <div className="wl-step" role="group" aria-label="Step through the worklist">
+          <div className="wl-step" role="group" aria-label={uiText("Step through the worklist")}>
             <button
               type="button"
               className="wl-icon-btn"
               data-testid="worklist-prev"
               onClick={() => step(-1)}
               disabled={stepAt === 0}
-              title="Previous row"
+              title={uiText("Previous row")}
             >
               <IconChevronLeft size={15} stroke={2} />
             </button>
@@ -556,7 +549,7 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
               data-testid="worklist-next"
               onClick={() => step(1)}
               disabled={stepAt === stepKeys.length - 1}
-              title={stepAt < 0 ? 'Start at the first row' : 'Next row'}
+              title={stepAt < 0 ? uiText("Start at the first row") : uiText("Next row")}
             >
               <IconChevronRight size={15} stroke={2} />
             </button>
@@ -570,18 +563,17 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
           disabled={entryCount === 0}
           aria-pressed={connectionHighlight}
           title={connectionHighlight
-            ? 'Highlight ON — click to hide worklist outlines and shared-net glow'
-            : 'Show this worklist on the board (mark colours) and glow the nets its parts share.'}
+            ? uiText("Highlight ON — click to hide worklist outlines and shared-net glow")
+            : uiText("Show this worklist on the board (mark colours) and glow the nets its parts share.")}
         >
-          <IconSparkles size={13} stroke={1.9} />Highlight
-        </button>
+          <IconSparkles size={13} stroke={1.9} />{uiText("Highlight")}</button>
         <button
           type="button"
           className={`wl-icon-btn${menu ? ' on' : ''}`}
           data-testid="worklist-menu-btn"
           aria-haspopup="menu"
           aria-expanded={!!menu}
-          title="More"
+          title={uiText("More")}
           onClick={e => {
             const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
             setMenu(menu ? null : { x: r.right - 176, y: r.bottom + 4 });
@@ -597,30 +589,30 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
             ariaLabel="Worklist actions"
             testId="worklist-menu"
             items={[
-              { label: 'Rename', testId: 'worklist-menu-rename', onSelect: startRename },
-              { label: 'Copy to clipboard', testId: 'worklist-menu-copy', onSelect: onCopyAll },
-              { label: ticketOpen ? 'Hide ticket note' : 'Ticket note…', onSelect: () => setTicketOpen(x => !x) },
+              { label: uiText("Rename"), testId: 'worklist-menu-rename', onSelect: startRename },
+              { label: uiText("Copy to clipboard"), testId: 'worklist-menu-copy', onSelect: onCopyAll },
+              { label: ticketOpen ? uiText("Hide ticket note") : uiText("Ticket note…"), onSelect: () => setTicketOpen(x => !x) },
               { kind: 'sep' },
-              ...(foreign ? [{ label: `Attribute to this board (${here})`, testId: 'worklist-menu-attribute',
+              ...(foreign ? [{ label: uiText`Attribute to this board (${here})`, testId: 'worklist-menu-attribute',
                   onSelect: () => worklistStore.attributeToActiveBoard(activeWorklist.id) }] : []),
-              { label: 'Duplicate', testId: 'worklist-menu-duplicate', onSelect: () => {
+              { label: uiText("Duplicate"), testId: 'worklist-menu-duplicate', onSelect: () => {
                   const d = worklistStore.duplicateWorklist(activeWorklist.id);
-                  if (d) { worklistStore.loadOnTab(boardStore.activeTabId, d.id); boardStore.addToast(`Loaded “${d.name}”.`, 'info'); }
+                  if (d) { worklistStore.loadOnTab(boardStore.activeTabId, d.id); boardStore.addToast(uiText`Loaded “${d.name}”.`, 'info'); }
                 } },
-              { label: 'Close on this board', testId: 'worklist-menu-unload',
+              { label: uiText("Close on this board"), testId: 'worklist-menu-unload',
                 onSelect: () => worklistStore.loadOnTab(boardStore.activeTabId, null) },
-              { label: 'Edit in Tools ▸ Worklists', onSelect: () => { showSidebarTab('tools'); setActiveTool('worklists'); } },
+              { label: uiText("Edit in Tools ▸ Worklists"), onSelect: () => { showSidebarTab('tools'); setActiveTool('worklists'); } },
               { kind: 'sep' },
-              { label: 'Clear all entries', testId: 'worklist-menu-wipe', onSelect: () => setConfirm('wipe') },
-              { label: 'Delete worklist', testId: 'worklist-menu-delete', onSelect: () => setConfirm('delete') },
+              { label: uiText("Clear all entries"), testId: 'worklist-menu-wipe', onSelect: () => setConfirm('wipe') },
+              { label: uiText("Delete worklist"), testId: 'worklist-menu-delete', onSelect: () => setConfirm('delete') },
             ]}
           />
         )}
       </header>
       <div className={`wl-origin${foreign ? ' foreign' : ''}`} data-testid="worklist-origin">
-        <span translate="no">{activeWorklist.board || 'No board name'}</span>
-        {foreign && <span className="note"> · another board's worklist, shown here for this session</span>}
-        {otherTabs.length > 0 && <span className="note">{` · also open on ${otherTabs.length} other tab${otherTabs.length === 1 ? '' : 's'}`}</span>}
+        <span translate="no">{activeWorklist.board || uiText("No board name")}</span>
+        {foreign && <span className="note">{uiText(" · another board's worklist, shown here for this session")}</span>}
+        {otherTabs.length > 0 && <span className="note">{uiText` · also open on ${otherTabs.length} other tab${otherTabs.length === 1 ? '' : uiText('plural.s')}`}</span>}
         {activeWorklist.tags.length > 0 && <span className="tags">{activeWorklist.tags.map(t => <span key={t} className="wl-tag" translate="no">{t}</span>)}</span>}
       </div>
 
@@ -630,10 +622,10 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
         <div className="wl-confirm" data-testid="worklist-confirm" role="alertdialog">
           <span className="q">
             {confirm === 'wipe'
-              ? `Clear all ${entryCount + netCount} entries from “${activeWorklist.name}”?`
-              : `Delete “${activeWorklist.name}”? This cannot be undone.${otherTabs.length ? ` It is also open on ${otherTabs.length} other board tab${otherTabs.length === 1 ? '' : 's'}.` : ''}`}
+              ? uiText`Clear all ${entryCount + netCount} entries from “${activeWorklist.name}”?`
+              : uiText`Delete “${activeWorklist.name}”? This cannot be undone.${otherTabs.length ? ` It is also open on ${otherTabs.length} other board tab${otherTabs.length === 1 ? '' : uiText('plural.s')}.` : ''}`}
           </span>
-          <button type="button" onClick={() => setConfirm(null)} data-testid="worklist-confirm-no">Cancel</button>
+          <button type="button" onClick={() => setConfirm(null)} data-testid="worklist-confirm-no">{uiText("Cancel")}</button>
           <button
             type="button"
             className="go"
@@ -643,7 +635,7 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
               else worklistStore.deleteWorklist(activeWorklist.id);
               setConfirm(null);
             }}
-          >{confirm === 'wipe' ? 'Clear' : 'Delete'}</button>
+          >{confirm === 'wipe' ? uiText("Clear") : uiText("Delete")}</button>
         </div>
       )}
 
@@ -653,20 +645,20 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
           className="wl-ticket-toggle"
           data-testid="worklist-ticket-toggle"
           onClick={() => setTicketOpen(x => !x)}
-          title={ticketOpen ? 'Collapse ticket note' : 'Expand ticket note'}
+          title={ticketOpen ? uiText("Collapse ticket note") : uiText("Expand ticket note")}
         >
           {ticketOpen ? <IconChevronDown size={12} stroke={2} /> : <IconChevronRight size={12} stroke={2} />}
-          <b>Ticket note</b>
+          <b>{uiText("Ticket note")}</b>
           {!ticketOpen && (ticketDraft.trim()
             ? <span className="wl-ticket-peek">{peek(ticketDraft.split('\n', 1)[0].trim(), 60)}</span>
-            : <span className="wl-ticket-peek">(empty)</span>)}
+            : <span className="wl-ticket-peek">{uiText("(empty)")}</span>)}
         </button>
         {ticketOpen && (
           <textarea
             className="wl-ticket-area"
             data-testid="worklist-ticket-area"
             value={ticketDraft}
-            placeholder="General note for this worklist / ticket. Saved when you click out."
+            placeholder={uiText("General note for this worklist / ticket. Saved when you click out.")}
             onChange={e => setTicketDraft(e.target.value)}
             onBlur={() => {
               if ((activeWorklist.note ?? '') !== ticketDraft) worklistStore.setWorklistNote(activeWorklist.id, ticketDraft);
@@ -682,7 +674,7 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
         onScroll={e => worklistScrollTop.set(activeWorklist.id, e.currentTarget.scrollTop)}
       >
         {entryCount === 0 && netCount === 0 && (
-          <div className="wl-empty">Empty. Shift-click parts on the board, or hit the pin button in the Search tab.</div>
+          <div className="wl-empty">{uiText("Empty. Shift-click parts on the board, or hit the pin button in the Search tab.")}</div>
         )}
         {activeWorklist.entries.map(entry => (
           <WorklistRow
@@ -694,7 +686,7 @@ function ActiveWorklistView({ renameOnMount, onRenameHandled }: {
             onSelect={() => setSelected('p:' + entry.refdes)}
           />
         ))}
-        {netCount > 0 && entryCount > 0 && <div className="wl-sec">Nets</div>}
+        {netCount > 0 && entryCount > 0 && <div className="wl-sec">{uiText("Nets")}</div>}
         {activeWorklist.netEntries?.map(entry => (
           <WorklistRow
             key={'net:' + entry.netName}
@@ -799,8 +791,8 @@ export function WorklistRow({ kind, worklistId, partEntry, netEntry, selected, o
 
   const FlagIcon = isNet ? IconBolt : IconDroplet;
   const flagTitle = isNet
-    ? (flagOn ? 'Surge / over-current flagged. Click to clear.' : 'Mark as surge / over-current.')
-    : (flagOn ? 'Water damage flagged. Click to clear.' : 'Mark as water-damaged.');
+    ? (flagOn ? uiText("Surge / over-current flagged. Click to clear.") : uiText("Mark as surge / over-current."))
+    : (flagOn ? uiText("Water damage flagged. Click to clear.") : uiText("Mark as water-damaged."));
 
   return (
     <div
@@ -838,18 +830,18 @@ export function WorklistRow({ kind, worklistId, partEntry, netEntry, selected, o
         </button>
         <span className="wl-ref">
           <span translate="no">{name}</span>
-          {unresolved && <span className="missing">(not on this board)</span>}
+          {unresolved && <span className="missing">{uiText("(not on this board)")}</span>}
         </span>
         <button
           type="button"
           className="wl-note-btn"
           onClick={e => { e.stopPropagation(); setExpanded(x => !x); }}
-          title={expanded ? 'Collapse note' : 'Expand note'}
+          title={expanded ? uiText("Collapse note") : uiText("Expand note")}
         >
           {expanded ? <IconChevronDown size={12} stroke={2} /> : <IconChevronRight size={12} stroke={2} />}
           {note && !expanded && <span className="wl-note-peek">{peek(note, 14)}</span>}
         </button>
-        <button type="button" className="wl-x" onClick={onRemove} title="Remove from worklist">
+        <button type="button" className="wl-x" onClick={onRemove} title={uiText("Remove from worklist")}>
           <IconX size={13} stroke={2} />
         </button>
       </div>
@@ -857,7 +849,7 @@ export function WorklistRow({ kind, worklistId, partEntry, netEntry, selected, o
         <textarea
           className="wl-note-area"
           value={noteDraft}
-          placeholder="Note (saved when you click out)"
+          placeholder={uiText("Note (saved when you click out)")}
           onChange={e => setNoteDraft(e.target.value)}
           onBlur={onCommitNote}
         />
@@ -933,7 +925,7 @@ function NetMeasSlot({ worklistId, netName, kind, m }: {
       <span
         className="wl-chip"
         data-testid={`net-meas-chip-${kind}`}
-        title={requested ? `Agent requested ${kind}${m?.prompt ? `: ${m.prompt}` : ''}` : `Record ${kind}`}
+        title={requested ? uiText`Agent requested ${kind}${m?.prompt ? `: ${m.prompt}` : ''}` : uiText`Record ${kind}`}
       >
         <MeasLabel k={kind} />
       </span>
@@ -941,7 +933,7 @@ function NetMeasSlot({ worklistId, netName, kind, m }: {
         className={`wl-in${requested ? ' req' : ''}`}
         data-testid={`net-meas-input-${kind}`}
         value={val}
-        placeholder={requested && m?.expected ? `exp ${m.expected}` : '—'}
+        placeholder={requested && m?.expected ? uiText`exp ${m.expected}` : '—'}
         onChange={e => setVal(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
         onBlur={commit}
@@ -973,14 +965,14 @@ function AiWorklistSection({ worklist }: { worklist: Worklist }) {
   return (
     <div className="wl-ai">
       <div className="wl-ai-head">
-        <IconSparkles size={13} /> AI relay{connected ? '' : ' (MCP offline)'}
+        <IconSparkles size={13} />{uiText(" AI relay")}{connected ? '' : uiText(" (MCP offline)")}
       </div>
       {messages.length > 0 && (
         <div className="wl-ai-log">
           {messages.map(msg => (
             <div key={msg.id} className="wl-ai-msg">
               <span className={`wl-ai-who ${msg.role === 'agent' ? 'agent' : 'user'}`}>
-                {msg.role === 'agent' ? 'AI' : 'You'}:
+                {msg.role === 'agent' ? uiText("AI") : uiText("You")}:
               </span>{' '}
               <span style={{ fontSize: 11 }}><NoteBody body={msg.text} board={boardStore.board} /></span>
             </div>
@@ -1007,9 +999,9 @@ function AiPromptBox({ disabled }: { disabled: boolean }) {
         value={text}
         onChange={e => setText(e.target.value)}
         onKeyDown={e => e.key === 'Enter' && send()}
-        placeholder={disabled ? 'Connect an MCP agent to chat…' : 'Message the agent (it reads this)…'}
+        placeholder={disabled ? uiText("Connect an MCP agent to chat…") : uiText("Message the agent (it reads this)…")}
       />
-      <button className="wl-ai-send" onClick={send} disabled={!text.trim()}>Send</button>
+      <button className="wl-ai-send" onClick={send} disabled={!text.trim()}>{uiText("Send")}</button>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useRef, useEffect, useState, useCallback, useSyncExternalStore } from 'react';
 import type { IDockviewPanelProps } from 'dockview-react';
 import { BoardRenderer } from '../renderer/BoardRenderer';
@@ -300,7 +301,7 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
       if (localStorage.getItem(KEY)) return;
       localStorage.setItem(KEY, '1');
     } catch { return; }
-    boardStore.addToast('Touch tip: press and hold a part to open its menu.', 'info', undefined, 10000);
+    boardStore.addToast(uiText("Touch tip: press and hold a part to open its menu."), 'info', undefined, 10000);
   }, [thisTab?.board]);
 
   const tabFmt = thisTab?.board ? getFormat(thisTab.board.format) : undefined;
@@ -330,9 +331,7 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
 
   if (tabId == null) {
     return (
-      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
-        No board loaded
-      </div>
+      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>{uiText("No board loaded")}</div>
     );
   }
 
@@ -346,7 +345,7 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
       {thisTab && !thisTab.board && (
         <div className="board-loading-overlay">
           <div className="board-loading-spinner" />
-          <span className="board-loading-text">Loading board...</span>
+          <span className="board-loading-text">{uiText("Loading board...")}</span>
         </div>
       )}
       <ResizeModeBanner />
@@ -358,7 +357,7 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
           className={`board-sidebar-toggle ${sidebarOpen ? 'active' : ''}`}
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-pressed={sidebarOpen}
-          title={sidebarOpen ? 'Hide board panel (Layers · Info · Search · Worklist)' : 'Show board panel (Layers · Info · Search · Worklist)'}
+          title={sidebarOpen ? uiText("Hide board panel (Layers · Info · Search · Worklist)") : uiText("Show board panel (Layers · Info · Search · Worklist)")}
         >
           <IconLayoutSidebarRight size={18} stroke={1.75} />
         </button>
@@ -383,10 +382,10 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
           className="overlay-collapse"
           data-testid="overlay-collapse"
           aria-expanded={!overlayCollapsed}
-          aria-label={overlayCollapsed ? 'Show board controls' : 'Hide board controls'}
+          aria-label={overlayCollapsed ? uiText("Show board controls") : uiText("Hide board controls")}
           title={renderSettings.overlayPosition === 'floating'
-            ? (overlayCollapsed ? 'Show board controls · drag to move' : 'Hide board controls · drag to move')
-            : (overlayCollapsed ? 'Show board controls' : 'Hide board controls')}
+            ? (overlayCollapsed ? uiText("Show board controls · drag to move") : uiText("Hide board controls · drag to move"))
+            : (overlayCollapsed ? uiText("Show board controls") : uiText("Hide board controls"))}
           onPointerDown={onHandlePointerDown}
           onClick={renderSettings.overlayPosition === 'floating' ? undefined : toggleOverlayCollapsed}
         >
@@ -406,7 +405,7 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
           ariaLabel="Board controls"
           testId="board-bar-menu"
           items={[
-            { kind: 'header', label: 'On the bar' },
+            { kind: 'header', label: uiText("On the bar") },
             ...renderSettings.overlayLayout
               .filter(sl => !isSeparatorId(sl.id))
               .map(sl => ({
@@ -417,20 +416,20 @@ export function BoardViewerPanel(props: IDockviewPanelProps<{ boardTabId?: numbe
                 onSelect: () => renderSettingsStore.setOverlaySlotVisible(sl.id, !sl.visible),
               })),
             { kind: 'sep' },
-            { kind: 'header', label: 'Position' },
-            { kind: 'check', label: 'Left', checked: renderSettings.overlayPosition === 'left', onSelect: () => renderSettingsStore.setOverlayPosition('left') },
-            { kind: 'check', label: 'Centred', checked: renderSettings.overlayPosition === 'center', onSelect: () => renderSettingsStore.setOverlayPosition('center') },
-            { kind: 'check', label: 'Floating · drag the handle', checked: renderSettings.overlayPosition === 'floating', testId: 'bar-menu-floating', onSelect: () => renderSettingsStore.setOverlayPosition('floating') },
-            { kind: 'header', label: 'Orientation' },
-            { kind: 'check', label: 'Horizontal', checked: renderSettings.overlayOrientation !== 'vertical', onSelect: () => renderSettingsStore.setOverlayOrientation('horizontal') },
-            { kind: 'check', label: 'Vertical', checked: renderSettings.overlayOrientation === 'vertical', testId: 'bar-menu-vertical', onSelect: () => renderSettingsStore.setOverlayOrientation('vertical') },
+            { kind: 'header', label: uiText("Position") },
+            { kind: 'check', label: uiText("Left"), checked: renderSettings.overlayPosition === 'left', onSelect: () => renderSettingsStore.setOverlayPosition('left') },
+            { kind: 'check', label: uiText("Centred"), checked: renderSettings.overlayPosition === 'center', onSelect: () => renderSettingsStore.setOverlayPosition('center') },
+            { kind: 'check', label: uiText("Floating · drag the handle"), checked: renderSettings.overlayPosition === 'floating', testId: 'bar-menu-floating', onSelect: () => renderSettingsStore.setOverlayPosition('floating') },
+            { kind: 'header', label: uiText("Orientation") },
+            { kind: 'check', label: uiText("Horizontal"), checked: renderSettings.overlayOrientation !== 'vertical', onSelect: () => renderSettingsStore.setOverlayOrientation('horizontal') },
+            { kind: 'check', label: uiText("Vertical"), checked: renderSettings.overlayOrientation === 'vertical', testId: 'bar-menu-vertical', onSelect: () => renderSettingsStore.setOverlayOrientation('vertical') },
             { kind: 'sep' },
-            { label: overlayCollapsed ? 'Unfold controls' : 'Fold controls', onSelect: toggleOverlayCollapsed },
-            { label: 'Customise order and separators…', testId: 'bar-menu-customise', onSelect: () => {
+            { label: overlayCollapsed ? uiText("Unfold controls") : uiText("Fold controls"), onSelect: toggleOverlayCollapsed },
+            { label: uiText("Customise order and separators…"), testId: 'bar-menu-customise', onSelect: () => {
                 showSidebarTab('settings');
-                window.dispatchEvent(new CustomEvent('settings-focus-section', { detail: 'boardOverlay' }));
+                window.dispatchEvent(new CustomEvent('settings-focus-section', { detail: uiText("boardOverlay") }));
               } },
-            { label: 'Reset layout', testId: 'bar-menu-reset', onSelect: () => renderSettingsStore.resetOverlayLayout() },
+            { label: uiText("Reset layout"), testId: 'bar-menu-reset', onSelect: () => renderSettingsStore.resetOverlayLayout() },
           ]}
         />
       )}

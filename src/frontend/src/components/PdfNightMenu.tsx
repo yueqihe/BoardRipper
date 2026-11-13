@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * PdfNightMenu — the PDF toolbar's night-mode control (issue #41).
  *
@@ -14,15 +15,15 @@ import { pdfNightStore, usePdfNight, type NightStyle } from '../store/pdf-night-
 import './PdfFilterMenu.css';
 
 const STYLES: { style: NightStyle; label: string; hint: string }[] = [
-  { style: 'dark', label: 'Dark paper, keep colours', hint: 'Black background; red and blue lines stay red and blue, lighter' },
-  { style: 'invert', label: 'Invert colours', hint: 'Every colour flipped (red turns cyan)' },
-  { style: 'custom', label: 'Custom colours', hint: 'Choose the exact background and text colour' },
+  { style: 'dark', label: uiText("Dark paper, keep colours"), hint: uiText("Black background; red and blue lines stay red and blue, lighter") },
+  { style: 'invert', label: uiText("Invert colours"), hint: uiText("Every colour flipped (red turns cyan)") },
+  { style: 'custom', label: uiText("Custom colours"), hint: uiText("Choose the exact background and text colour") },
 ];
 
 const STYLE_TITLE: Record<NightStyle, string> = {
-  dark: 'dark paper, colours kept',
-  invert: 'invert colours',
-  custom: 'custom colours',
+  dark: uiText("dark paper, colours kept"),
+  invert: uiText("invert colours"),
+  custom: uiText("custom colours"),
 };
 
 export function PdfNightMenu() {
@@ -78,20 +79,18 @@ export function PdfNightMenu() {
         data-night-style={s.style}
         aria-haspopup="menu"
         aria-expanded={open}
-        title={s.on ? `PDF colours: ${STYLE_TITLE[s.style]}` : 'PDF colours'}
+        title={s.on ? uiText`PDF colours: ${STYLE_TITLE[s.style]}` : uiText("PDF colours")}
         onClick={e => { setDoc(e.currentTarget.ownerDocument); setOpen(v => !v); }}
       >
         <span aria-hidden="true">&#x25D0;</span>
         <IconChevronDown size={10} className="pdf-filter-caret" />
       </button>
       {open && createPortal(
-        <div ref={menuRef} className="quick-menu pdf-filter-menu pdf-night-menu" role="menu" aria-label="PDF colours" data-testid="pdf-night-menu">
-          <div className="quick-menu-header">PDF colours · all PDFs</div>
+        <div ref={menuRef} className="quick-menu pdf-filter-menu pdf-night-menu" role="menu" aria-label={uiText("PDF colours")} data-testid="pdf-night-menu">
+          <div className="quick-menu-header">{uiText("PDF colours · all PDFs")}</div>
           <button type="button" role="menuitemradio" aria-checked={!s.on} data-testid="pdf-night-off"
                   onClick={() => { pdfNightStore.setOn(false); close(); }}>
-            <span className="quick-menu-tick">{!s.on ? '✓' : ''}</span>
-            Off
-          </button>
+            <span className="quick-menu-tick">{!s.on ? '✓' : ''}</span>{uiText("Off")}</button>
           {STYLES.map(({ style, label, hint }) => {
             const checked = s.on && s.style === style;
             return (
@@ -106,42 +105,34 @@ export function PdfNightMenu() {
           <div className={`pdf-night-colors${customOn ? '' : ' off'}`}>
             <label>
               <input type="color" data-testid="pdf-night-bg" value={s.bg}
-                     onChange={e => { pdfNightStore.setColors({ bg: e.target.value }); pdfNightStore.setStyle('custom'); }} />
-              Background
-            </label>
+                     onChange={e => { pdfNightStore.setColors({ bg: e.target.value }); pdfNightStore.setStyle('custom'); }} />{uiText("Background")}</label>
             <label>
               <input type="color" data-testid="pdf-night-fg" value={s.fg}
-                     onChange={e => { pdfNightStore.setColors({ fg: e.target.value }); pdfNightStore.setStyle('custom'); }} />
-              Text and lines
-            </label>
+                     onChange={e => { pdfNightStore.setColors({ fg: e.target.value }); pdfNightStore.setStyle('custom'); }} />{uiText("Text and lines")}</label>
           </div>
           <div className="quick-menu-sep" role="separator" />
-          <div className="quick-menu-header">Coloured text and lines</div>
+          <div className="quick-menu-header">{uiText("Coloured text and lines")}</div>
           <div className={`pdf-night-sliders${s.on ? '' : ' off'}`}>
-            <label title="0 % turns every coloured line into a shade of the text colour">
-              <span>Colour</span>
+            <label title={uiText("0 % turns every coloured line into a shade of the text colour")}>
+              <span>{uiText("Colour")}</span>
               <input type="range" min={0} max={200} step={5} value={s.colour} data-testid="pdf-night-colour"
                      onChange={e => pdfNightStore.setColour(Number(e.target.value))} />
-              <span className="pdf-night-val" translate="no">{s.colour === 0 ? 'Grey' : `${s.colour} %`}</span>
+              <span className="pdf-night-val" translate="no">{s.colour === 0 ? uiText("Grey") : `${s.colour} %`}</span>
             </label>
-            <label title="Pulls pale lines toward the text colour so they stay readable on the new background">
-              <span>Contrast</span>
+            <label title={uiText("Pulls pale lines toward the text colour so they stay readable on the new background")}>
+              <span>{uiText("Contrast")}</span>
               <input type="range" min={0} max={100} step={5} value={s.contrast} data-testid="pdf-night-contrast"
                      className={s.contrastAuto ? 'auto' : ''}
                      onChange={e => pdfNightStore.setContrast(Number(e.target.value))} />
               <button type="button" role="checkbox" aria-checked={s.contrastAuto}
                       className={`pdf-night-auto${s.contrastAuto ? ' on' : ''}`} data-testid="pdf-night-contrast-auto"
-                      title="Choose the contrast from the background and text colours"
-                      onClick={() => pdfNightStore.setContrastAuto(!s.contrastAuto)}>
-                Auto
-              </button>
+                      title={uiText("Choose the contrast from the background and text colours")}
+                      onClick={() => pdfNightStore.setContrastAuto(!s.contrastAuto)}>{uiText("Auto")}</button>
             </label>
           </div>
           <button type="button" role="menuitem" data-testid="pdf-night-reset"
                   onClick={() => pdfNightStore.resetColors()}>
-            <span className="quick-menu-tick" />
-            Reset colours
-          </button>
+            <span className="quick-menu-tick" />{uiText("Reset colours")}</button>
         </div>,
         doc.body,
       )}

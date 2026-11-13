@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * PDF quality preset — the PDF side of the board's QualityPresetCard, with
  * the same four names (`store/pdf-quality.ts`). Start page, beside the board
@@ -27,13 +28,13 @@ export function PdfQualityCard() {
   return (
     <div className="ui-scale-full home-quality-card" data-testid="pdf-quality-card">
       <div className="ui-scale-full-label">
-        <span>PDF quality</span>
+        <span>{uiText("PDF quality")}</span>
         <span className="ui-scale-full-readout" translate="no"
-              title="Sharpest zoom and the cache this preset allows on this device">
-          {`${cfg.maxMainTier}× · ${Math.round(cfg.cacheMaxPixels / 1e6)} MP`}
+              title={uiText("Sharpest zoom and the cache this preset allows on this device")}>
+          {uiText`${cfg.maxMainTier}× · ${Math.round(cfg.cacheMaxPixels / 1e6)} MP`}
         </span>
       </div>
-      <div className="home-quality-buttons" role="radiogroup" aria-label="PDF quality preset">
+      <div className="home-quality-buttons" role="radiogroup" aria-label={uiText("PDF quality preset")}>
         {PDF_RENDER_QUALITY_OPTIONS.map((id) => (
           <button
             key={id}

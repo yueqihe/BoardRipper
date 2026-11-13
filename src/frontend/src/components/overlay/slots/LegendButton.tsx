@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 /**
  * "?" — opens the board legend card (components/BoardLegend.tsx). Shown by
  * default; switched off from the ribbon's right-click menu or Settings ▸
@@ -14,7 +15,7 @@ export function LegendButton() {
       className={`board-netlines-toggle${open ? ' active' : ''}`}
       data-testid="legend-btn"
       aria-pressed={open}
-      title={open ? 'Hide the legend' : 'Legend: pin colours, readings, lines and keys'}
+      title={open ? uiText("Hide the legend") : uiText("Legend: pin colours, readings, lines and keys")}
       onClick={() => boardLegendStore.toggle()}
     >
       <IconQuestionMark size={16} />

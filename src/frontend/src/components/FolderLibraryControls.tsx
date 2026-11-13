@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IconFolderOpen, IconRefresh, IconPlugConnected, IconX } from '@tabler/icons-react';
 import { databankStore } from '../store/databank-store';
@@ -19,10 +20,10 @@ import { showSidebarTab } from './Sidebar.utils';
  *  it says so; a scan that found something confirms it in the same place. */
 function reportScan(rootName: string, count: number): void {
   if (count > 0) {
-    boardStore.addToast(`Library: ${rootName} — ${count} file${count === 1 ? '' : 's'}`, 'info');
+    boardStore.addToast(uiText`Library: ${rootName} — ${count} file${count === 1 ? '' : uiText('plural.s')}`, 'info');
   } else {
     boardStore.addToast(
-      `No boards or PDFs in "${rootName}". Pick the folder that holds them, or one above it.`,
+      uiText`No boards or PDFs in "${rootName}". Pick the folder that holds them, or one above it.`,
       'error',
     );
   }
@@ -78,7 +79,7 @@ function useFolderPicker(testId: string) {
       ok = await databankStore.adoptFolderFiles(list);
       reportScan(databankStore.folderState.kind === 'none' ? '' : databankStore.folderState.rootName, databankStore.files.length);
     } catch (err) {
-      boardStore.addToast(`Could not read that folder: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      boardStore.addToast(uiText`Could not read that folder: ${err instanceof Error ? err.message : String(err)}`, 'error');
     } finally {
       setBusy(false);
       // Let the same folder be picked again (change events need a new value).
@@ -109,9 +110,9 @@ function useFolderPicker(testId: string) {
           // the second. Saying which folders are off limits is the only way
           // the user can tell those apart.
           boardStore.addToast(
-            'No folder opened. Note that browsers refuse some folders outright — ' +
-            'your home folder, Desktop, Documents and the system folders. Pick the ' +
-            'folder your boards are in, or one below it.',
+            uiText("No folder opened. Note that browsers refuse some folders outright — ") +
+            uiText("your home folder, Desktop, Documents and the system folders. Pick the ") +
+            uiText("folder your boards are in, or one below it."),
             'info',
           );
           settle(false);
@@ -121,7 +122,7 @@ function useFolderPicker(testId: string) {
           break;   // the input below can do it, and settles when it closes
         default:
           boardStore.addToast(
-            `Could not read that folder: ${res.error instanceof Error ? res.error.message : 'unknown error'}`,
+            uiText`Could not read that folder: ${res.error instanceof Error ? res.error.message : 'unknown error'}`,
             'error',
           );
           settle(false);
@@ -167,9 +168,9 @@ export function FolderLibraryOpenButton({ className, children }: { className?: s
           await pick();
           if (databankStore.folderMode) showSidebarTab('library');
         }}
-        title="Index a folder of boards and schematics, read in this browser"
+        title={uiText("Index a folder of boards and schematics, read in this browser")}
       >
-        <IconFolderOpen size={18} stroke={1.75} /> {busy ? 'Reading folder…' : (children ?? 'Open a folder')}
+        <IconFolderOpen size={18} stroke={1.75} /> {busy ? uiText("Reading folder…") : (children ?? uiText("Open a folder"))}
       </button>
     </>
   );
@@ -182,36 +183,21 @@ export function FolderLibraryEmptyState() {
   return (
     <div className="library-empty folder-lib-empty">
       {input}
-      <div className="folder-lib-empty-title">No library folder yet</div>
-      <div className="folder-lib-empty-text">
-        Point BoardRipper at a folder of boardview files and schematics. It is read
-        in the browser — nothing is uploaded, and nothing leaves this machine.
-      </div>
+      <div className="folder-lib-empty-title">{uiText("No library folder yet")}</div>
+      <div className="folder-lib-empty-text">{uiText("Point BoardRipper at a folder of boardview files and schematics. It is read in the browser — nothing is uploaded, and nothing leaves this machine.")}</div>
       <button
         className="library-empty-action"
         data-testid="pick-library-folder"
         onClick={pick}
         disabled={busy}
       >
-        <IconFolderOpen size={14} /> {busy ? 'Reading folder…' : 'Choose a folder'}
+        <IconFolderOpen size={14} /> {busy ? uiText("Reading folder…") : uiText("Choose a folder")}
       </button>
       {mode === 'input' && (
-        <div className="folder-lib-empty-note">
-          Your browser will call this an <em>upload</em> and may ask you to
-          confirm it. Nothing is uploaded — that is just the only wording it
-          has for “let this page read these files”, and they are read here in
-          this tab. This browser cannot remember a folder between visits, so
-          it asks once per visit; boards you have already opened come back
-          without it.
-        </div>
+        <div className="folder-lib-empty-note">{uiText("Your browser will call this an ")}<em>{uiText("upload")}</em>{uiText(" and may ask you to confirm it. Nothing is uploaded — that is just the only wording it has for “let this page read these files”, and they are read here in this tab. This browser cannot remember a folder between visits, so it asks once per visit; boards you have already opened come back without it.")}</div>
       )}
       {mode === 'handle' && (
-        <div className="folder-lib-empty-note">
-          The browser keeps access only until the last tab closes. Pick
-          <em> Allow on every visit</em> when it asks, or install BoardRipper
-          (browser menu ▸ Install) — an installed app keeps the folder for
-          good and is never asked again.
-        </div>
+        <div className="folder-lib-empty-note">{uiText("The browser keeps access only until the last tab closes. Pick")}<em>{uiText(" Allow on every visit")}</em>{uiText(" when it asks, or install BoardRipper (browser menu ▸ Install) — an installed app keeps the folder for good and is never asked again.")}</div>
       )}
     </div>
   );
@@ -229,7 +215,7 @@ export function FolderLibraryChip() {
     databankStore.setFolderRepickHandler(() => new Promise<boolean>((resolve) => {
       pendingRef.current = resolve;
       boardStore.addToast(
-        'Choose the library folder again to open this file. Your browser may call it an upload — nothing leaves this machine.',
+        uiText("Choose the library folder again to open this file. Your browser may call it an upload — nothing leaves this machine."),
         'info',
       );
       void pick();
@@ -255,7 +241,7 @@ export function FolderLibraryChip() {
       <span className="folder-lib-chip-count">{files.length}</span>
       {detached && (
         <span className="folder-lib-chip-state">
-          {folderState.reason === 'permission' ? 'needs permission' : 'index only'}
+          {folderState.reason === 'permission' ? uiText("needs permission") : uiText("index only")}
         </span>
       )}
       <div className="folder-lib-chip-actions">
@@ -268,18 +254,17 @@ export function FolderLibraryChip() {
               const ok = await databankStore.reconnectFolderLibrary();
               if (ok) reportScan(folderState.rootName, databankStore.files.length);
               else boardStore.addToast(
-                'The browser did not restore access to that folder. Choose it again to reconnect.',
+                uiText("The browser did not restore access to that folder. Choose it again to reconnect."),
                 'error',
               );
             })}
             title={
-              'Grant access to this folder again. Chromium drops the grant when the last tab ' +
-              'closes — pick "Allow on every visit" in the prompt, or install BoardRipper ' +
-              '(browser menu ▸ Install), and it will not ask again.'
+              uiText("Grant access to this folder again. Chromium drops the grant when the last tab ") +
+              uiText("closes — pick \"Allow on every visit\" in the prompt, or install BoardRipper ") +
+              uiText("(browser menu ▸ Install), and it will not ask again.")
             }
           >
-            <IconPlugConnected size={13} /> Reconnect
-          </button>
+            <IconPlugConnected size={13} />{uiText(" Reconnect")}</button>
         )}
         {canRescan && (
           <button
@@ -287,7 +272,7 @@ export function FolderLibraryChip() {
             data-testid="rescan-library-folder"
             disabled={working}
             onClick={() => run(() => databankStore.rescanFolderLibrary())}
-            title="Read the folder again — picks up files added or removed since"
+            title={uiText("Read the folder again — picks up files added or removed since")}
           >
             <IconRefresh size={13} />
           </button>
@@ -297,16 +282,16 @@ export function FolderLibraryChip() {
           data-testid="change-library-folder"
           disabled={busy || working}
           onClick={pick}
-          title="Choose a different folder"
+          title={uiText("Choose a different folder")}
         >
-          {detached && folderState.reason === 'repick' ? 'Choose folder' : 'Change'}
+          {detached && folderState.reason === 'repick' ? uiText("Choose folder") : uiText("Change")}
         </button>
         <button
           className="library-scan-btn library-scan-icon"
           data-testid="forget-library-folder"
           disabled={working}
           onClick={() => run(() => databankStore.forgetFolderLibrary())}
-          title="Forget this folder and its index"
+          title={uiText("Forget this folder and its index")}
         >
           <IconX size={13} />
         </button>

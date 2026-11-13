@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import type { BoardData, BoardRevision, Part, Pin } from '../parsers';
 import { Emitter } from './emitter';
 import { boardCache } from './board-cache';
@@ -516,7 +517,7 @@ function applyBoardFilters(tab: BoardTab): void {
 function syntheticRevisionFromBoard(b: BoardData): BoardRevision {
   return {
     index: 1,
-    label: 'rev 1',
+    label: uiText("rev 1"),
     componentCount: b.parts.length,
     parts: b.parts,
     bounds: b.bounds,
@@ -626,7 +627,7 @@ export function boardHasCopper(board: BoardData | null | undefined): boolean {
 }
 
 export const BUTTERFLY_COPPER_HIDDEN_MESSAGE =
-  'Butterfly shows both sides flat, so traces, vias and copper layers are hidden while it is on.';
+  uiText("Butterfly shows both sides flat, so traces, vias and copper layers are hidden while it is on.");
 
 /** The board search's part test: the part's name, or the net of any of its
  *  pins, matches the query (substring, or the loose rule in loose-match.ts).
@@ -1119,11 +1120,11 @@ class BoardStore extends Emitter {
 
       try {
         loadProgressStore.start(file.name, file.size);
-        loadProgressStore.setPhase('Cache lookup', 'Checking IndexedDB for previously-parsed board');
+        loadProgressStore.setPhase(uiText("Cache lookup"), uiText("Checking IndexedDB for previously-parsed board"));
         this._openFiles.set(file.name, file);
         const cached = await boardCache.get(file.name, file.size, file.lastModified);
         if (cached) {
-          loadProgressStore.pushLog(`Cache hit: ${cached.parts.length} parts, ${cached.nets.size} nets`);
+          loadProgressStore.pushLog(uiText`Cache hit: ${cached.parts.length} parts, ${cached.nets.size} nets`);
           log.cache.log(`Loaded from cache: ${file.name} (${cached.parts.length} parts, ${cached.nets.size} nets)`);
           this.applyCachedBoard(tab, cached, file.name, file.size, file.lastModified);
           // Per-file user overrides win over both auto-rotation and the
@@ -1135,7 +1136,7 @@ class BoardStore extends Emitter {
           // runs inside BoardRenderer.activateScene which is what the user
           // is actually waiting on, especially on cold-cache opens of large
           // boards like NM-G611. Renderer calls finishIfMatching when done.
-          loadProgressStore.setPhase('Building scene', 'Renderer mounting + buildBoardScene + first frame');
+          loadProgressStore.setPhase(uiText("Building scene"), uiText("Renderer mounting + buildBoardScene + first frame"));
           this.markSceneBuilding(id, file.name);
           this.onTabCreated?.(id, file.name);
           this.notify();
@@ -1143,12 +1144,12 @@ class BoardStore extends Emitter {
         }
 
         log.parser.log(`Parsing: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
-        loadProgressStore.setPhase('Reading file bytes', `${(file.size / 1024 / 1024).toFixed(2)} MB`);
+        loadProgressStore.setPhase(uiText("Reading file bytes"), uiText`${(file.size / 1024 / 1024).toFixed(2)} MB`);
         this._openFiles.set(file.name, file);
         const t0 = performance.now();
         const buffer = await file.arrayBuffer();
-        loadProgressStore.pushLog(`Read ${buffer.byteLength.toLocaleString()} bytes into memory`);
-        loadProgressStore.setPhase('Parsing', `${file.name.split('.').pop()?.toUpperCase()} format`);
+        loadProgressStore.pushLog(uiText`Read ${buffer.byteLength.toLocaleString()} bytes into memory`);
+        loadProgressStore.setPhase(uiText("Parsing"), uiText`${file.name.split('.').pop()?.toUpperCase()} format`);
         let board;
         try {
           board = await parseBoardFileInWorker(buffer, file.name);
@@ -1174,7 +1175,7 @@ class BoardStore extends Emitter {
         }
         const elapsed = (performance.now() - t0).toFixed(0);
         log.parser.log(`Parsed OK in ${elapsed}ms: format=${board.format}, parts=${board.parts.length}, nets=${board.nets.size}, outline=${board.outline.length} pts`);
-        loadProgressStore.pushLog(`Parsed ${board.parts.length} parts, ${board.nets.size} nets, ${board.outline.length} outline pts`);
+        loadProgressStore.pushLog(uiText`Parsed ${board.parts.length} parts, ${board.nets.size} nets, ${board.outline.length} outline pts`);
 
         // Log side detection summary
         const fmt = getFormat(board.format);
@@ -1191,7 +1192,7 @@ class BoardStore extends Emitter {
           (fmt?.swapSides ? ', swapSides=ON' : ''),
         );
 
-        loadProgressStore.setPhase('Post-process', 'Mechanical-part detection, derived-view, filters');
+        loadProgressStore.setPhase(uiText("Post-process"), uiText("Mechanical-part detection, derived-view, filters"));
         const tPost = performance.now();
         flagMechanicalParts(board.parts);
         tab.board = board;
@@ -1226,7 +1227,7 @@ class BoardStore extends Emitter {
         // Cache write runs in the background — the renderer handoff below must
         // not wait on IndexedDB serialization (hundreds of ms on big boards),
         // and a failed write must not fail the load (the board is already good).
-        loadProgressStore.pushLog('Cache write scheduled (background)');
+        loadProgressStore.pushLog(uiText("Cache write scheduled (background)"));
         const tCache = performance.now();
         void boardCache.put(file.name, file.size, file.lastModified, board)
           .then(() => log.perf.log(`cache put: ${(performance.now() - tCache).toFixed(0)}ms (background)`))
@@ -1240,7 +1241,7 @@ class BoardStore extends Emitter {
       } catch (err) {
         log.parser.error(`Failed to load ${file.name}:`, err);
         const errMsg = err instanceof Error ? err.message : String(err);
-        this.addToast(`Failed to load ${file.name}: ${errMsg}`, 'error');
+        this.addToast(uiText`Failed to load ${file.name}: ${errMsg}`, 'error');
         loadProgressStore.abort(errMsg);
         const idx = this._tabs.indexOf(tab);
         if (idx !== -1) this._tabs.splice(idx, 1);
@@ -1253,7 +1254,7 @@ class BoardStore extends Emitter {
 
       // Create panel AFTER board + rotation are ready so the renderer sees correct state.
       // Renderer closes the overlay once activateScene finishes — see above.
-      loadProgressStore.setPhase('Building scene', 'Renderer mounting + buildBoardScene + first frame');
+      loadProgressStore.setPhase(uiText("Building scene"), uiText("Renderer mounting + buildBoardScene + first frame"));
       this.markSceneBuilding(id, file.name);
       this.onTabCreated?.(id, file.name);
       this.notify();
@@ -1320,10 +1321,10 @@ class BoardStore extends Emitter {
     if (!section) return;
     const missing = ASC_SECTIONS.filter(s => s !== section);
     this.addToast(
-      `"${file.name}" is the ${section} section of a split ASC board — ${missing.join(', ')} are separate files.`,
+      uiText`"${file.name}" is the ${section} section of a split ASC board — ${missing.join(', ')} are separate files.`,
       'info',
       {
-        label: 'Add sections…',
+        label: uiText("Add sections…"),
         run: () => this.pickAscSiblings(file),
       },
       12000,
@@ -2020,7 +2021,7 @@ class BoardStore extends Emitter {
     const file = this._openFiles.get(tab.fileName);
     if (!file) {
       log.cache.error(`reparse: no File reference for ${tab.fileName}`);
-      this.addToast(`Cannot re-parse ${tab.fileName} — original file not in memory. Drag-and-drop it again.`, 'error');
+      this.addToast(uiText`Cannot re-parse ${tab.fileName} — original file not in memory. Drag-and-drop it again.`, 'error');
       return false;
     }
     try {
@@ -2041,7 +2042,7 @@ class BoardStore extends Emitter {
       return true;
     } catch (err) {
       log.parser.error(`Re-parse failed for ${tab.fileName}:`, err);
-      this.addToast(`Re-parse failed: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      this.addToast(uiText`Re-parse failed: ${err instanceof Error ? err.message : String(err)}`, 'error');
       return false;
     }
   }
@@ -2075,8 +2076,8 @@ class BoardStore extends Emitter {
     log.cache.log(`Re-parsed ${reparsed} open tab(s)${skipped ? `, skipped ${skipped} (no File ref)` : ''}`);
     this.addToast(
       reparsed > 0
-        ? `Re-parsed ${reparsed} open board${reparsed === 1 ? '' : 's'}.`
-        : 'Board cache cleared.',
+        ? uiText`Re-parsed ${reparsed} open board${reparsed === 1 ? '' : uiText('plural.s')}.`
+        : uiText("Board cache cleared."),
       'info',
     );
     this.notify();
@@ -2093,7 +2094,7 @@ class BoardStore extends Emitter {
     invalidateTileCache();
     clearFontCache();
     log.cache.log('PDF caches cleared');
-    this.addToast('PDF caches cleared.', 'info');
+    this.addToast(uiText("PDF caches cleared."), 'info');
     this.notify();
   }
 

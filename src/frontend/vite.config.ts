@@ -161,6 +161,7 @@ export default defineConfig(({ mode }) => {
       // `BR_VERSION_SUFFIX=-beta.1 npm run build:lite`. Unset in every normal
       // and released build, so the version string is exactly package.json's.
       __APP_VERSION__: JSON.stringify(pkg.version + (process.env.BR_VERSION_SUFFIX ?? '')),
+      __APP_DEFAULT_LANGUAGE__: JSON.stringify(process.env.BR_DEFAULT_LANGUAGE ?? 'zh-CN'),
     },
     build: {
       // Separate output dirs so the backend-free bundles never collide with the

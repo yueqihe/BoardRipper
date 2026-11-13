@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useCallback, useRef, useSyncExternalStore } from 'react';
 import type { IDockviewPanelHeaderProps } from 'dockview-react';
 import { useBoardStore } from '../hooks/useBoardStore';
@@ -114,8 +115,8 @@ export function BoardTab(props: IDockviewPanelHeaderProps<{ boardTabId?: number 
             primaryLabel="Linked PDFs"
             fixedDropdown
             title={linkedCount > 0
-              ? `Linked PDFs: ${linkedPdfs.join(', ')} — click to manage`
-              : 'Link a PDF to this board'}
+              ? uiText`Linked PDFs: ${linkedPdfs.join(', ')} — click to manage`
+              : uiText("Link a PDF to this board")}
           />
         </span>
       )}

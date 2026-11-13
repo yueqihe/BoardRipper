@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * PDF render quality presets — one choice that sets every knob of the PDF
  * render pipeline at once. Same four names as the board's presets
@@ -30,10 +31,10 @@ export const PDF_RENDER_QUALITY_OPTIONS: PdfRenderQuality[] = ['max', 'high', 'm
 
 /** The names shown for the stored ids — the board presets' names. */
 export const PDF_QUALITY_LABELS: Record<PdfRenderQuality, string> = {
-  max: 'Quality',
-  high: 'Balanced',
-  medium: 'Fast',
-  low: 'Fastest',
+  max: uiText("Quality"),
+  high: uiText("Balanced"),
+  medium: uiText("Fast"),
+  low: uiText("Fastest"),
 };
 
 export interface PdfQualityConfig {
@@ -124,9 +125,9 @@ export function getPdfQualityConfig(q: PdfRenderQuality): PdfQualityConfig {
 export function pdfQualityDescription(q: PdfRenderQuality): string {
   const c = QUALITY_CONFIGS[q];
   switch (q) {
-    case 'max':    return `Sharpest while moving (page up to ${c.maxCanvasDim} px) and neighbouring pages kept sharp. Most memory. Every preset is sharp once the view stops.`;
-    case 'high':   return `Sharp while moving up to about ${Math.round(c.maxCanvasDim / 2000)}× zoom; a neighbouring page sharpens as it comes into view. Sharp at any zoom once the view stops.`;
-    case 'medium': return `Lighter while moving; neighbouring pages lighter. Sharp at any zoom once the view stops. For tablets and integrated GPUs.`;
-    case 'low':    return `Lightest while moving; least memory and battery. Sharp at any zoom once the view stops.`;
+    case 'max':    return uiText`Sharpest while moving (page up to ${c.maxCanvasDim} px) and neighbouring pages kept sharp. Most memory. Every preset is sharp once the view stops.`;
+    case 'high':   return uiText`Sharp while moving up to about ${Math.round(c.maxCanvasDim / 2000)}× zoom; a neighbouring page sharpens as it comes into view. Sharp at any zoom once the view stops.`;
+    case 'medium': return uiText("Lighter while moving; neighbouring pages lighter. Sharp at any zoom once the view stops. For tablets and integrated GPUs.");
+    case 'low':    return uiText("Lightest while moving; least memory and battery. Sharp at any zoom once the view stops.");
   }
 }

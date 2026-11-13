@@ -1,3 +1,4 @@
+import { uiText } from '../../../i18n';
 import { IconHierarchy, IconHierarchyOff, IconChartDots3, IconHierarchy3 } from '@tabler/icons-react';
 import { boardStore } from '../../../store/board-store';
 import type { SlotCtx } from '../slot-ctx';
@@ -11,12 +12,12 @@ export function NetLinesButton({ ctx }: { ctx: SlotCtx }) {
       onClick={() => boardStore.cycleNetLineMode()}
       title={
         netLineMode === 'off'
-          ? 'Net lines: off (click for star)'
+          ? uiText("Net lines: off (click for star)")
           : netLineMode === 'star'
-          ? 'Net lines: star — radiate from selected part (click for chain)'
+          ? uiText("Net lines: star — radiate from selected part (click for chain)")
           : netLineMode === 'chain'
-          ? 'Net lines: chain — nearest-neighbor MST (click for chain + adjacent)'
-          : 'Net lines: chain + adjacent — propagate one hop through 2-pin parts (click to turn off)'
+          ? uiText("Net lines: chain — nearest-neighbor MST (click for chain + adjacent)")
+          : uiText("Net lines: chain + adjacent — propagate one hop through 2-pin parts (click to turn off)")
       }
     >
       {netLineMode === 'off' ? (

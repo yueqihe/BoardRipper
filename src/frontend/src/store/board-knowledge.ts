@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 // src/frontend/src/store/board-knowledge.ts
 //
 // What is known about a board beyond its geometry: repair tables, loose
@@ -42,7 +43,7 @@ function fromFile(board: BoardData): KnowledgeSource | null {
   if (tables.length === 0 && notes.length === 0 && netNotes.size === 0) return null;
   return {
     kind: 'file',
-    label: board.format === 'XZZ' ? 'From the XZZ board file' : 'From the board file',
+    label: board.format === 'XZZ' ? uiText("From the XZZ board file") : uiText("From the board file"),
     tables,
     notes,
     netNotes,

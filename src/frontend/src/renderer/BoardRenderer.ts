@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Main PixiJS renderer — owns the Application, Viewport, and scene lifecycle.
  *
@@ -3445,7 +3446,7 @@ export class BoardRenderer {
       // here; pushing detail here gives the user the actual buildBoardScene
       // cost broken out from the rest of the phase (panel mount, GPU upload).
       void import('../store/load-progress-store').then(({ loadProgressStore }) => {
-        loadProgressStore.pushLog(`buildBoardScene: ${elapsed}ms (${board.parts.length} parts, ${(graph.topLabels.length + graph.bottomLabels.length).toLocaleString()} labels, ${board.surfaces?.length ?? 0} surfaces)`);
+        loadProgressStore.pushLog(uiText`buildBoardScene: ${elapsed}ms (${board.parts.length} parts, ${(graph.topLabels.length + graph.bottomLabels.length).toLocaleString()} labels, ${board.surfaces?.length ?? 0} surfaces)`);
       });
 
       // Debug vertex overlay (toggled in settings)
@@ -4287,7 +4288,7 @@ export class BoardRenderer {
     const tab = boardStore.tabs.find(t => t.id === this.tabId);
     if (!tab) return;
     navHistoryStore.record({
-      cause: 'view', label: 'Fit board',
+      cause: 'view', label: uiText("Fit board"),
       place: { kind: 'board', tabId: tab.id, fileKey: tab.cacheKey, fileId: tab.fileId, fileName: tab.fileName,
         side: tab.butterfly || (tab.showTop && tab.showBottom) ? 'both' : tab.showTop ? 'top' : 'bottom', camera: this.navCamera.get() },
     });
@@ -4757,7 +4758,7 @@ export class BoardRenderer {
         // unlock gesture, not rotation the board should catch up on.
         rotationLockStore.setLocked(false);
         lr.baseRad = targetRad;
-        boardStore.addToast('Rotation unlocked — turn two fingers to rotate; double-tap with two fingers to lock again.', 'info');
+        boardStore.addToast(uiText("Rotation unlocked — turn two fingers to rotate; double-tap with two fingers to lock again."), 'info');
         log.ui.log('touch: rotation unlocked by a two-finger turn');
       } else if (turnedDeg < BoardRenderer.ROTATE_DEAD_ZONE_DEG) {
         return;
@@ -4793,14 +4794,14 @@ export class BoardRenderer {
   private toggleRotationLock(): void {
     if (rotationLockStore.locked) {
       rotationLockStore.setLocked(false);
-      boardStore.addToast('Rotation unlocked — turn two fingers to rotate; double-tap with two fingers to lock again.', 'info');
+      boardStore.addToast(uiText("Rotation unlocked — turn two fingers to rotate; double-tap with two fingers to lock again."), 'info');
       log.ui.log('touch: rotation unlocked by a two-finger double-tap');
       return;
     }
     rotationLockStore.setLocked(true);
     const nearest = (Math.round(boardStore.rotation / 90) * 90) % 360;
     boardStore.setRotation(nearest);
-    boardStore.addToast(`Rotation locked at ${nearest}°.`, 'info');
+    boardStore.addToast(uiText`Rotation locked at ${nearest}°.`, 'info');
     log.ui.log(`touch: rotation locked by a two-finger double-tap, snapped to ${nearest}°`);
   }
 
@@ -8019,12 +8020,12 @@ export class BoardRenderer {
     const wl = this.tabWorklist();
     if (wl && wl.entries.some(e => e.refdes === refdes)) {
       worklistStore.removeEntry(wl.id, refdes);
-      boardStore.addToast(`Removed '${refdes}' from ${wl.name}`, 'info');
+      boardStore.addToast(uiText`Removed '${refdes}' from ${wl.name}`, 'info');
     } else {
       const firstUse = !wl;
       worklistStore.pushRefdesToActive(refdes);
       const name = this.tabWorklist()?.name ?? 'worklist';
-      boardStore.addToast(`Added '${refdes}' to ${name}`, 'info');
+      boardStore.addToast(uiText`Added '${refdes}' to ${name}`, 'info');
       if (firstUse) openBoardSidebarTab('worklist');
     }
   }

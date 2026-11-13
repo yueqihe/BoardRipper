@@ -10424,3 +10424,11 @@ button.wl-tag:hover { color: var(--text-primary); }
   background: #2d7d46;
   transition: width 0.2s linear;
 }
+
+/* Native language picker shares the toolbar theme. */
+.toolbar-language { min-width: 86px; max-width: 112px; padding: 4px 7px; color-scheme: dark; }
+body.light .toolbar-language { color-scheme: light; }
+.toolbar-language option { background: var(--bg-primary); color: var(--text-primary); }
+html[lang="zh-CN"] { font-family: system-ui, "Microsoft YaHei", "PingFang SC", sans-serif; }
+
+html[lang="zh-CN"] body { font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif; }

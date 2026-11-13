@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * The board legend — a half-transparent reference card over the board,
  * opened by the ribbon's "?" slot (`legendHelp`, shown by default). It explains what
@@ -91,7 +92,7 @@ export function BoardLegend({ tabId, sidebarOpen, rootRef }: {
       <>
         {(settings.pinGroups ?? []).filter(g => g.rules.length > 0).map(g => (
           <div key={g.id} className="lg-group">
-            <div className="lg-cap">{g.label}{g.outlineOnly ? ' · outline only' : ''}</div>
+            <div className="lg-cap">{g.label}{g.outlineOnly ? uiText(" · outline only") : ''}</div>
             {g.rules.map(r => (
               <Row key={r.id} testId={`legend-pin-${r.id}`}
                 swatch={<Swatch color={r.color} outline={g.outlineOnly} />}
@@ -101,26 +102,26 @@ export function BoardLegend({ tabId, sidebarOpen, rootRef }: {
           </div>
         ))}
         <div className="lg-group">
-          <div className="lg-cap">No rule matched</div>
+          <div className="lg-cap">{uiText("No rule matched")}</div>
           <Row testId="legend-pin-unmatched-top" swatch={<Swatch color={settings.defaultPinColorTop} />} name="Top side" count={pins.unmatchedTop} />
           <Row testId="legend-pin-unmatched-bottom" swatch={<Swatch color={settings.defaultPinColorBottom} />} name="Bottom side" count={pins.unmatchedBottom} />
         </div>
-        <button type="button" className="lg-link" onClick={() => openSettingsSection('netColors')}>Edit rules in Settings ▸ Pin Color Rules</button>
+        <button type="button" className="lg-link" onClick={() => openSettingsSection('netColors')}>{uiText("Edit rules in Settings ▸ Pin Color Rules")}</button>
       </>
     );
   } else if (mode === 'parts' && parts) {
     const types = settings.partTypes.filter(t => t.color && (parts.get(t.id) ?? 0) > 0);
     body = !settings.showComponentColors ? (
-      <p className="lg-note">Component colours are off, so every body is drawn in the board's own colour.</p>
+      <p className="lg-note">{uiText("Component colours are off, so every body is drawn in the board's own colour.")}</p>
     ) : types.length === 0 ? (
-      <p className="lg-note">No part on this board matches a coloured component type.</p>
+      <p className="lg-note">{uiText("No part on this board matches a coloured component type.")}</p>
     ) : (
       <div className="lg-group">
         {types.map(t => (
           <Row key={t.id} testId={`legend-part-${t.id}`}
             swatch={<Swatch color={t.color} shape="box" />}
             name={t.label}
-            sub={<span className="lg-mono" translate="no">{t.prefixes.join(' ')}{t.hidden ? ' · hidden' : ''}</span>}
+            sub={<span className="lg-mono" translate="no">{t.prefixes.join(' ')}{t.hidden ? uiText(" · hidden") : ''}</span>}
             count={parts.get(t.id) ?? 0} />
         ))}
       </div>
@@ -132,14 +133,14 @@ export function BoardLegend({ tabId, sidebarOpen, rootRef }: {
         <div className="lg-group">
           {READING_BANDS.map(b => (
             <Row key={b.id} testId={`legend-reading-${b.id}`}
-              swatch={<span className="lg-reading" style={{ color: hex(b.color) }}>{b.id === 'open' ? 'OL' : b.id === 'short' ? '0.012' : b.id === 'junction' ? '0.335' : '0.612'}</span>}
+              swatch={<span className="lg-reading" style={{ color: hex(b.color) }}>{b.id === 'open' ? uiText("OL") : b.id === 'short' ? '0.012' : b.id === 'junction' ? '0.335' : '0.612'}</span>}
               name={b.label} sub={b.range}
               count={total > 0 ? readings.get(b.id) ?? 0 : undefined} />
           ))}
         </div>
         <p className="lg-note">{total > 0
-          ? 'Counts are the readings this file carries. OpenBoardData readings use the same colours.'
-          : 'This file carries no readings. OpenBoardData readings use these colours.'}</p>
+          ? uiText("Counts are the readings this file carries. OpenBoardData readings use the same colours.")
+          : uiText("This file carries no readings. OpenBoardData readings use these colours.")}</p>
       </>
     );
   } else if (mode === 'lines') {
@@ -164,7 +165,7 @@ export function BoardLegend({ tabId, sidebarOpen, rootRef }: {
           const isPan = id === 'panBoardUp';
           return (
             <div key={id} className="lg-row lg-key" data-testid={`legend-key-${id}`}>
-              <span className="lg-name">{isPan ? 'Pan' : s.label}</span>
+              <span className="lg-name">{isPan ? uiText("Pan") : s.label}</span>
               <kbd>{isPan ? pan : formatShortcut(id)}</kbd>
             </div>
           );
@@ -235,16 +236,16 @@ export function BoardLegend({ tabId, sidebarOpen, rootRef }: {
       data-placed={pos ? 'moved' : 'corner'} style={placement}>
       <div className="lg-head" data-testid="legend-grip" onPointerDown={onHeadPointerDown}
         onDoubleClick={(e) => { if (!(e.target as HTMLElement).closest('button')) boardLegendStore.setPos(null); }}
-        title="Drag to move · double-click to put it back in the corner">
+        title={uiText("Drag to move · double-click to put it back in the corner")}>
         <IconGripVertical size={14} stroke={1.8} className="lg-grip" aria-hidden />
-        <div className="lg-modes" role="tablist" aria-label="Legend">
+        <div className="lg-modes" role="tablist" aria-label={uiText("Legend")}>
           {LEGEND_MODES.map(m => (
             <button key={m.id} type="button" role="tab" aria-selected={mode === m.id}
               className={mode === m.id ? 'on' : ''} data-testid={`legend-mode-${m.id}`} title={m.title}
               onClick={() => boardLegendStore.setMode(m.id)}>{m.label}</button>
           ))}
         </div>
-        <button type="button" className="lg-close" aria-label="Close legend" title="Close" onClick={() => boardLegendStore.close()}>
+        <button type="button" className="lg-close" aria-label={uiText("Close legend")} title={uiText("Close")} onClick={() => boardLegendStore.close()}>
           <IconX size={13} stroke={2} />
         </button>
       </div>

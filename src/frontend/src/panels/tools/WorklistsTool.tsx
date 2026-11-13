@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 /**
  * Worklist navigator (Tools ▸ Worklists) — every worklist, board open or
  * not. Grouped by the board name each worklist is attributed to, searchable
@@ -67,27 +68,25 @@ export function WorklistsTool() {
 
   const paste = async () => {
     let text = '';
-    try { text = await navigator.clipboard.readText(); } catch { boardStore.addToast('Clipboard read failed.', 'error'); return; }
+    try { text = await navigator.clipboard.readText(); } catch { boardStore.addToast(uiText("Clipboard read failed."), 'error'); return; }
     const r = worklistStore.importFromText(text);
-    if (!r) { boardStore.addToast('Clipboard does not look like a worklist. First line must be -[name]-.', 'error'); return; }
-    boardStore.addToast(`Imported “${r.created}”.`, 'info');
+    if (!r) { boardStore.addToast(uiText("Clipboard does not look like a worklist. First line must be -[name]-."), 'error'); return; }
+    boardStore.addToast(uiText`Imported “${r.created}”.`, 'info');
   };
 
   return (
     <div className="wlnav" data-testid="tools-worklists">
       <div className="wlnav-head">
-        <div className="tools-group-label">{`Worklists (${summaries.length})`}</div>
+        <div className="tools-group-label">{uiText`Worklists (${summaries.length})`}</div>
         <button type="button" className="wl-act" data-testid="wlnav-new" onClick={create}>
-          <IconPlus size={13} stroke={1.9} />New
-        </button>
+          <IconPlus size={13} stroke={1.9} />{uiText("New")}</button>
         <button type="button" className="wl-act" data-testid="wlnav-paste" onClick={() => { void paste(); }}>
-          <IconClipboardText size={13} stroke={1.9} />Paste
-        </button>
+          <IconClipboardText size={13} stroke={1.9} />{uiText("Paste")}</button>
       </div>
       <input
         className="wlnav-search"
         data-testid="wlnav-search"
-        placeholder="Search name, board or tag"
+        placeholder={uiText("Search name, board or tag")}
         value={q}
         onChange={e => setQ(e.target.value)}
       />
@@ -99,10 +98,10 @@ export function WorklistsTool() {
           ))}
         </div>
       )}
-      {summaries.length === 0 && <div className="library-empty">No worklists yet.</div>}
+      {summaries.length === 0 && <div className="library-empty">{uiText("No worklists yet.")}</div>}
       {groups.map(([board, rows]) => (
         <div key={board} className="wlnav-group" data-testid="wlnav-group">
-          <div className="tools-group-label" translate="no">{board || 'No board name'}</div>
+          <div className="tools-group-label" translate="no">{board || uiText("No board name")}</div>
           {rows.map(w => (
             <div key={w.id}>
               <button
@@ -149,33 +148,33 @@ function WorklistEditor({ id, onGone }: { id: string; onGone: () => void }) {
   return (
     <div className="wlnav-editor" data-testid="wlnav-editor">
       <label className="wlnav-field">
-        <span>Name</span>
+        <span>{uiText("Name")}</span>
         <input data-testid="wlnav-name" value={name} onChange={e => setName(e.target.value)}
           onBlur={() => worklistStore.renameWorklist(id, name)}
           onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />
       </label>
       <label className="wlnav-field">
-        <span>Board</span>
+        <span>{uiText("Board")}</span>
         <input data-testid="wlnav-board" value={board} placeholder="e.g. 820-02016" translate="no"
           onChange={e => setBoard(e.target.value)}
           onBlur={() => worklistStore.setBoardName(id, board)}
           onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />
       </label>
       <label className="wlnav-field">
-        <span>Tags</span>
-        <input data-testid="wlnav-tags" value={tags} placeholder="A2337, water, no power" translate="no"
+        <span>{uiText("Tags")}</span>
+        <input data-testid="wlnav-tags" value={tags} placeholder={uiText("A2337, water, no power")} translate="no"
           onChange={e => setTags(e.target.value)} onBlur={commitTags}
           onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }} />
       </label>
-      {w.origin?.fileName && <div className="wlnav-origin">{`Started on ${w.origin.fileName}`}</div>}
+      {w.origin?.fileName && <div className="wlnav-origin">{uiText`Started on ${w.origin.fileName}`}</div>}
 
       <div className="wlnav-load">
-        <span>{tabs.length ? 'Load into' : 'Open a board to load it there.'}</span>
+        <span>{tabs.length ? uiText("Load into") : uiText("Open a board to load it there.")}</span>
         {tabs.map(t => {
           const on = openOn.includes(t.id);
           return (
             <button key={t.id} type="button" className={`wl-hl${on ? ' on' : ''}`} data-testid="wlnav-load"
-              disabled={on} title={on ? 'Open on this board' : `Load on ${t.fileName} for this session`}
+              disabled={on} title={on ? uiText("Open on this board") : uiText`Load on ${t.fileName} for this session`}
               onClick={() => { boardStore.switchTab(t.id); worklistStore.loadOnTab(t.id, id); }} translate="no">
               {t.fileName}
             </button>
@@ -185,27 +184,23 @@ function WorklistEditor({ id, onGone }: { id: string; onGone: () => void }) {
 
       <div className="wlnav-actions">
         <button type="button" className="wl-act" data-testid="wlnav-duplicate"
-          onClick={() => { const d = worklistStore.duplicateWorklist(id); if (d) boardStore.addToast(`Made “${d.name}”.`, 'info'); }}>
-          Duplicate
-        </button>
+          onClick={() => { const d = worklistStore.duplicateWorklist(id); if (d) boardStore.addToast(uiText`Made “${d.name}”.`, 'info'); }}>{uiText("Duplicate")}</button>
         <button type="button" className="wl-act" data-testid="wlnav-copy"
-          onClick={() => { void copyText(worklistStore.formatWorklistForClipboard(id)).then(() => boardStore.addToast('Copied.', 'info')); }}>
-          Copy
-        </button>
+          onClick={() => { void copyText(worklistStore.formatWorklistForClipboard(id)).then(() => boardStore.addToast(uiText("Copied."), 'info')); }}>{uiText("Copy")}</button>
         {!confirmDelete
-          ? <button type="button" className="wl-act" data-testid="wlnav-delete" onClick={() => setConfirmDelete(true)}>Delete</button>
+          ? <button type="button" className="wl-act" data-testid="wlnav-delete" onClick={() => setConfirmDelete(true)}>{uiText("Delete")}</button>
           : (
             <span className="wl-confirm">
-              <span className="q">{`Delete “${w.name}”? This cannot be undone.${openOn.length ? ` It is open on ${openOn.length} board tab${openOn.length === 1 ? '' : 's'}.` : ''}`}</span>
-              <button type="button" onClick={() => setConfirmDelete(false)}>Cancel</button>
+              <span className="q">{uiText`Delete “${w.name}”? This cannot be undone.${openOn.length ? ` It is open on ${openOn.length} board tab${openOn.length === 1 ? '' : uiText('plural.s')}.` : ''}`}</span>
+              <button type="button" onClick={() => setConfirmDelete(false)}>{uiText("Cancel")}</button>
               <button type="button" className="go" data-testid="wlnav-delete-yes"
-                onClick={() => { worklistStore.deleteWorklist(id); onGone(); }}>Delete</button>
+                onClick={() => { worklistStore.deleteWorklist(id); onGone(); }}>{uiText("Delete")}</button>
             </span>
           )}
       </div>
 
       <div className="wlnav-rows">
-        {w.entries.length + w.netEntries.length === 0 && <div className="wl-empty">Empty. Add parts and nets from a board.</div>}
+        {w.entries.length + w.netEntries.length === 0 && <div className="wl-empty">{uiText("Empty. Add parts and nets from a board.")}</div>}
         {w.entries.map(e => (
           <WorklistRow key={e.refdes} kind="part" worklistId={id} partEntry={e} boardless
             selected={sel === 'p:' + e.refdes} onSelect={() => setSel('p:' + e.refdes)} />

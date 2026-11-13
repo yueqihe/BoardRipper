@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useMemo, useState, type ReactNode } from 'react';
 import type { AnnotationTable, BoardData } from '../parsers/types';
 import { hasNonLatin } from '../parsers/annotation-tables';
@@ -24,7 +25,7 @@ export function BoardNotesTab({ board, highlightedNet }: { board: BoardData; hig
   const k = boardKnowledge(board);
   const partIndex = useMemo(() => new Map(board.parts.map((p, i) => [p.name, i])), [board]);
   if (k.count === 0) {
-    return <div className="panel-empty"><span>No notes for this board</span></div>;
+    return <div className="panel-empty"><span>{uiText("No notes for this board")}</span></div>;
   }
   const forNet = highlightedNet ? netKnowledge(k, highlightedNet) : [];
   return (
@@ -53,7 +54,7 @@ function SourceView({ source, board, partIndex }: { source: KnowledgeSource; boa
       {source.tables.map((t, i) => <TableView key={i} table={t} board={board} partIndex={partIndex} />)}
       {source.notes.length > 0 && (
         <details className="bn-block" data-testid="board-notes-notes">
-          <summary><span>{`Notes (${source.notes.length})`}</span></summary>
+          <summary><span>{uiText`Notes (${source.notes.length})`}</span></summary>
           <ul className="bn-notes">
             {source.notes.map((n, i) => (
               <li key={i}><Line text={n} board={board} partIndex={partIndex} /></li>
@@ -111,23 +112,23 @@ function NetNotes({ notes, board }: { notes: ReadonlyMap<string, string>; board:
   }, [notes, board, q]);
   return (
     <details className="bn-block" data-testid="board-notes-glossary">
-      <summary><span>{`What each net does (${notes.size})`}</span></summary>
+      <summary><span>{uiText`What each net does (${notes.size})`}</span></summary>
       <input
         className="bn-filter"
         data-testid="board-notes-filter"
         type="search"
-        placeholder="Filter nets"
+        placeholder={uiText("Filter nets")}
         value={filter}
         onChange={e => setFilter(e.target.value)}
       />
       <div className="bn-glossary">
-        {rows.length === 0 && <div className="bn-empty"><span>No net matches</span></div>}
+        {rows.length === 0 && <div className="bn-empty"><span>{uiText("No net matches")}</span></div>}
         {rows.map(([net, text]) => (
           <div key={net} className="bn-glossary-row" data-testid="board-notes-glossary-row">
             <div className="bn-glossary-net" translate="no">
               {board.nets.has(net)
                 ? <NetChip netName={net} />
-                : <span className="bn-offboard" title="Not on this board">{net}</span>}
+                : <span className="bn-offboard" title={uiText("Not on this board")}>{net}</span>}
             </div>
             <div className="bn-glossary-text" lang={langOf(text)}>{text}</div>
           </div>

@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { uiZoom } from '../../store/ui-zoom';
@@ -149,12 +150,10 @@ export function SuggestionList({ groups, highlight, onHighlight, onSelect, onClo
     >
       <div className="overlay-dropdown-list">
         {rendered.length === 0
-          ? <div className="overlay-dropdown-empty">No matches</div>
+          ? <div className="overlay-dropdown-empty">{uiText("No matches")}</div>
           : rendered}
         {overflow && (
-          <div className="overlay-dropdown-overflow">
-            … and {flatRows.length - MAX_RENDERED_ROWS} more — refine your search
-          </div>
+          <div className="overlay-dropdown-overflow">{uiText("… and ")}{flatRows.length - MAX_RENDERED_ROWS}{uiText(" more — refine your search")}</div>
         )}
       </div>
     </div>,
@@ -244,11 +243,11 @@ export function DropdownPopover({ buildGroups, onSelect, onClose, placeholder }:
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder={placeholder ?? 'Filter…'}
+        placeholder={placeholder ?? uiText("Filter…")}
       />
       <div className="overlay-dropdown-list">
-        {rendered.length === 0 ? <div className="overlay-dropdown-empty">No matches</div> : rendered}
-        {overflow && <div className="overlay-dropdown-overflow">… and {flatRows.length - MAX_RENDERED_ROWS} more — refine your search</div>}
+        {rendered.length === 0 ? <div className="overlay-dropdown-empty">{uiText("No matches")}</div> : rendered}
+        {overflow && <div className="overlay-dropdown-overflow">{uiText("… and ")}{flatRows.length - MAX_RENDERED_ROWS}{uiText(" more — refine your search")}</div>}
       </div>
     </div>
   );

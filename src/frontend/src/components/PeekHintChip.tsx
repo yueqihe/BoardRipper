@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useState } from 'react';
 import { usePeekHintVisible } from '../store/peek-hint-store';
 
@@ -39,8 +40,6 @@ export function PeekHintChip() {
       className={`peek-hint-chip${phase === 'fading' ? ' fading' : ''}`}
       role="status"
       aria-live="polite"
-    >
-      Peeking other side — release Space to revert
-    </div>
+    >{uiText("Peeking other side — release Space to revert")}</div>
   );
 }

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /** Resize Mode popup — appears at the click point with the handles relevant to
  *  what was clicked (a pin shows pin/number/net sizes; a component shows label
  *  + outline; empty board shows board opacity). Each row edits one global
@@ -56,7 +57,7 @@ function ControlRow({ k }: { k: keyof RenderSettings }) {
           {modified && (
             <span
               data-testid="resize-modified-dot"
-              title="Changed from the default"
+              title={uiText("Changed from the default")}
               style={{ color: 'var(--accent-text)', marginLeft: 4 }}
             >
               •
@@ -79,12 +80,12 @@ function ControlRow({ k }: { k: keyof RenderSettings }) {
             onChange={(e) => resizeModeStore.commit(k, parseInt(e.target.value.slice(1), 16))}
             style={{ flex: 1, height: 26, padding: 0, border: '1px solid var(--border)', borderRadius: 5, background: 'transparent', cursor: 'pointer' }}
           />
-          <button onClick={() => resizeModeStore.reset(k)} style={btnStyle} title="Reset to default">⟲</button>
+          <button onClick={() => resizeModeStore.reset(k)} style={btnStyle} title={uiText("Reset to default")}>⟲</button>
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
           <button onClick={() => resizeModeStore.nudge(k, -1)} style={btnStyle} title={`− ${def.step}`}>−</button>
-          <div style={{ flex: 1 }} title={toggle ? 'Click the thumb or the name to turn on/off · drag to set · double-click the track to reset' : 'Drag to set · double-click to reset to default'}>
+          <div style={{ flex: 1 }} title={toggle ? uiText("Click the thumb or the name to turn on/off · drag to set · double-click the track to reset") : uiText("Drag to set · double-click to reset to default")}>
             <RangeControl
               value={value} min={def.min} max={def.max} step={def.step}
               onChange={(v) => resizeModeStore.commit(k, v)}
@@ -101,7 +102,7 @@ function ControlRow({ k }: { k: keyof RenderSettings }) {
               data-testid="resize-row-reset"
               onClick={() => resizeModeStore.reset(k)}
               style={btnStyle}
-              title={`Reset ${def.label} to its default (${DEFAULTS[k] as number})`}
+              title={uiText`Reset ${def.label} to its default (${DEFAULTS[k] as number})`}
             >
               ⟲
             </button>
@@ -177,7 +178,7 @@ export function ResizePopup() {
         color: 'var(--text-secondary)', fontSize: 11,
       }}>
         <span style={{ opacity: 0.8 }}>
-          {groupModified ? 'Changed — saved for every board' : 'Saved for every board'}
+          {groupModified ? uiText("Changed — saved for every board") : uiText("Saved for every board")}
         </span>
         <button
           data-testid="resize-reset-all"
@@ -191,10 +192,8 @@ export function ResizePopup() {
             textDecoration: groupModified ? 'underline' : 'none',
             whiteSpace: 'nowrap', flex: 'none',
           }}
-          title={groupModified ? 'Put every handle here back to its default' : 'Nothing here has been changed'}
-        >
-          Reset all
-        </button>
+          title={groupModified ? uiText("Put every handle here back to its default") : uiText("Nothing here has been changed")}
+        >{uiText("Reset all")}</button>
       </div>
     </div>,
     document.body,

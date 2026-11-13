@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 /**
  * Part comparison — one component's pinout across two open boards.
  *
@@ -34,23 +35,23 @@ const WIDE_PX = 520;
 const ROW_CAP = 600;
 
 const STATUS_TITLE: Record<PinDiffStatus, string> = {
-  same: 'Same net name',
-  renamed: 'Different name, identical neighbours — a rename, not a rewiring',
-  similar: 'Different name, mostly the same neighbours',
-  partial: 'The two names share most of their text — the same net spelled differently',
-  bulk: 'Both sides are ground/power rails of comparable size',
-  differs: 'Different net, and the neighbours differ too',
-  'only-a': 'This pin exists only on board A',
-  'only-b': 'This pin exists only on board B',
-  nc: 'Unconnected on both sides',
+  same: uiText("Same net name"),
+  renamed: uiText("Different name, identical neighbours — a rename, not a rewiring"),
+  similar: uiText("Different name, mostly the same neighbours"),
+  partial: uiText("The two names share most of their text — the same net spelled differently"),
+  bulk: uiText("Both sides are ground/power rails of comparable size"),
+  differs: uiText("Different net, and the neighbours differ too"),
+  'only-a': uiText("This pin exists only on board A"),
+  'only-b': uiText("This pin exists only on board B"),
+  nc: uiText("Unconnected on both sides"),
 };
 
 const MODE_LABEL: Record<AlignMode, string> = {
-  auto: 'Auto',
-  name: 'Pin name',
-  number: 'Pin number',
-  order: 'File order',
-  geometry: 'Geometry',
+  auto: uiText("Auto"),
+  name: uiText("Pin name"),
+  number: uiText("Pin number"),
+  order: uiText("File order"),
+  geometry: uiText("Geometry"),
 };
 
 function shortName(fileName: string): string {
@@ -130,7 +131,7 @@ function PartPicker({ which }: { which: 'a' | 'b' }) {
         ref={inputRef}
         className="part-compare-input"
         data-testid={`compare-part-${which}`}
-        placeholder={resolved ? 'Component…' : 'Pick a board first'}
+        placeholder={resolved ? uiText("Component…") : uiText("Pick a board first")}
         disabled={!resolved}
         value={value}
         onChange={e => { setQuery(e.target.value); setOpen(true); }}
@@ -145,7 +146,7 @@ function PartPicker({ which }: { which: 'a' | 'b' }) {
         className={`part-compare-pincount${found ? '' : ' missing'}`}
         data-testid={`compare-pins-${which}`}
       >
-        {found ? `${found.pins.length} pins` : (ref?.partName ? 'not on this board' : '')}
+        {found ? uiText`${found.pins.length} pins` : (ref?.partName ? uiText("not on this board") : '')}
       </span>
       {open && matches.length > 0 && (
         <div className="part-compare-suggest" data-testid={`compare-suggest-${which}`}>
@@ -181,7 +182,7 @@ function BoardPicker({ which }: { which: 'a' | 'b' }) {
         else partCompareStore.setBoard(which, Number(v));
       }}
     >
-      <option value="">— pick a board —</option>
+      <option value="">{uiText("— pick a board —")}</option>
       {loaded.map(t => (
         <option key={t.id} value={t.id}>{shortName(t.fileName)}</option>
       ))}
@@ -289,7 +290,7 @@ export function PartCompareTool() {
         <button
           className="part-compare-swap"
           data-testid="compare-swap"
-          title="Swap the two sides"
+          title={uiText("Swap the two sides")}
           onClick={() => partCompareStore.swap()}
         >⇄</button>
         <div className="part-compare-side">
@@ -300,10 +301,7 @@ export function PartCompareTool() {
       </div>
 
       {!result && (
-        <div className="part-compare-empty" data-testid="compare-empty">
-          Pick a board and a component on each side. Right-clicking a component
-          on the board fills both sides in with the same refdes.
-        </div>
+        <div className="part-compare-empty" data-testid="compare-empty">{uiText("Pick a board and a component on each side. Right-clicking a component on the board fills both sides in with the same refdes.")}</div>
       )}
 
       {result && (
@@ -325,14 +323,10 @@ export function PartCompareTool() {
               />
             ))}
             {rows.length === 0 && (
-              <div className="part-compare-empty">
-                No differences — every matched pin agrees.
-              </div>
+              <div className="part-compare-empty">{uiText("No differences — every matched pin agrees.")}</div>
             )}
             {capped && (
-              <div className="part-compare-note">
-                Showing {ROW_CAP} of {visibleRows.length} rows. Use Copy for the full list.
-              </div>
+              <div className="part-compare-note">{uiText("Showing ")}{ROW_CAP}{uiText(" of ")}{visibleRows.length}{uiText(" rows. Use Copy for the full list.")}</div>
             )}
           </div>
         </>
@@ -366,34 +360,26 @@ function Summary({
     <div className="part-compare-summary">
       <div className="part-compare-headline" data-testid="compare-headline">
         <strong data-testid="compare-difference-count">{result.differences}</strong>
-        {result.differences === 1 ? ' difference' : ' differences'}
+        {result.differences === 1 ? uiText(" difference") : uiText(" differences")}
         {bits.length > 0 && <span className="part-compare-bits"> · {bits.join(' · ')}</span>}
       </div>
 
       <div className="part-compare-align" data-testid="compare-alignment">
-        {alignment.matched} of {result.rows.length} rows matched via{' '}
+        {alignment.matched}{uiText(" of ")}{result.rows.length}{uiText(" rows matched via")}{' '}
         <em>{MODE_LABEL[alignment.mode as ResolvedAlignMode]}</em>
         {alignment.transform ? ` (${alignment.transform})` : ''}
         {result.candidates[0] && (
           <span className="part-compare-evidence">
-            {' '}· nets agree {pct(result.candidates[0].netAgree)}
-            , positions {pct(result.candidates[0].geomAgree)}
+            {' '}{uiText("· nets agree ")}{pct(result.candidates[0].netAgree)}{uiText(", positions ")}{pct(result.candidates[0].geomAgree)}
           </span>
         )}
       </div>
 
       {alignment.ambiguous && (
-        <div className="part-compare-warn" data-testid="compare-ambiguous">
-          This package is symmetric and the net names give no clue which way
-          round it sits — the pairing is a guess. Check it, or pin an alignment
-          mode below.
-        </div>
+        <div className="part-compare-warn" data-testid="compare-ambiguous">{uiText("This package is symmetric and the net names give no clue which way round it sits — the pairing is a guess. Check it, or pin an alignment mode below.")}</div>
       )}
       {result.sizeMismatch && (
-        <div className="part-compare-warn" data-testid="compare-size-mismatch">
-          The two footprints are very different sizes — these are probably not
-          the same package.
-        </div>
+        <div className="part-compare-warn" data-testid="compare-size-mismatch">{uiText("The two footprints are very different sizes — these are probably not the same package.")}</div>
       )}
 
       <div className="part-compare-controls">
@@ -403,15 +389,13 @@ function Summary({
             data-testid="compare-only-diffs"
             checked={state.onlyDiffs}
             onChange={e => partCompareStore.setOnlyDiffs(e.target.checked)}
-          />
-          only differences
-        </label>
+          />{uiText("only differences")}</label>
         <select
           className="part-compare-mode"
           data-testid="compare-mode"
           value={state.mode}
           onChange={e => partCompareStore.setMode(e.target.value as AlignMode)}
-          title="How pins are paired up. Auto ranks every strategy by how well it explains the nets and the pad positions."
+          title={uiText("How pins are paired up. Auto ranks every strategy by how well it explains the nets and the pad positions.")}
         >
           {(['auto', 'name', 'number', 'order', 'geometry'] as AlignMode[]).map(m => {
             const cand = result.candidates.find(c => c.mode === m);
@@ -428,13 +412,11 @@ function Summary({
           data-testid="compare-highlight"
           aria-pressed={state.highlight}
           onClick={() => partCompareStore.toggleHighlight()}
-          title={'Outline this component on the board and mark every pin that is not a plain match — '
-               + 'red where the boards disagree, amber where the net is the same one named differently.'}
+          title={uiText("Outline this component on the board and mark every pin that is not a plain match — ")
+               + uiText("red where the boards disagree, amber where the net is the same one named differently.")}
         >
-          {state.highlight ? '◉' : '○'} Highlight on board
-        </button>
-        <button className="part-compare-copy" data-testid="compare-copy" onClick={onCopy}>
-          Copy {visible}
+          {state.highlight ? '◉' : '○'}{uiText(" Highlight on board")}</button>
+        <button className="part-compare-copy" data-testid="compare-copy" onClick={onCopy}>{uiText("Copy ")}{visible}
         </button>
       </div>
     </div>
@@ -462,7 +444,7 @@ function Row({
     <span
       className={`part-compare-badge s-${row.status}`}
       title={(row.nameReason || STATUS_TITLE[row.status]) + (row.similarity != null
-        ? ` (${Math.round(row.similarity * 100)}% shared neighbours)` : '')}
+        ? uiText` (${Math.round(row.similarity * 100)}% shared neighbours)` : '')}
       data-status={row.status}
     >
       {statusSymbol(row.status)}

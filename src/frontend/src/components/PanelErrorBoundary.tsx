@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { log } from '../store/log-store';
 
@@ -47,13 +48,11 @@ export class PanelErrorBoundary extends Component<
     if (this.state.error) {
       return (
         <div className="panel-error-boundary" data-testid="panel-error-boundary">
-          <div className="panel-error-title">This panel crashed</div>
+          <div className="panel-error-title">{uiText("This panel crashed")}</div>
           <div className="panel-error-message">
             {`${this.props.label ? `${this.props.label}: ` : ''}${this.state.error.message || 'An unexpected error occurred while rendering this panel.'}`}
           </div>
-          <button className="panel-error-reset" onClick={this.reset}>
-            Reload panel
-          </button>
+          <button className="panel-error-reset" onClick={this.reset}>{uiText("Reload panel")}</button>
         </div>
       );
     }

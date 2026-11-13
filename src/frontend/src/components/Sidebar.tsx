@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { IconLayoutSidebar, IconLayoutSidebarRight } from '@tabler/icons-react';
 import { LibraryPanel } from '../panels/LibraryPanel';
@@ -147,12 +148,12 @@ export function Sidebar() {
             <button
               className="sidebar-tab sidebar-action-btn"
               onClick={toggleSidebar}
-              title="Hide sidebar"
+              title={uiText("Hide sidebar")}
             >▶</button>
             <button
               className="sidebar-tab sidebar-action-btn"
               onClick={flipSidebarSide}
-              title="Move sidebar to left"
+              title={uiText("Move sidebar to left")}
             >
               <IconLayoutSidebar size={14} />
             </button>
@@ -173,14 +174,14 @@ export function Sidebar() {
             <button
               className="sidebar-tab sidebar-action-btn"
               onClick={flipSidebarSide}
-              title="Move sidebar to right"
+              title={uiText("Move sidebar to right")}
             >
               <IconLayoutSidebarRight size={14} />
             </button>
             <button
               className="sidebar-tab sidebar-action-btn"
               onClick={toggleSidebar}
-              title="Hide sidebar"
+              title={uiText("Hide sidebar")}
             >◀</button>
           </div>
         )}
@@ -194,12 +195,12 @@ export function Sidebar() {
           <LibraryPanel />
         </div>
         <div style={{ display: activeTab === 'history' ? 'flex' : 'none', flex: 1, minHeight: 0, flexDirection: 'column' }}>
-          <PanelErrorBoundary label="History">
+          <PanelErrorBoundary label={uiText("History")}>
             <HistoryPanel />
           </PanelErrorBoundary>
         </div>
         <div style={{ display: activeTab === 'tools' ? 'flex' : 'none', flex: 1, minHeight: 0, flexDirection: 'column' }}>
-          <PanelErrorBoundary label="Tools">
+          <PanelErrorBoundary label={uiText("Tools")}>
             <ToolsPanel />
           </PanelErrorBoundary>
         </div>

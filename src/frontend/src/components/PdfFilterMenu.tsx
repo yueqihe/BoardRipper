@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * PdfFilterMenu — the PDF toolbar's one filtering control.
  *
@@ -116,8 +117,8 @@ export function PdfFilterMenu({ fileName }: { fileName: string }) {
   };
 
   const reloadLabel = reloading
-    ? 'Reloading…'
-    : stale.length > 1 ? `Reload & re-parse ${stale.length} open PDFs` : 'Reload & re-parse PDF';
+    ? uiText("Reloading…")
+    : stale.length > 1 ? uiText`Reload & re-parse ${stale.length} open PDFs` : uiText("Reload & re-parse PDF");
 
   return (
     <div className="pdf-corrector-wrapper">
@@ -128,7 +129,7 @@ export function PdfFilterMenu({ fileName }: { fileName: string }) {
         data-testid="pdf-filter-btn"
         aria-haspopup="menu"
         aria-expanded={open}
-        title={stale.length > 0 ? 'PDF filters — reload needed to apply a change' : 'PDF filters'}
+        title={stale.length > 0 ? uiText("PDF filters — reload needed to apply a change") : uiText("PDF filters")}
         onClick={e => { setDoc(e.currentTarget.ownerDocument); setOpen(v => !v); }}
       >
         <IconWand size={14} />
@@ -136,8 +137,8 @@ export function PdfFilterMenu({ fileName }: { fileName: string }) {
         {stale.length > 0 && <span className="pdf-filter-dot" data-testid="pdf-filter-dot" />}
       </button>
       {open && createPortal(
-        <div ref={menuRef} className="quick-menu pdf-filter-menu" role="menu" aria-label="PDF filters" data-testid="pdf-filter-menu">
-          <div className="quick-menu-header">Watermarks · all PDFs</div>
+        <div ref={menuRef} className="quick-menu pdf-filter-menu" role="menu" aria-label={uiText("PDF filters")} data-testid="pdf-filter-menu">
+          <div className="quick-menu-header">{uiText("Watermarks · all PDFs")}</div>
           <button
             type="button"
             role="menuitemcheckbox"
@@ -145,14 +146,12 @@ export function PdfFilterMenu({ fileName }: { fileName: string }) {
             data-testid="pdf-filter-wm-text"
             onClick={() => setWatermarkTextEnabled(!textOn)}
           >
-            <span className="quick-menu-tick">{textOn ? '✓' : ''}</span>
-            Hide watermark text
-          </button>
+            <span className="quick-menu-tick">{textOn ? '✓' : ''}</span>{uiText("Hide watermark text")}</button>
           <div className={`pdf-filter-terms${textOn ? '' : ' off'}`}>
             {terms.map(t => (
               <span key={t} className="pdf-filter-term" data-testid="pdf-filter-term">
                 {t}
-                <button type="button" aria-label={`Remove ${t}`} onClick={() => removeWatermarkTerm(t)}>
+                <button type="button" aria-label={uiText`Remove ${t}`} onClick={() => removeWatermarkTerm(t)}>
                   <IconX size={10} />
                 </button>
               </span>
@@ -160,39 +159,35 @@ export function PdfFilterMenu({ fileName }: { fileName: string }) {
             <input
               className="pdf-filter-term-input"
               data-testid="pdf-filter-term-input"
-              placeholder="Add term…"
+              placeholder={uiText("Add term…")}
               value={draft}
               onChange={e => { setDraft(e.target.value); if (dupe) setDupe(null); }}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); commitDraft(); } }}
               onBlur={() => { if (draft.trim()) commitDraft(); }}
             />
-            {dupe && <span className="pdf-filter-dupe" data-testid="pdf-filter-dupe">“{dupe}” is already listed</span>}
+            {dupe && <span className="pdf-filter-dupe" data-testid="pdf-filter-dupe">“{dupe}{uiText("” is already listed")}</span>}
           </div>
           <button
             type="button"
             role="menuitemcheckbox"
             aria-checked={stripOn}
             data-testid="pdf-filter-strip-images"
-            title="Remove images up to 50 px (logos, stamps) before the PDF is parsed. Applies on reload."
+            title={uiText("Remove images up to 50 px (logos, stamps) before the PDF is parsed. Applies on reload.")}
             onClick={() => setStripWatermarkImages(!stripOn)}
           >
-            <span className="quick-menu-tick">{stripOn ? '✓' : ''}</span>
-            Strip small watermark images
-            <span className="pdf-filter-note">on reload</span>
+            <span className="quick-menu-tick">{stripOn ? '✓' : ''}</span>{uiText("Strip small watermark images")}<span className="pdf-filter-note">{uiText("on reload")}</span>
           </button>
           <div className="quick-menu-sep" role="separator" />
-          <div className="quick-menu-header">Performance</div>
+          <div className="quick-menu-header">{uiText("Performance")}</div>
           <button
             type="button"
             role="menuitemcheckbox"
             aria-checked={pruneOn}
             data-testid="pdf-filter-prune"
-            title="Skip content that cannot be seen — transparent images, invisible fills, empty transparency groups. The page looks the same; some PDFs scroll and zoom much faster. Applies on reload."
+            title={uiText("Skip content that cannot be seen — transparent images, invisible fills, empty transparency groups. The page looks the same; some PDFs scroll and zoom much faster. Applies on reload.")}
             onClick={() => setPruneInvisible(!pruneOn)}
           >
-            <span className="quick-menu-tick">{pruneOn ? '✓' : ''}</span>
-            Skip invisible content
-            <span className="pdf-filter-note">on reload</span>
+            <span className="quick-menu-tick">{pruneOn ? '✓' : ''}</span>{uiText("Skip invisible content")}<span className="pdf-filter-note">{uiText("on reload")}</span>
           </button>
           <div className="quick-menu-sep" role="separator" />
           <button
@@ -201,7 +196,7 @@ export function PdfFilterMenu({ fileName }: { fileName: string }) {
             className="pdf-filter-reload"
             data-testid="pdf-filter-reload"
             disabled={stale.length === 0 || reloading}
-            title={stale.length === 0 ? 'Every open PDF is parsed with the current settings' : stale.join('\n')}
+            title={stale.length === 0 ? uiText("Every open PDF is parsed with the current settings") : stale.join('\n')}
             onClick={() => { void reload(); }}
           >
             <span className="quick-menu-tick"><IconRefresh size={12} /></span>

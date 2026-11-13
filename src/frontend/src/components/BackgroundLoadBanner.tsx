@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useSyncExternalStore } from 'react';
 import { useBoardStore } from '../hooks/useBoardStore';
 import { pdfStore, PDF_LOAD_PHASE_TEXT } from '../store/pdf-store';
@@ -29,11 +30,11 @@ export function BackgroundLoadBanner() {
   const names = [...backgroundLoads.names, ...pdfLoads.names];
   let label: string;
   if (total > 1) {
-    label = backgroundLoads.count === 0 ? `Loading ${total} PDFs…`
-      : pdfLoads.count === 0 ? `Loading ${total} boards…`
-      : `Loading ${total} files…`;
+    label = backgroundLoads.count === 0 ? uiText`Loading ${total} PDFs…`
+      : pdfLoads.count === 0 ? uiText`Loading ${total} boards…`
+      : uiText`Loading ${total} files…`;
   } else if (backgroundLoads.count === 1) {
-    label = `Loading ${backgroundLoads.names[0]}…`;
+    label = uiText`Loading ${backgroundLoads.names[0]}…`;
   } else {
     const l = pdfLoads.byName[pdfLoads.names[0]];
     label = `${PDF_LOAD_PHASE_TEXT[l.phase]} ${l.name}…`;
@@ -44,7 +45,7 @@ export function BackgroundLoadBanner() {
       <span className="background-load-spinner" aria-hidden="true" />
       <span className="background-load-banner-text">
         <span translate="no">{label}</span>
-        {backgroundLoads.count > 0 && <> <span className="background-load-banner-hint">the view may pause until it is ready</span></>}
+        {backgroundLoads.count > 0 && <> <span className="background-load-banner-hint">{uiText("the view may pause until it is ready")}</span></>}
       </span>
     </div>
   );

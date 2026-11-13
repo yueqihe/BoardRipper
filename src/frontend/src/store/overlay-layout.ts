@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 // src/frontend/src/store/overlay-layout.ts
 /**
  * BoardViewer overlay slot model — single source of truth for the slot
@@ -44,31 +45,31 @@ const NAMED_SLOT_IDS: ReadonlySet<NamedSlotId> = new Set([
  *  editor. Short, noun-first, no trailing state ("Hover info", not
  *  "Hover info: ON" — the button's own title carries the state). */
 export const SLOT_LABELS: Readonly<Record<NamedSlotId, string>> = {
-  sideSwitch:    'Side',
-  butterfly:     'Butterfly',
-  rotateCCW:     'Rotate left',
-  rotateCW:      'Rotate right',
-  transformMenu: 'More transforms',
-  history:       'History',
-  traces:        'Traces',
-  pdfFollow:     'Follow PDF',
-  scrollMode:    'Scroll mode',
-  fitBoard:      'Fit board',
-  minimap:       'Minimap',
-  slides:        'Slide mode',
-  hoverInfo:     'Hover info',
-  netDim:        'Spotlight',
-  netLines:      'Net lines',
-  ghosts:        'Ghost parts',
-  diodeValues:   'Diode values',
-  partsDropdown: 'Find part',
-  netsDropdown:  'Find net',
-  sideFlipAxis:  'Flip axis',
-  legendHelp:    'Legend',
+  sideSwitch:    uiText("Side"),
+  butterfly:     uiText("Butterfly"),
+  rotateCCW:     uiText("Rotate left"),
+  rotateCW:      uiText("Rotate right"),
+  transformMenu: uiText("More transforms"),
+  history:       uiText("History"),
+  traces:        uiText("Traces"),
+  pdfFollow:     uiText("Follow PDF"),
+  scrollMode:    uiText("Scroll mode"),
+  fitBoard:      uiText("Fit board"),
+  minimap:       uiText("Minimap"),
+  slides:        uiText("Slide mode"),
+  hoverInfo:     uiText("Hover info"),
+  netDim:        uiText("Spotlight"),
+  netLines:      uiText("Net lines"),
+  ghosts:        uiText("Ghost parts"),
+  diodeValues:   uiText("Diode values"),
+  partsDropdown: uiText("Find part"),
+  netsDropdown:  uiText("Find net"),
+  sideFlipAxis:  uiText("Flip axis"),
+  legendHelp:    uiText("Legend"),
 };
 
 export function slotLabel(id: OverlaySlotId): string {
-  return isSeparatorId(id) ? 'Separator' : SLOT_LABELS[id];
+  return isSeparatorId(id) ? uiText("Separator") : SLOT_LABELS[id];
 }
 
 /** True for `sep1`, `sep2`, … — any `sep` followed by a positive integer. */

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /** Board minimap: the whole board in miniature with a box for what the screen
  *  shows. Two ways it appears:
  *    - `always` (slide mode): steady while composing a view;
@@ -710,45 +711,45 @@ export function BoardMinimap({ renderer, tabId = null, mode }: { renderer: Board
       onLostPointerCapture={() => { dragging.current = false; markActive(); }}
     >
       <div className="minimap-head" data-testid="minimap-head" data-nav={nav}
-        title="Drag to move the map" onPointerDown={onHeadPointerDown}>
-        <button type="button" data-testid="minimap-history-back" aria-label={nav === 'worklist' ? 'Previous row' : 'Back'}
-          title={nav === 'worklist' ? 'Previous worklist row · ←' : 'Back · history of all boards and PDFs · ←'}
+        title={uiText("Drag to move the map")} onPointerDown={onHeadPointerDown}>
+        <button type="button" data-testid="minimap-history-back" aria-label={nav === 'worklist' ? uiText("Previous row") : uiText("Back")}
+          title={nav === 'worklist' ? uiText("Previous worklist row · ←") : uiText("Back · history of all boards and PDFs · ←")}
           disabled={nav === 'worklist' ? !wlPrev : !history.canBack}
           onClick={() => nav === 'worklist' ? goWl(wlPrev) : historyBack()}>
           <IconChevronLeft size={ICON} stroke={2.2} />
         </button>
-        <button type="button" data-testid="minimap-history-forward" aria-label={nav === 'worklist' ? 'Next row' : 'Forward'}
-          title={nav === 'worklist' ? (wlAt < 0 ? 'Start at the first worklist row · →' : 'Next worklist row · →') : 'Forward · history of all boards and PDFs · →'}
+        <button type="button" data-testid="minimap-history-forward" aria-label={nav === 'worklist' ? uiText("Next row") : uiText("Forward")}
+          title={nav === 'worklist' ? (wlAt < 0 ? uiText("Start at the first worklist row · →") : uiText("Next worklist row · →")) : uiText("Forward · history of all boards and PDFs · →")}
           disabled={nav === 'worklist' ? !wlNext : !history.canForward}
           onClick={() => nav === 'worklist' ? goWl(wlNext) : historyForward()}>
           <IconChevronRight size={ICON} stroke={2.2} />
         </button>
         <span className={`minimap-head-mode${modeFlash ? ' flash' : ''}`} data-testid="minimap-mode"
-          title={nav === 'worklist' ? (wl ? `Worklist “${wl.name}”` : 'No worklist loaded on this board') : 'History of all boards and PDFs'}>
+          title={nav === 'worklist' ? (wl ? uiText`Worklist “${wl.name}”` : uiText("No worklist loaded on this board")) : uiText("History of all boards and PDFs")}>
           <span className="minimap-head-name" translate={nav === 'worklist' && wl ? 'no' : undefined}>
-            {nav === 'worklist' ? (wl ? (wl.name || 'Worklist') : 'No worklist') : 'History'}
+            {nav === 'worklist' ? (wl ? (wl.name || uiText("Worklist")) : uiText("No worklist")) : uiText("History")}
           </span>
           {nav === 'worklist' && wl && (
             <span className="minimap-head-pos" data-testid="minimap-wl-pos" translate="no">
-              {wlKeys.length === 0 ? 'empty' : wlAt < 0 ? String(wlKeys.length) : `${wlAt + 1}/${wlKeys.length}`}
+              {wlKeys.length === 0 ? uiText("empty") : wlAt < 0 ? String(wlKeys.length) : `${wlAt + 1}/${wlKeys.length}`}
             </span>
           )}
         </span>
-        <span className="minimap-head-seg" role="group" aria-label="Map shows">
+        <span className="minimap-head-seg" role="group" aria-label={uiText("Map shows")}>
           <button type="button" data-testid="minimap-nav-history" aria-pressed={nav === 'history'}
-            className={nav === 'history' ? 'on' : ''} title="Show history: back / forward and recent visits"
+            className={nav === 'history' ? 'on' : ''} title={uiText("Show history: back / forward and recent visits")}
             onClick={() => renderSettingsStore.setMinimapNav('history')}>
             <IconHistory size={ICON} stroke={2} />
           </button>
           <button type="button" data-testid="minimap-nav-worklist" aria-pressed={nav === 'worklist'}
-            className={nav === 'worklist' ? 'on' : ''} title={loadedWl ? `Show worklist: step through “${loadedWl.name}”` : 'Show worklist: none loaded on this board'}
+            className={nav === 'worklist' ? 'on' : ''} title={loadedWl ? uiText`Show worklist: step through “${loadedWl.name}”` : uiText("Show worklist: none loaded on this board")}
             onClick={() => renderSettingsStore.setMinimapNav('worklist')}>
             <IconChecklist size={ICON} stroke={2} />
           </button>
         </span>
         {(() => {
-          const label = nav === 'history' ? 'Open the History tab'
-            : wl ? `Open worklist “${wl.name}”` : 'Open Tools ▸ Worklists';
+          const label = nav === 'history' ? uiText("Open the History tab")
+            : wl ? uiText`Open worklist “${wl.name}”` : uiText("Open Tools ▸ Worklists");
           return (
             <button type="button" data-testid="minimap-open-tab" aria-label={label} title={label}
               onClick={() => {
@@ -768,7 +769,7 @@ export function BoardMinimap({ renderer, tabId = null, mode }: { renderer: Board
           <div key={modeFlash} className="minimap-mode-banner" data-testid="minimap-mode-banner" data-nav={nav}>
             {nav === 'worklist' ? <IconChecklist size={15} stroke={2} /> : <IconHistory size={15} stroke={2} />}
             <span translate={nav === 'worklist' && wl ? 'no' : undefined}>
-              {nav === 'worklist' ? (wl ? wl.name || 'Worklist' : 'No worklist loaded') : 'History'}
+              {nav === 'worklist' ? (wl ? wl.name || uiText("Worklist") : uiText("No worklist loaded")) : uiText("History")}
             </span>
           </div>
         )}
@@ -782,44 +783,44 @@ export function BoardMinimap({ renderer, tabId = null, mode }: { renderer: Board
         ariaLabel="Minimap"
         testId="minimap-menu"
         items={[
-          { kind: 'header', label: 'Position' },
-          { kind: 'check', label: 'Left', checked: position === 'left', testId: 'minimap-pos-left', onSelect: pick('left') },
-          { kind: 'check', label: 'Centre', checked: position === 'center', testId: 'minimap-pos-center', onSelect: pick('center') },
-          { kind: 'check', label: 'Right', checked: position === 'right', testId: 'minimap-pos-right', onSelect: pick('right') },
-          { kind: 'check', label: 'Float · click to put it down', checked: position === 'floating', testId: 'minimap-pos-floating', onSelect: pick('floating') },
+          { kind: 'header', label: uiText("Position") },
+          { kind: 'check', label: uiText("Left"), checked: position === 'left', testId: 'minimap-pos-left', onSelect: pick('left') },
+          { kind: 'check', label: uiText("Centre"), checked: position === 'center', testId: 'minimap-pos-center', onSelect: pick('center') },
+          { kind: 'check', label: uiText("Right"), checked: position === 'right', testId: 'minimap-pos-right', onSelect: pick('right') },
+          { kind: 'check', label: uiText("Float · click to put it down"), checked: position === 'floating', testId: 'minimap-pos-floating', onSelect: pick('floating') },
           { kind: 'sep' },
-          { kind: 'header', label: 'Show' },
-          { kind: 'check', label: 'While panning', checked: curMode === 'onPan', testId: 'minimap-show-onPan', onSelect: show('onPan') },
-          { kind: 'check', label: 'Always', checked: curMode === 'always', testId: 'minimap-show-always', onSelect: show('always') },
-          { kind: 'check', label: 'Off', checked: curMode === 'off', testId: 'minimap-show-off', onSelect: show('off') },
+          { kind: 'header', label: uiText("Show") },
+          { kind: 'check', label: uiText("While panning"), checked: curMode === 'onPan', testId: 'minimap-show-onPan', onSelect: show('onPan') },
+          { kind: 'check', label: uiText("Always"), checked: curMode === 'always', testId: 'minimap-show-always', onSelect: show('always') },
+          { kind: 'check', label: uiText("Off"), checked: curMode === 'off', testId: 'minimap-show-off', onSelect: show('off') },
           { kind: 'sep' },
           {
-            kind: 'check', label: 'Show history', testId: 'minimap-show-history',
-            hint: 'The parts and views you visited on this board in this session, newest strongest',
+            kind: 'check', label: uiText("Show history"), testId: 'minimap-show-history',
+            hint: uiText("The parts and views you visited on this board in this session, newest strongest"),
             checked: settings.minimapShowHistory !== false,
             onSelect: () => renderSettingsStore.setMinimapShowHistory(settings.minimapShowHistory === false),
           },
           {
-            kind: 'range', label: 'Steps', testId: 'minimap-history-steps',
+            kind: 'range', label: uiText("Steps"), testId: 'minimap-history-steps',
             value: settings.minimapHistorySteps ?? 8, min: 2, max: 20, step: 1,
             onChange: v => renderSettingsStore.setMinimapHistorySteps(v),
           },
           { kind: 'sep' },
           {
-            kind: 'range', label: 'Size', testId: 'minimap-size',
+            kind: 'range', label: uiText("Size"), testId: 'minimap-size',
             value: Math.round((settings.minimapScale ?? 1) * 100), min: 60, max: 200, step: 10,
             format: v => `${v} %`,
             onChange: v => renderSettingsStore.setMinimapScale(v / 100),
           },
           {
-            kind: 'range', label: 'Opacity', testId: 'minimap-opacity',
+            kind: 'range', label: uiText("Opacity"), testId: 'minimap-opacity',
             value: Math.round((settings.minimapOpacity ?? 1) * 100), min: 20, max: 100, step: 5,
             format: v => `${v} %`,
             onChange: v => renderSettingsStore.setMinimapOpacity(v / 100),
           },
           {
-            kind: 'check', label: 'Full strength while in use', testId: 'minimap-opaque-active',
-            hint: 'While the board is panned or the map is dragged',
+            kind: 'check', label: uiText("Full strength while in use"), testId: 'minimap-opaque-active',
+            hint: uiText("While the board is panned or the map is dragged"),
             checked: settings.minimapOpaqueWhileActive !== false,
             onSelect: () => renderSettingsStore.setMinimapOpaqueWhileActive(settings.minimapOpaqueWhileActive === false),
           },

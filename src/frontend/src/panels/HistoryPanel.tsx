@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * History — the rail destination for the navigation timeline.
  *
@@ -26,17 +27,17 @@ import { NAV_CAUSES, type NavCause, type NavEntry } from '../store/nav-history';
 import { formatShortcut } from '../store/keyboard-shortcuts';
 
 const LAYER_LABELS: Record<NavCause, string> = {
-  click: 'Clicks',
-  lookup: 'PDF lookups',
-  search: 'Searches',
-  view: 'Viewpoints',
+  click: uiText("Clicks"),
+  lookup: uiText("PDF lookups"),
+  search: uiText("Searches"),
+  view: uiText("Viewpoints"),
 };
 
 const LAYER_HINTS: Record<NavCause, string> = {
-  click: 'Parts, pins and nets picked on the board',
-  lookup: 'Jumps between a board and a PDF, or PDF to PDF',
-  search: 'Queries typed in a search field, with the result picked',
-  view: 'Regions and pages looked at with no selection (recorded only while on)',
+  click: uiText("Parts, pins and nets picked on the board"),
+  lookup: uiText("Jumps between a board and a PDF, or PDF to PDF"),
+  search: uiText("Queries typed in a search field, with the result picked"),
+  view: uiText("Regions and pages looked at with no selection (recorded only while on)"),
 };
 
 function CauseGlyph({ cause }: { cause: NavCause }) {
@@ -146,7 +147,7 @@ export function HistoryPanel() {
   return (
     <div className="hist-panel" data-testid="history-panel">
       <div className="hist-strip">
-        <div className="hist-layers" role="group" aria-label="History layers">
+        <div className="hist-layers" role="group" aria-label={uiText("History layers")}>
           {NAV_CAUSES.map(c => (
             <button
               key={c}
@@ -164,21 +165,21 @@ export function HistoryPanel() {
           ))}
         </div>
         <div className="hist-scope-row">
-          <div className="hist-scope" role="group" aria-label="Scope">
-            <button type="button" className={`hist-scope-btn${scope === 'all' ? ' on' : ''}`} aria-pressed={scope === 'all'} onClick={() => setScope('all')} data-testid="history-scope-all">Everything</button>
-            <button type="button" className={`hist-scope-btn${scope === 'board' ? ' on' : ''}`} aria-pressed={scope === 'board'} onClick={() => setScope('board')} disabled={!activeTab} data-testid="history-scope-board" title={activeTab ? `${activeTab.fileName} and its PDFs` : 'No board open'}>This board</button>
+          <div className="hist-scope" role="group" aria-label={uiText("Scope")}>
+            <button type="button" className={`hist-scope-btn${scope === 'all' ? ' on' : ''}`} aria-pressed={scope === 'all'} onClick={() => setScope('all')} data-testid="history-scope-all">{uiText("Everything")}</button>
+            <button type="button" className={`hist-scope-btn${scope === 'board' ? ' on' : ''}`} aria-pressed={scope === 'board'} onClick={() => setScope('board')} disabled={!activeTab} data-testid="history-scope-board" title={activeTab ? uiText`${activeTab.fileName} and its PDFs` : uiText("No board open")}>{uiText("This board")}</button>
           </div>
-          <div className="hist-scope" role="group" aria-label="Kind" title="Lists boards, PDFs or both — the shortcuts still walk both">
-            <button type="button" className={`hist-scope-btn${kind === 'all' ? ' on' : ''}`} aria-pressed={kind === 'all'} onClick={() => setKind('all')} data-testid="history-kind-all">All</button>
-            <button type="button" className={`hist-scope-btn${kind === 'boards' ? ' on' : ''}`} aria-pressed={kind === 'boards'} onClick={() => setKind('boards')} data-testid="history-kind-boards"><IconCpu size={11} stroke={2} /> Boards</button>
-            <button type="button" className={`hist-scope-btn${kind === 'pdfs' ? ' on' : ''}`} aria-pressed={kind === 'pdfs'} onClick={() => setKind('pdfs')} data-testid="history-kind-pdfs"><IconFileTypePdf size={11} stroke={2} /> PDFs</button>
+          <div className="hist-scope" role="group" aria-label={uiText("Kind")} title={uiText("Lists boards, PDFs or both — the shortcuts still walk both")}>
+            <button type="button" className={`hist-scope-btn${kind === 'all' ? ' on' : ''}`} aria-pressed={kind === 'all'} onClick={() => setKind('all')} data-testid="history-kind-all">{uiText("All")}</button>
+            <button type="button" className={`hist-scope-btn${kind === 'boards' ? ' on' : ''}`} aria-pressed={kind === 'boards'} onClick={() => setKind('boards')} data-testid="history-kind-boards"><IconCpu size={11} stroke={2} />{uiText(" Boards")}</button>
+            <button type="button" className={`hist-scope-btn${kind === 'pdfs' ? ' on' : ''}`} aria-pressed={kind === 'pdfs'} onClick={() => setKind('pdfs')} data-testid="history-kind-pdfs"><IconFileTypePdf size={11} stroke={2} />{uiText(" PDFs")}</button>
           </div>
         </div>
         {confirmClear && (
           <div className="wl-confirm" data-testid="history-confirm" role="alertdialog">
-            <span className="q">Clear the whole history?</span>
-            <button type="button" onClick={() => setConfirmClear(false)} data-testid="history-confirm-no">Cancel</button>
-            <button type="button" className="go" onClick={() => { navHistoryStore.clear(); setConfirmClear(false); }} data-testid="history-confirm-yes">Clear</button>
+            <span className="q">{uiText("Clear the whole history?")}</span>
+            <button type="button" onClick={() => setConfirmClear(false)} data-testid="history-confirm-no">{uiText("Cancel")}</button>
+            <button type="button" className="go" onClick={() => { navHistoryStore.clear(); setConfirmClear(false); }} data-testid="history-confirm-yes">{uiText("Clear")}</button>
           </div>
         )}
       </div>
@@ -187,13 +188,13 @@ export function HistoryPanel() {
         {entries.length === 0 ? (
           <div className="panel-empty hist-empty">
             <IconHistory size={28} stroke={1.4} />
-            <div>Nothing visited yet.</div>
-            <small>Click a part, search, or look something up — then {formatShortcut('historyBack')} / {formatShortcut('historyForward')} walk back and forward through it.</small>
+            <div>{uiText("Nothing visited yet.")}</div>
+            <small>{uiText("Click a part, search, or look something up — then ")}{formatShortcut('historyBack')} / {formatShortcut('historyForward')}{uiText(" walk back and forward through it.")}</small>
           </div>
         ) : allOff ? (
-          <div className="panel-empty hist-empty"><div>Every layer is switched off.</div><small>Switch one on above to list it.</small></div>
+          <div className="panel-empty hist-empty"><div>{uiText("Every layer is switched off.")}</div><small>{uiText("Switch one on above to list it.")}</small></div>
         ) : rows.length === 0 ? (
-          <div className="panel-empty hist-empty"><div>{kind === 'pdfs' ? 'No PDF visits yet.' : kind === 'boards' ? 'No board visits yet.' : 'Nothing on this board yet.'}</div></div>
+          <div className="panel-empty hist-empty"><div>{kind === 'pdfs' ? uiText("No PDF visits yet.") : kind === 'boards' ? uiText("No board visits yet.") : uiText("Nothing on this board yet.")}</div></div>
         ) : rows.map(e => {
           const file = fileOf(e);
           const header = scope === 'all' && file !== lastFile ? file : null;
@@ -207,7 +208,7 @@ export function HistoryPanel() {
               {header !== null && (
                 <div className="hist-group">
                   {header?.toLowerCase().endsWith('.pdf') ? <IconFileTypePdf size={12} stroke={1.8} /> : <IconCpu size={12} stroke={1.8} />}
-                  <span>{header ?? 'Searches'}</span>
+                  <span>{header ?? uiText("Searches")}</span>
                 </div>
               )}
               <div
@@ -218,7 +219,7 @@ export function HistoryPanel() {
                 data-cause={e.cause}
                 role="button"
                 tabIndex={0}
-                title={reachable ? (isCurrent ? 'You are here' : `Jump here · ${e.label}`) : (e.place?.fileId != null ? `${file} is closed · click to open it from the library` : `${file} is closed`)}
+                title={reachable ? (isCurrent ? uiText("You are here") : uiText`Jump here · ${e.label}`) : (e.place?.fileId != null ? uiText`${file} is closed · click to open it from the library` : uiText`${file} is closed`)}
                 onClick={() => { if (!isCurrent || !reachable) historyJumpTo(e.id); }}
                 onKeyDown={ev => onRowKey(ev, e.id)}
               >
@@ -236,8 +237,8 @@ export function HistoryPanel() {
 
       {entries.length > 0 && (
         <div className="hist-foot">
-          <span className="hist-foot-n">{`${entries.length} visit${entries.length === 1 ? '' : 's'}${cursorIndex >= 0 ? ` · at ${cursorIndex + 1}` : ''}`}</span>
-          <button type="button" className="hist-foot-btn" onClick={() => setConfirmClear(true)} data-testid="history-clear">Clear</button>
+          <span className="hist-foot-n">{uiText`${entries.length} visit${entries.length === 1 ? '' : uiText('plural.s')}${cursorIndex >= 0 ? ` · at ${cursorIndex + 1}` : ''}`}</span>
+          <button type="button" className="hist-foot-btn" onClick={() => setConfirmClear(true)} data-testid="history-clear">{uiText("Clear")}</button>
         </div>
       )}
     </div>

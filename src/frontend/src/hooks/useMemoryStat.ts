@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useState } from 'react';
 
 /**
@@ -54,8 +55,8 @@ export function useMemoryStat(): MemoryStat | null {
       // immediately so the bar isn't blank, then upgrade in place.
       if (perf.memory) {
         setStat({
-          label: `Mem ≈ ${fmt(perf.memory.usedJSHeapSize)}`,
-          title: 'Approximate JS heap — precise measurement pending (resolves at the next GC).',
+          label: uiText`Mem ≈ ${fmt(perf.memory.usedJSHeapSize)}`,
+          title: uiText("Approximate JS heap — precise measurement pending (resolves at the next GC)."),
         });
       }
       const fallbackToHeapPolling = () => {
@@ -65,8 +66,8 @@ export function useMemoryStat(): MemoryStat | null {
         timer = null;
         if (!perf.memory) return;
         const read = () => setStat({
-          label: `Mem ≈ ${fmt(perf.memory!.usedJSHeapSize)}`,
-          title: 'Approximate JS heap (performance.memory) — precise measurement unavailable in this browser build.',
+          label: uiText`Mem ≈ ${fmt(perf.memory!.usedJSHeapSize)}`,
+          title: uiText("Approximate JS heap (performance.memory) — precise measurement unavailable in this browser build."),
         });
         read();
         timer = setInterval(read, 5_000);
@@ -80,8 +81,8 @@ export function useMemoryStat(): MemoryStat | null {
             if (e.types.some(t => t.includes('Worker'))) workers += e.bytes;
           }
           setStat({
-            label: `Mem: ${fmt(res.bytes)}`,
-            title: `JS memory, precise (cross-origin isolated)\nTotal: ${fmt(res.bytes)}\nWorkers (incl. parse worker): ${fmt(workers)}\nUpdates every ~20 s`,
+            label: uiText`Mem: ${fmt(res.bytes)}`,
+            title: uiText`JS memory, precise (cross-origin isolated)\nTotal: ${fmt(res.bytes)}\nWorkers (incl. parse worker): ${fmt(workers)}\nUpdates every ~20 s`,
           });
         } catch (e) {
           if (!cancelled && e instanceof DOMException && e.name === 'SecurityError') fallbackToHeapPolling();
@@ -97,8 +98,8 @@ export function useMemoryStat(): MemoryStat | null {
       const read = () => {
         const m = perf.memory!;
         setStat({
-          label: `Mem ≈ ${fmt(m.usedJSHeapSize)}`,
-          title: 'Approximate JS heap (performance.memory).\nWithout cross-origin isolation the browser bucketizes this value and refreshes it only every ~20 minutes — treat as a rough indicator.',
+          label: uiText`Mem ≈ ${fmt(m.usedJSHeapSize)}`,
+          title: uiText("Approximate JS heap (performance.memory).\nWithout cross-origin isolation the browser bucketizes this value and refreshes it only every ~20 minutes — treat as a rough indicator."),
         });
       };
       read();

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import type { DockviewApi, IDockviewPanel, DockviewGroupPanel } from 'dockview-react';
 import { log } from './log-store';
 import { isTwoWindowMode, setTwoWindowMode, onTwoWindowModeChange } from './two-window-mode';
@@ -210,7 +211,7 @@ async function migrateOpenPdfsToPopout(): Promise<void> {
     log.twoWindow.warn('addPopoutGroup blocked or failed — reverting mode');
     _modeListenerSuppressed = true;
     try { setTwoWindowMode(false); } finally { _modeListenerSuppressed = false; }
-    boardStore.addToast('Popup blocked — 2-window mode disabled. Allow popups for this site and try again.', 'info');
+    boardStore.addToast(uiText("Popup blocked — 2-window mode disabled. Allow popups for this site and try again."), 'info');
     return;
   }
   const popout = findPopoutPdfGroup();
@@ -297,7 +298,7 @@ export function ensureWorklistPanel(): void {
     api.addPanel({
       id,
       component: 'worklist',
-      title: 'Worklist',
+      title: uiText("Worklist"),
       ...(anchorPanel
         ? { position: { referencePanel: anchorPanel.id } }
         : (() => {
@@ -360,7 +361,7 @@ export function ensurePdfPanel(fileName: string): void {
         });
         if (!ok) {
           log.twoWindow.warn('popup blocked — PDF left in main grid:', fileName);
-          boardStore.addToast('Popup blocked — PDF opened in main window. Click the 2-window button to retry.', 'info');
+          boardStore.addToast(uiText("Popup blocked — PDF opened in main window. Click the 2-window button to retry."), 'info');
         }
         return;
       }
@@ -427,7 +428,7 @@ export function ensureDatabaseEditorPanel(): void {
     const id = 'database-editor';
     const existing = api.getPanel(id);
     if (existing) { existing.api.setActive(); return; }
-    api.addPanel({ id, component: 'databaseEditor', title: 'Database Editor' });
+    api.addPanel({ id, component: 'databaseEditor', title: uiText("Database Editor") });
   } catch (err) {
     log.ui.error('Failed to open Database Editor panel:', err);
   }

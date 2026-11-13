@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * First-run welcome / input setup modal.
  *
@@ -106,7 +107,7 @@ function WelcomeSetupBody() {
     const nextPdfTouched = pdfTouched || surface === 'pdf';
     setBoardTouched(nextBoardTouched);
     setPdfTouched(nextPdfTouched);
-    setFeedback({ ok: true, text: `detected: ${verdict.label}` });
+    setFeedback({ ok: true, text: uiText`detected: ${verdict.label}` });
 
     // Auto-advance to the first surface that hasn't been set yet.
     if (!nextBoardTouched) setTarget('board-pan');
@@ -192,7 +193,7 @@ function WelcomeSetupBody() {
         className={`welcome-chip${target === key ? ' is-active' : ''}${touchedFor(key) ? ' is-set' : ''}`}
         onClick={() => { setTarget(key); setFeedback(null); }}
       >
-        <span className="welcome-chip-name">{action === 'pan' ? 'Pan' : 'Zoom'}{touchedFor(key) ? ' ✓' : ''}</span>
+        <span className="welcome-chip-name">{action === 'pan' ? uiText("Pan") : uiText("Zoom")}{touchedFor(key) ? ' ✓' : ''}</span>
         <span className="welcome-chip-gesture">{gestureFor(key)}</span>
       </button>
     );
@@ -201,28 +202,23 @@ function WelcomeSetupBody() {
   return (
     <div className="library-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
       <div className="library-modal library-modal-wide welcome-modal">
-        <div className="library-modal-title" id="welcome-title">Welcome to BoardRipper</div>
-        <div className="library-modal-filename">
-          The most important step is navigation setup. Pick an action, then do the gesture
-          you want for it in the box. You can change everything later in Settings.
-        </div>
+        <div className="library-modal-title" id="welcome-title">{uiText("Welcome to BoardRipper")}</div>
+        <div className="library-modal-filename">{uiText("The most important step is navigation setup. Pick an action, then do the gesture you want for it in the box. You can change everything later in Settings.")}</div>
 
         <div className="welcome-chiprow">
-          <span className="welcome-chiprow-label">Board</span>
+          <span className="welcome-chiprow-label">{uiText("Board")}</span>
           {renderChip('board-pan')}
           {renderChip('board-zoom')}
         </div>
         <div className="welcome-chiprow">
-          <span className="welcome-chiprow-label">PDF</span>
+          <span className="welcome-chiprow-label">{uiText("PDF")}</span>
           {renderChip('pdf-pan')}
           {renderChip('pdf-zoom')}
         </div>
 
         <div className="welcome-test" ref={boxRef} onPointerDown={onPointerDown}>
-          <div className="welcome-test-prompt">
-            Show how you want to <b>{tAction === 'pan' ? 'PAN' : 'ZOOM'}</b> the <b>{tSurface === 'board' ? 'board' : 'PDF'}</b>
-            <br />scroll · swipe · pinch · drag here
-          </div>
+          <div className="welcome-test-prompt">{uiText("Show how you want to ")}<b>{tAction === 'pan' ? uiText("PAN") : uiText("ZOOM")}</b>{uiText(" the ")}<b>{tSurface === 'board' ? uiText("board") : uiText("PDF")}</b>
+            <br />{uiText("scroll · swipe · pinch · drag here")}</div>
           {feedback && (
             <div className={`welcome-test-detected is-set${feedback.ok ? '' : ' is-err'}`}>
               {feedback.ok ? `→ ${feedback.text}` : feedback.text}
@@ -233,17 +229,14 @@ function WelcomeSetupBody() {
         <label className="welcome-check">
           <input type="checkbox" checked={momentum} onChange={e => { setMomentum(e.target.checked); }} />
           <span className="welcome-check-text">
-            <b>BoardRipper momentum</b> — adds glide after a flick. Leave off if your device already scrolls with momentum.
-            {osMomentum && <span className="welcome-check-note"> Your device already does — left off.</span>}
+            <b>{uiText("BoardRipper momentum")}</b>{uiText(" — adds glide after a flick. Leave off if your device already scrolls with momentum.")}{osMomentum && <span className="welcome-check-note">{uiText(" Your device already does — left off.")}</span>}
           </span>
         </label>
 
         <div className="library-modal-actions">
-          <button type="button" className="welcome-never-btn" onClick={() => welcomeStore.finish()}>
-            Don&apos;t show again
-          </button>
-          <button type="button" onClick={() => welcomeStore.dismiss()}>Skip for now</button>
-          <button type="button" className="library-modal-save" onClick={onSave}>Save</button>
+          <button type="button" className="welcome-never-btn" onClick={() => welcomeStore.finish()}>{uiText("Don't show again")}</button>
+          <button type="button" onClick={() => welcomeStore.dismiss()}>{uiText("Skip for now")}</button>
+          <button type="button" className="library-modal-save" onClick={onSave}>{uiText("Save")}</button>
         </div>
       </div>
     </div>

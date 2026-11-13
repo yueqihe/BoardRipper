@@ -1,3 +1,5 @@
+import { getLanguage } from '../../i18n';
+
 /**
  * Pool of welcome-screen rants. One is picked at random per session
  * (module-level, so it stays stable if the backdrop hides and reappears).
@@ -55,5 +57,10 @@ The PC laptop technician pulls out a microscope, extracts the fly with tweezers,
 The Apple Genius pours the drink into a clean glass, carefully sets the fly on a plate, washes the original glass, reassembles everything, takes a sip, and frowns. “Unfortunately, same issue. I think I’m buying a new one.”`,
 ];
 
-export const sessionRant: string =
-  welcomeRants[Math.floor(Math.random() * welcomeRants.length)];
+const chineseRants = [
+  '测量前先确认参考地，拆焊前先确认位号。',
+  '先看供电，再查时钟和复位；板图帮你找到位置。',
+  '把测量值和检修备注记进工作清单，下次接手时少走弯路。',
+];
+const pool = getLanguage() === 'zh-CN' ? chineseRants : welcomeRants;
+export const sessionRant: string = pool[Math.floor(Math.random() * pool.length)];

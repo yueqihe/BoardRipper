@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Navigation history — back, forward, jump.
  *
@@ -60,7 +61,7 @@ function restoreBoard(entry: NavEntry, place: BoardPlace): boolean {
     const upper = place.part.toUpperCase();
     const part = tab.board.parts.find(p => p.name.toUpperCase() === upper);
     if (!part) {
-      boardStore.addToast(`${place.part} is not on this board any more`, 'info');
+      boardStore.addToast(uiText`${place.part} is not on this board any more`, 'info');
       log.ui.warn(`history: ${place.part} not found on ${tab.fileName}`);
     } else {
       let pinIndex: number | null = null;
@@ -157,13 +158,13 @@ export function historyJumpTo(id: number): boolean {
   if (!entryReachable(e)) {
     const fileId = e.place?.fileId;
     if (fileId == null) {
-      boardStore.addToast(`${e.place?.fileName ?? 'That file'} is closed — open it to return here`, 'info');
+      boardStore.addToast(uiText`${e.place?.fileName ?? 'That file'} is closed — open it to return here`, 'info');
       return false;
     }
-    boardStore.addToast(`Opening ${e.place?.fileName}…`, 'info', undefined, 3000);
+    boardStore.addToast(uiText`Opening ${e.place?.fileName}…`, 'info', undefined, 3000);
     openLibraryFileById(fileId, e.place?.kind === 'pdf' ? e.place.page : undefined)
       .then(() => { setTimeout(() => historyJumpTo(id), 400); })
-      .catch(err => { log.ui.warn('history: reopen failed', err); boardStore.addToast(`Could not open ${e.place?.fileName}`, 'error'); });
+      .catch(err => { log.ui.warn('history: reopen failed', err); boardStore.addToast(uiText`Could not open ${e.place?.fileName}`, 'error'); });
     return false;
   }
   navHistoryStore.touchCurrentCamera();

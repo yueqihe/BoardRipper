@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * ComponentInfoBody — the source of truth for the component-inspection UI.
  * It has a single live surface: the board sidebar's Info tab
@@ -127,7 +128,7 @@ export function ComponentInfoBody({
   if (!selectedPart) {
     return (
       <div className="panel-content component-info" data-testid="component-info">
-        <div className="panel-empty">Click a component to inspect</div>
+        <div className="panel-empty">{uiText("Click a component to inspect")}</div>
         {obdNotes}
       </div>
     );
@@ -180,7 +181,7 @@ export function ComponentInfoBody({
       className="pin-th-sort"
       data-testid={`pin-sort-${col}`}
       aria-sort={pinSort?.col === col ? (pinSort.dir === 1 ? 'ascending' : 'descending') : 'none'}
-      title={`${title} — click to sort, again to reverse, a third time for file order`}
+      title={uiText`${title} — click to sort, again to reverse, a third time for file order`}
       onClick={() => cycleSort(col)}
     >
       {label}{pinSort?.col === col && <span className="pin-th-arrow" aria-hidden>{pinSort.dir === 1 ? '▲' : '▼'}</span>}
@@ -207,15 +208,14 @@ export function ComponentInfoBody({
         <div className="info-meta">
           <span className={`badge badge-${selectedPart.side}`}>{selectedPart.side}</span>
           <span className="badge">{selectedPart.type}</span>
-          <span className="badge">{selectedPart.pins.length} pins</span>
+          <span className="badge">{selectedPart.pins.length}{uiText(" pins")}</span>
           {obd.hasData && (
             <span
               className="badge"
               data-testid="obd-badge"
-              title={`OpenBoardData loaded: ${obd.variantCount} variant(s)`}
+              title={uiText`OpenBoardData loaded: ${obd.variantCount} variant(s)`}
               style={{ background: '#3a5', color: '#fff' }}
-            >
-              OBD ×{obd.variantCount}
+            >{uiText("OBD ×")}{obd.variantCount}
             </span>
           )}
         </div>
@@ -249,7 +249,7 @@ export function ComponentInfoBody({
             type="text"
             className="pin-filter-input"
             data-testid="pin-filter"
-            placeholder="Filter pins: number, name or net"
+            placeholder={uiText("Filter pins: number, name or net")}
             value={pinQuery}
             onChange={(e) => setPinFilter({ part: selection.partIndex, q: e.target.value })}
             onKeyDown={(e) => { if (e.key === 'Escape' && pinQuery) { e.stopPropagation(); setPinFilter({ part: null, q: '' }); } }}
@@ -257,7 +257,7 @@ export function ComponentInfoBody({
           />
           {pinQuery && (
             <span className="pin-filter-count" data-testid="pin-filter-count">
-              {`${pinOrder.length} of ${selectedPart.pins.length}`}
+              {uiText`${pinOrder.length} of ${selectedPart.pins.length}`}
             </span>
           )}
         </div>
@@ -270,8 +270,8 @@ export function ComponentInfoBody({
               {sortHeader('num', '#', 'Pin number')}
               {sortHeader('name', 'Name', 'Pin name')}
               {sortHeader('net', 'Net', 'Net')}
-              {board.diodeReference && <th title="diode-mode reference reading baked into the board file (volts)">Diode</th>}
-              {obd.hasData && <th title="diode / V / Ω from OpenBoardData">OBD</th>}
+              {board.diodeReference && <th title={uiText("diode-mode reference reading baked into the board file (volts)")}>{uiText("Diode")}</th>}
+              {obd.hasData && <th title={uiText("diode / V / Ω from OpenBoardData")}>{uiText("OBD")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -335,7 +335,7 @@ export function ComponentInfoBody({
                             setCollapsedNet(netOpen ? branchNet : null);
                           }
                         }}
-                        title={netOpen ? 'Collapse the net' : 'Expand the net'}
+                        title={netOpen ? uiText("Collapse the net") : uiText("Expand the net")}
                       >
                         {netOpen ? <IconChevronDown size={12} /> : <IconChevronRight size={12} />}
                       </span>
@@ -347,7 +347,7 @@ export function ComponentInfoBody({
                     <span translate="no">{pin.net}</span>
                     {isSelected && branchNet && netStats && (
                       <span className="pin-net-counts" data-testid="net-counts">
-                        {` · ${netStats.pins} pin${netStats.pins === 1 ? '' : 's'} · ${netStats.comps} comp${netStats.comps === 1 ? '' : 's'}`}
+                        {uiText` · ${netStats.pins} pin${netStats.pins === 1 ? '' : uiText('plural.s')} · ${netStats.comps} comp${netStats.comps === 1 ? '' : uiText('plural.s')}`}
                       </span>
                     )}
                   </td>
@@ -435,14 +435,12 @@ function BomClusterSection({
           borderRadius: 4,
         }}
       >
-        <strong style={{ fontSize: 12 }}>BOM alternates ({cluster.memberRefdes.length})</strong>
-        <span style={{ fontSize: 11, color: '#888' }} title={`Auto-pick reason: ${reasonLabel}`}>
-          auto: {reasonLabel}
+        <strong style={{ fontSize: 12 }}>{uiText("BOM alternates (")}{cluster.memberRefdes.length})</strong>
+        <span style={{ fontSize: 11, color: '#888' }} title={uiText`Auto-pick reason: ${reasonLabel}`}>{uiText("auto: ")}{reasonLabel}
         </span>
       </div>
-      <div style={{ fontSize: 11, color: '#888', padding: '2px 6px' }}>
-        Only one is fitted per BOM.{' '}
-        {showAll ? 'All shown (X-ray).' : 'Click a row to switch which member is rendered.'}
+      <div style={{ fontSize: 11, color: '#888', padding: '2px 6px' }}>{uiText("Only one is fitted per BOM.")}{' '}
+        {showAll ? uiText("All shown (X-ray).") : uiText("Click a row to switch which member is rendered.")}
       </div>
       <table
         className="bom-cluster-table"
@@ -474,7 +472,7 @@ function BomClusterSection({
                     boardStore.selectBomClusterPrimary(sig, refdes);
                   }
                 }}
-                title={showAll ? `Select ${refdes}` : `Render ${refdes} as the primary`}
+                title={showAll ? uiText`Select ${refdes}` : uiText`Render ${refdes} as the primary`}
               >
                 <td style={{ padding: '2px 6px', width: 18 }}>
                   {isChosen ? '●' : <span style={{ color: '#666' }}>○</span>}
@@ -493,8 +491,8 @@ function BomClusterSection({
 /** Suffix shown next to a BOM-cluster member: marks the rendered primary, the
  *  currently-selected member, or both. */
 function memberStatusLabel(isChosen: boolean, isSelected: boolean): string {
-  if (isChosen && isSelected) return '(primary, selected)';
-  if (isChosen) return '(primary)';
-  if (isSelected) return '(selected)';
+  if (isChosen && isSelected) return uiText("(primary, selected)");
+  if (isChosen) return uiText("(primary)");
+  if (isSelected) return uiText("(selected)");
   return '';
 }

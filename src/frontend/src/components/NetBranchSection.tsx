@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * NetBranchSection — the net half of the Info tab.
  *
@@ -141,18 +142,14 @@ export function NetBranchSection({ board, net, selection, obd }: NetBranchSectio
                 data-testid="net-branch-more"
                 onClick={() => setShowMore(true)}
               >
-                + {hiddenByPreview} more
-              </button>
+                + {hiddenByPreview}{uiText(" more")}</button>
             </div>
           )}
 
           {/* Stage 2: past ROW_CAP, ask again — this is rail territory. */}
           {hiddenByCap > 0 && (
-            <div className="net-branch-overflow">
-              Showing {shown.length} of {rows.length} —{' '}
-              <button type="button" className="net-branch-showall" onClick={() => setShowAll(true)}>
-                show all
-              </button>
+            <div className="net-branch-overflow">{uiText("Showing ")}{shown.length}{uiText(" of ")}{rows.length} —{' '}
+              <button type="button" className="net-branch-showall" onClick={() => setShowAll(true)}>{uiText("show all")}</button>
             </div>
           )}
       </div>
@@ -193,7 +190,7 @@ function BranchItem({
         data-refdes={part.name}
         onClick={onPreview}
         onDoubleClick={onPromote}
-        title={`${part.name} — click to show it on the board, double-click to inspect it`}
+        title={uiText`${part.name} — click to show it on the board, double-click to inspect it`}
       >
         <button
           type="button"
@@ -209,14 +206,14 @@ function BranchItem({
           // Suppressed so a fast double-click on the chevron can't fall through
           // to promote — the chevron's contract is "changes nothing else".
           onDoubleClick={(e) => e.stopPropagation()}
-          title={isExpanded ? `Collapse ${part.name} details` : `Show ${part.name} details (keeps the current selection)`}
+          title={isExpanded ? uiText`Collapse ${part.name} details` : uiText`Show ${part.name} details (keeps the current selection)`}
         >
           {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
         </button>
         <span className="net-branch-refdes" translate="no">{part.name}</span>
         <span className={`badge badge-${part.side}`}>{part.side}</span>
         <span className="net-branch-pins">
-          <span>{netPinIndices.length === 1 ? 'pin ' : 'pins '}</span>
+          <span>{netPinIndices.length === 1 ? uiText("pin ") : uiText("pins ")}</span>
           <span className="net-branch-pin-ids" translate="no">{netPinLabel}</span>
         </span>
       </div>
@@ -263,10 +260,10 @@ function BranchDetail({
         <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
-            <th>Net</th>
-            {board.diodeReference && <th title="diode-mode reference reading baked into the board file (volts)">Diode</th>}
-            {obd.hasData && <th title="diode / V / Ω from OpenBoardData">OBD</th>}
+            <th>{uiText("Name")}</th>
+            <th>{uiText("Net")}</th>
+            {board.diodeReference && <th title={uiText("diode-mode reference reading baked into the board file (volts)")}>{uiText("Diode")}</th>}
+            {obd.hasData && <th title={uiText("diode / V / Ω from OpenBoardData")}>{uiText("OBD")}</th>}
           </tr>
         </thead>
         <tbody>
@@ -280,7 +277,7 @@ function BranchDetail({
                   e.stopPropagation();
                   if (pin.net) boardStore.highlightNet(pin.net === net ? null : pin.net);
                 }}
-                title={pin.net ? `Highlight ${pin.net}` : undefined}
+                title={pin.net ? uiText`Highlight ${pin.net}` : undefined}
               >
                 {pin.net}
               </td>

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useState } from 'react';
 import { shortcuts, formatShortcut, CATEGORY_LABELS, CATEGORY_ORDER } from '../store/keyboard-shortcuts';
 
@@ -27,10 +28,10 @@ export function ShortcutsOverlay() {
 
   return (
     <div className="shortcuts-overlay-backdrop" onClick={() => setOpen(false)}>
-      <div className="shortcuts-overlay" role="dialog" aria-label="Keyboard shortcuts" onClick={e => e.stopPropagation()}>
+      <div className="shortcuts-overlay" role="dialog" aria-label={uiText("Keyboard shortcuts")} onClick={e => e.stopPropagation()}>
         <div className="shortcuts-overlay-header">
-          <span>Keyboard shortcuts</span>
-          <button className="shortcuts-overlay-close" onClick={() => setOpen(false)} aria-label="Close">✕</button>
+          <span>{uiText("Keyboard shortcuts")}</span>
+          <button className="shortcuts-overlay-close" onClick={() => setOpen(false)} aria-label={uiText("Close")}>✕</button>
         </div>
         <div className="home-shortcut-grid">
           {CATEGORY_ORDER.map(cat => {

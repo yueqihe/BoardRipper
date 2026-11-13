@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useState, useCallback } from 'react';
 import type { IDockviewPanelProps } from 'dockview-react';
 import { log } from '../store/log-store';
@@ -135,13 +136,13 @@ export function DatabaseEditorPanel(_props: IDockviewPanelProps) {
   return (
     <div style={styles.root}>
       <div style={styles.left}>
-        <div style={styles.leftHeader}>Boards Database</div>
+        <div style={styles.leftHeader}>{uiText("Boards Database")}</div>
         <div style={styles.tree}>
-          {error && <div style={styles.errorMsg}>Error: {error}</div>}
-          {!error && !data && <div style={styles.loadingMsg}>Loading…</div>}
-          {data && data.available === false && <div style={styles.loadingMsg}>Board database not available.</div>}
+          {error && <div style={styles.errorMsg}>{uiText("Error: ")}{error}</div>}
+          {!error && !data && <div style={styles.loadingMsg}>{uiText("Loading…")}</div>}
+          {data && data.available === false && <div style={styles.loadingMsg}>{uiText("Board database not available.")}</div>}
           {data?.available && (data.brands?.length ?? 0) === 0 && (
-            <div style={styles.loadingMsg}>Database is empty.</div>
+            <div style={styles.loadingMsg}>{uiText("Database is empty.")}</div>
           )}
           {data?.available && data.brands?.map(brand => (
             <BrandNode
@@ -158,7 +159,7 @@ export function DatabaseEditorPanel(_props: IDockviewPanelProps) {
       <div style={styles.divider} />
       <div style={styles.right}>
         {!selectedEntity && (
-          <div style={styles.emptyDetail}>Select an entity on the left to inspect.</div>
+          <div style={styles.emptyDetail}>{uiText("Select an entity on the left to inspect.")}</div>
         )}
         {selectedEntity && <DetailCard entity={selectedEntity} />}
       </div>
@@ -335,7 +336,7 @@ function AliasList({ aliases }: { aliases: HierarchyAlias[] | undefined }) {
   if (!aliases || aliases.length === 0) return null;
   return (
     <div style={styles.field}>
-      <div style={styles.fieldLabel}>Aliases ({aliases.length})</div>
+      <div style={styles.fieldLabel}>{uiText("Aliases (")}{aliases.length})</div>
       <ul style={styles.aliasList}>
         {aliases.map(a => (
           <li key={a.uuid} style={styles.aliasItem}>
@@ -355,10 +356,10 @@ function BrandDetail({ brand }: { brand: HierarchyBrand }) {
   return (
     <>
       <div style={styles.detailTitle}>{brand.name}</div>
-      <Field label="UUID" value={<code style={styles.uuid}>{brand.uuid}</code>} />
-      <Field label="Notes" value={brand.notes} />
-      <Field label="Families" value={families.length} />
-      <Field label="Boards" value={boards} />
+      <Field label={uiText("UUID")} value={<code style={styles.uuid}>{brand.uuid}</code>} />
+      <Field label={uiText("Notes")} value={brand.notes} />
+      <Field label={uiText("Families")} value={families.length} />
+      <Field label={uiText("Boards")} value={boards} />
     </>
   );
 }
@@ -370,10 +371,10 @@ function FamilyDetail({ brand, family }: { brand: HierarchyBrand; family: Hierar
     <>
       <div style={styles.detailTitle}>{family.name}</div>
       <div style={styles.detailCrumb}>{brand.name}</div>
-      <Field label="UUID" value={<code style={styles.uuid}>{family.uuid}</code>} />
-      <Field label="Notes" value={family.notes} />
-      <Field label="Models" value={models.length} />
-      <Field label="Boards" value={boards} />
+      <Field label={uiText("UUID")} value={<code style={styles.uuid}>{family.uuid}</code>} />
+      <Field label={uiText("Notes")} value={family.notes} />
+      <Field label={uiText("Models")} value={models.length} />
+      <Field label={uiText("Boards")} value={boards} />
     </>
   );
 }
@@ -384,10 +385,10 @@ function ModelDetail({ brand, family, model }: { brand: HierarchyBrand; family: 
     <>
       <div style={styles.detailTitle}>{model.model_number}</div>
       <div style={styles.detailCrumb}>{brand.name} › {family.name}</div>
-      {model.display_name && <Field label="Display Name" value={model.display_name} />}
-      <Field label="UUID" value={<code style={styles.uuid}>{model.uuid}</code>} />
-      <Field label="Notes" value={model.notes} />
-      <Field label="Boards" value={boards.length} />
+      {model.display_name && <Field label={uiText("Display Name")} value={model.display_name} />}
+      <Field label={uiText("UUID")} value={<code style={styles.uuid}>{model.uuid}</code>} />
+      <Field label={uiText("Notes")} value={model.notes} />
+      <Field label={uiText("Boards")} value={boards.length} />
       <AliasList aliases={model.aliases} />
     </>
   );
@@ -398,18 +399,18 @@ function BoardDetail({ brand, family, model, board }: { brand: HierarchyBrand; f
     <>
       <div style={styles.detailTitle}>{board.board_number}</div>
       <div style={styles.detailCrumb}>{brand.name} › {family.name} › {model.model_number}</div>
-      <Field label="UUID" value={<code style={styles.uuid}>{board.uuid}</code>} />
-      <Field label="Board Name" value={board.board_name} />
-      <Field label="ODM" value={board.odm} />
-      <Field label="Number Type" value={board.board_number_type} />
-      <Field label="Source" value={board.source} />
+      <Field label={uiText("UUID")} value={<code style={styles.uuid}>{board.uuid}</code>} />
+      <Field label={uiText("Board Name")} value={board.board_name} />
+      <Field label={uiText("ODM")} value={board.odm} />
+      <Field label={uiText("Number Type")} value={board.board_number_type} />
+      <Field label={uiText("Source")} value={board.source} />
       <Field
-        label="Source URL"
+        label={uiText("Source URL")}
         value={board.source_url
           ? <a href={board.source_url} target="_blank" rel="noreferrer">{board.source_url}</a>
           : null}
       />
-      <Field label="Notes" value={board.notes} />
+      <Field label={uiText("Notes")} value={board.notes} />
       <AliasList aliases={board.aliases} />
     </>
   );

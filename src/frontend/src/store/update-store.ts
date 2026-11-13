@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /** Reactive store for update checking — polls /api/update/status */
 import { Emitter } from './emitter';
 import { log } from './log-store';
@@ -256,7 +257,7 @@ class UpdateStore extends Emitter {
       }
     } catch {
       log.update.error('Apply request failed');
-      this._progress.push({ time: new Date().toISOString(), message: 'Request failed', status: 'error' });
+      this._progress.push({ time: new Date().toISOString(), message: uiText("Request failed"), status: 'error' });
       this._updating = false;
       clearRestartFlag();
       this.notify();
@@ -302,7 +303,7 @@ class UpdateStore extends Emitter {
       }
     } catch {
       log.update.error('Bundle upload failed');
-      this._progress.push({ time: new Date().toISOString(), message: 'Upload failed', status: 'error' });
+      this._progress.push({ time: new Date().toISOString(), message: uiText("Upload failed"), status: 'error' });
       this._updating = false;
       clearRestartFlag();
       this.notify();
@@ -488,8 +489,8 @@ class UpdateStore extends Emitter {
           // the board store.
           const { boardStore } = await import('./board-store');
           boardStore.addToast(
-            `Update rolled back — still on ${fmtVersion(flag.fromVersion)}. The new version never answered its health check. ` +
-            `Details: update-orchestrator.log in the data folder, plus the container kept as "<name>-failed".`,
+            uiText`Update rolled back — still on ${fmtVersion(flag.fromVersion)}. The new version never answered its health check. ` +
+            uiText("Details: update-orchestrator.log in the data folder, plus the container kept as \"<name>-failed\"."),
             'error', undefined, 15000,
           );
         }

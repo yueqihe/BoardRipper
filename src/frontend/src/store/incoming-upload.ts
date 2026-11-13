@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { boardStore } from './board-store';
 import { pdfStore } from './pdf-store';
 import { databankStore, isElectron } from './databank-store';
@@ -110,10 +111,10 @@ export async function saveDroppedToIncoming(files: File[]): Promise<void> {
     log.ui.log('Dropped file(s) already in library — not copied', existing);
     const first = existing[0];
     const more = existing.length > 1 ? ` (+${existing.length - 1} more)` : '';
-    boardStore.addToast(`Already in library: ${first}${more}`, 'info');
+    boardStore.addToast(uiText`Already in library: ${first}${more}`, 'info');
   }
   if (failures.length > 0) {
     log.ui.warn('Failed to save dropped file(s) to incoming/', failures);
-    boardStore.addToast(`Couldn't save to library: ${failures[0]}`, 'error');
+    boardStore.addToast(uiText`Couldn't save to library: ${failures[0]}`, 'error');
   }
 }

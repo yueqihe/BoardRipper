@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Floating "Interactive mode is on" pill over the board, with the way out.
  * Interactive mode repurposes a plain click, so the switch that turns it off
@@ -17,16 +18,14 @@ export function ResizeModeBanner() {
   return (
     <div className="resize-mode-banner" role="status" data-testid="resize-mode-banner">
       <IconClick size={15} className="resize-mode-banner-icon" />
-      <span className="resize-mode-banner-text">Interactive mode — click a pin, component or the board to size it</span>
+      <span className="resize-mode-banner-text">{uiText("Interactive mode — click a pin, component or the board to size it")}</span>
       <button
         type="button"
         className="resize-mode-banner-done"
         onClick={() => resizeModeStore.setEnabled(false)}
-        title="Back to normal clicks"
+        title={uiText("Back to normal clicks")}
         data-testid="resize-mode-done"
-      >
-        Done
-      </button>
+      >{uiText("Done")}</button>
     </div>
   );
 }

@@ -12,6 +12,7 @@ export default defineConfig({
   retries: 0,
   use: {
     headless: true,
+    channel: process.env.BOARDRIPPER_BROWSER_CHANNEL,
     screenshot: 'only-on-failure',
     launchOptions: {
       args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],

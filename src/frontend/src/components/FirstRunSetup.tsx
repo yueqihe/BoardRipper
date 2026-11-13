@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * First-run library setup modal.
  *
@@ -83,57 +84,51 @@ function FirstRunBody({ neverIndexed }: { neverIndexed: boolean }) {
   return (
     <div className="library-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="firstrun-title" data-testid="firstrun-modal">
       <div className="library-modal library-modal-wide firstrun-modal">
-        <div className="library-modal-title" id="firstrun-title">Set up your library</div>
-        <div className="library-modal-filename">
-          BoardRipper reads the folders mounted at <code>{libraryPath ?? '/library'}</code>. Nothing is imported or copied.
-          {' '}Mounted: <span data-testid="firstrun-folders">{folderText}</span>
+        <div className="library-modal-title" id="firstrun-title">{uiText("Set up your library")}</div>
+        <div className="library-modal-filename">{uiText("BoardRipper reads the folders mounted at ")}<code>{libraryPath ?? '/library'}</code>{uiText(". Nothing is imported or copied.")}{' '}{uiText("Mounted: ")}<span data-testid="firstrun-folders">{folderText}</span>
           {folders !== null && folders.length === 0 && (
-            <span className="firstrun-warn"> — mount your board folders as subfolders of <code>/library</code> (see Getting started) and reload.</span>
+            <span className="firstrun-warn">{uiText(" — mount your board folders as subfolders of ")}<code>/library</code>{uiText(" (see Getting started) and reload.")}</span>
           )}
         </div>
 
         <ol className="firstrun-steps">
           <li>
-            <b>Index files</b>
-            <span>Walks the folders and builds the board and PDF list. About 200 files a second; everything else depends on it. Starts when you press Start.</span>
+            <b>{uiText("Index files")}</b>
+            <span>{uiText("Walks the folders and builds the board and PDF list. About 200 files a second; everything else depends on it. Starts when you press Start.")}</span>
           </li>
           <li>
-            <b>Index PDF text</b>
-            <span>Extracts the text of every schematic for full-text search. Slow, runs in the background, starts by itself when step 1 finishes. Nothing to click.</span>
+            <b>{uiText("Index PDF text")}</b>
+            <span>{uiText("Extracts the text of every schematic for full-text search. Slow, runs in the background, starts by itself when step 1 finishes. Nothing to click.")}</span>
           </li>
           <li>
             <label className="welcome-check">
               <input type="checkbox" checked={bind} onChange={e => setBind(e.target.checked)} data-testid="firstrun-bind" />
               <span className="welcome-check-text">
-                <b>Link boards to their PDFs automatically</b> — by name, board number, similarity, or the only PDF in a folder. Rules and a preview live in Settings ▸ Library.
-              </span>
+                <b>{uiText("Link boards to their PDFs automatically")}</b>{uiText(" — by name, board number, similarity, or the only PDF in a folder. Rules and a preview live in Settings ▸ Library.")}</span>
             </label>
           </li>
           <li>
             <label className="welcome-check">
               <input type="checkbox" checked={obd} onChange={e => setObd(e.target.checked)} data-testid="firstrun-obd" />
               <span className="welcome-check-text">
-                <b>Download OpenBoardData</b> — community diode and voltage readings for about a hundred boards, a couple of minutes, from{' '}
-                <a href="https://openboarddata.org" target="_blank" rel="noopener noreferrer">openboarddata.org</a> under the ODbL licence. Readings appear on matching boards by themselves.
-              </span>
+                <b>{uiText("Download OpenBoardData")}</b>{uiText(" — community diode and voltage readings for about a hundred boards, a couple of minutes, from")}{' '}
+                <a href="https://openboarddata.org" target="_blank" rel="noopener noreferrer">{uiText("openboarddata.org")}</a>{uiText(" under the ODbL licence. Readings appear on matching boards by themselves.")}</span>
             </label>
           </li>
         </ol>
 
         <label className="welcome-check firstrun-rescan">
           <input type="checkbox" checked={rescan} onChange={e => setRescan(e.target.checked)} data-testid="firstrun-rescan" />
-          <span className="welcome-check-text"><b>Re-index on every start</b> — picks up files added since the last run.</span>
+          <span className="welcome-check-text"><b>{uiText("Re-index on every start")}</b>{uiText(" — picks up files added since the last run.")}</span>
         </label>
 
         <div className="library-modal-actions">
           {neverIndexed && (
-            <button type="button" className="welcome-never-btn" onClick={() => firstRunStore.neverAgain()} disabled={busy}>
-              Don&apos;t show again
-            </button>
+            <button type="button" className="welcome-never-btn" onClick={() => firstRunStore.neverAgain()} disabled={busy}>{uiText("Don't show again")}</button>
           )}
-          <button type="button" onClick={() => firstRunStore.skip()} disabled={busy}>Skip for now</button>
+          <button type="button" onClick={() => firstRunStore.skip()} disabled={busy}>{uiText("Skip for now")}</button>
           <button type="button" className="library-modal-save" onClick={start} disabled={busy} data-testid="firstrun-start">
-            {busy ? 'Starting…' : 'Start'}
+            {busy ? uiText("Starting…") : uiText("Start")}
           </button>
         </div>
       </div>

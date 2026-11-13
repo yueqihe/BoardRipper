@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 /**
  * Keyboard shortcuts registry — defines all shortcuts, platform detection, and label formatting.
  */
@@ -6,9 +7,9 @@ export const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform ?? navigator
 
 /** Modifier key that acts as the "command" key on each platform */
 export const MOD = isMac ? 'Meta' : 'Control';
-const MOD_LABEL = isMac ? '\u2318' : 'Ctrl';
-const ALT_LABEL = isMac ? '\u2325' : 'Alt';
-const SHIFT_LABEL = isMac ? '\u21E7' : 'Shift';
+const MOD_LABEL = isMac ? '\u2318' : uiText("Ctrl");
+const ALT_LABEL = isMac ? '\u2325' : uiText("Alt");
+const SHIFT_LABEL = isMac ? '\u21E7' : uiText("Shift");
 
 export interface Shortcut {
   id: string;
@@ -62,167 +63,167 @@ export const shortcuts: Shortcut[] = [
   // --- File ---
   {
     id: 'openBoard',
-    label: 'Open File',
+    label: uiText("Open File"),
     category: 'file',
     key: 'o',
     mod: true,
-    description: 'Open a board or PDF (⌘O and ⌘P both open the same picker)',
+    description: uiText("Open a board or PDF (⌘O and ⌘P both open the same picker)"),
   },
   {
     id: 'openPdf',
-    label: 'Open PDF',
+    label: uiText("Open PDF"),
     category: 'file',
     key: 'p',
     mod: true,
     hideInList: true, // same picker as Open File — one row in the cheat sheet
-    description: 'Open a PDF schematic',
+    description: uiText("Open a PDF schematic"),
   },
   {
     id: 'focusSearch',
-    label: 'Find',
+    label: uiText("Find"),
     category: 'file',
     key: 'f',
     mod: true,
-    description: 'Board: open the board search with the selected part or net. PDF: focus the find field (a clicked word becomes the query). Repeat Cmd/Ctrl+F = next, Shift+Cmd/Ctrl+F = previous. Enter = next, Shift+Enter = previous. Up/Down = next/previous.',
+    description: uiText("Board: open the board search with the selected part or net. PDF: focus the find field (a clicked word becomes the query). Repeat Cmd/Ctrl+F = next, Shift+Cmd/Ctrl+F = previous. Enter = next, Shift+Enter = previous. Up/Down = next/previous."),
   },
   {
     id: 'copySelection',
-    label: 'Copy Selection',
+    label: uiText("Copy Selection"),
     category: 'file',
     key: 'c',
     mod: true,
-    description: 'Copy the selected component, pin, or net name to the clipboard (board panel). Highlighted text still copies normally.',
+    description: uiText("Copy the selected component, pin, or net name to the clipboard (board panel). Highlighted text still copies normally."),
   },
 
   // --- View ---
   {
     id: 'flipBoard',
-    label: 'Flip Board',
+    label: uiText("Flip Board"),
     category: 'view',
     key: ' ',         // Space
-    description: 'Tap: flip between top and bottom. Hold: peek at the other side (returns on release).',
+    description: uiText("Tap: flip between top and bottom. Hold: peek at the other side (returns on release)."),
   },
   {
     id: 'rotateCW',
-    label: 'Rotate CW',
+    label: uiText("Rotate CW"),
     category: 'view',
     key: 'ArrowRight',
     mod: true,
-    description: 'Rotate 90° clockwise (board or PDF page)',
+    description: uiText("Rotate 90° clockwise (board or PDF page)"),
   },
   {
     id: 'rotateCCW',
-    label: 'Rotate CCW',
+    label: uiText("Rotate CCW"),
     category: 'view',
     key: 'ArrowLeft',
     mod: true,
-    description: 'Rotate 90° counter-clockwise (board or PDF page)',
+    description: uiText("Rotate 90° counter-clockwise (board or PDF page)"),
   },
   {
     id: 'mirrorBoard',
-    label: 'Mirror',
+    label: uiText("Mirror"),
     category: 'view',
     key: 'ArrowUp',
     mod: true,
-    description: 'Mirror horizontally (board or PDF page)',
+    description: uiText("Mirror horizontally (board or PDF page)"),
   },
   {
     id: 'panLeft',
-    label: 'Pan Left',
+    label: uiText("Pan Left"),
     category: 'view',
     key: 'ArrowLeft',
     alt: true,
-    description: 'Move the view left',
+    description: uiText("Move the view left"),
   },
   {
     id: 'panRight',
-    label: 'Pan Right',
+    label: uiText("Pan Right"),
     category: 'view',
     key: 'ArrowRight',
     alt: true,
-    description: 'Move the view right',
+    description: uiText("Move the view right"),
   },
   {
     id: 'panUp',
-    label: 'Pan Up',
+    label: uiText("Pan Up"),
     category: 'view',
     key: 'ArrowUp',
     alt: true,
-    description: 'Move the view up',
+    description: uiText("Move the view up"),
   },
   {
     id: 'panDown',
-    label: 'Pan Down',
+    label: uiText("Pan Down"),
     category: 'view',
     key: 'ArrowDown',
     alt: true,
-    description: 'Move the view down',
+    description: uiText("Move the view down"),
   },
 
   // --- Navigation ---
   {
     id: 'historyBack',
-    label: 'Back',
+    label: uiText("Back"),
     category: 'navigation',
     key: '[',
     mod: true,
     ignoreAlt: true,
-    description: 'Go back through the places you visited — parts, PDF lookups, searches (Preview’s Go ▸ Back)',
+    description: uiText("Go back through the places you visited — parts, PDF lookups, searches (Preview’s Go ▸ Back)"),
   },
   {
     id: 'historyForward',
-    label: 'Forward',
+    label: uiText("Forward"),
     category: 'navigation',
     key: ']',
     mod: true,
     ignoreAlt: true,
-    description: 'Go forward again through the navigation history',
+    description: uiText("Go forward again through the navigation history"),
   },
   {
     id: 'mapStep',
-    label: 'Map back / forward',
+    label: uiText("Map back / forward"),
     category: 'navigation',
     key: 'ArrowLeft',
     displayLabel: '← →',
     displayOnly: true,
-    description: 'On a board with the minimap on: step back / forward through the history, or through the loaded worklist when the map is set to Worklist.',
+    description: uiText("On a board with the minimap on: step back / forward through the history, or through the loaded worklist when the map is set to Worklist."),
   },
   {
     id: 'searchStep',
-    label: 'Next / previous result',
+    label: uiText("Next / previous result"),
     category: 'navigation',
     key: 'n',
     ignoreShift: true,
     displayLabel: `N / ${SHIFT_LABEL}${isMac ? '' : '+'}N`,
-    description: 'Board: on a lit net, visit each part on it (small parts first); otherwise step through the parts the search found. PDF: next / previous match.',
+    description: uiText("Board: on a lit net, visit each part on it (small parts first); otherwise step through the parts the search found. PDF: next / previous match."),
   },
   {
     id: 'pageDown',
-    label: 'PDF Next Page',
+    label: uiText("PDF Next Page"),
     category: 'navigation',
     key: 'PageDown',
-    description: 'Go to the next PDF page',
+    description: uiText("Go to the next PDF page"),
   },
   {
     id: 'pageUp',
-    label: 'PDF Previous Page',
+    label: uiText("PDF Previous Page"),
     category: 'navigation',
     key: 'PageUp',
-    description: 'Go to the previous PDF page',
+    description: uiText("Go to the previous PDF page"),
   },
   {
     id: 'pageFirst',
-    label: 'PDF First Page',
+    label: uiText("PDF First Page"),
     category: 'navigation',
     key: 'Home',
-    description: 'Jump to the first PDF page',
+    description: uiText("Jump to the first PDF page"),
   },
   {
     id: 'pageLast',
-    label: 'PDF Last Page',
+    label: uiText("PDF Last Page"),
     category: 'navigation',
     key: 'End',
-    description: 'Jump to the last PDF page',
+    description: uiText("Jump to the last PDF page"),
   },
   // Display-only — these behaviours are handled by ad-hoc code paths in
   // useKeyboardShortcuts (Tab jump, arrow match-nav) and previously appeared
@@ -230,43 +231,43 @@ export const shortcuts: Shortcut[] = [
   // surface them; the matcher skips displayOnly entries.
   {
     id: 'tabJump',
-    label: 'Jump board ↔ PDF',
+    label: uiText("Jump board ↔ PDF"),
     category: 'navigation',
     key: 'Tab',
     displayOnly: true,
-    description: 'Switch focus between the active board panel and its linked PDF (and back).',
+    description: uiText("Switch focus between the active board panel and its linked PDF (and back)."),
   },
   {
     id: 'matchNav',
-    label: 'Next / previous match',
+    label: uiText("Next / previous match"),
     category: 'navigation',
     key: 'ArrowDown',
     displayLabel: '↑ ↓',
     displayOnly: true,
-    description: 'With PDF search results, Up/Down step through matches; with none, they page the PDF.',
+    description: uiText("With PDF search results, Up/Down step through matches; with none, they page the PDF."),
   },
 
   // --- PDF Viewer ---
   {
     id: 'pdfFitWidth',
-    label: 'Fit to Width',
+    label: uiText("Fit to Width"),
     category: 'pdf',
     key: ' ',         // Space
-    description: 'Reset zoom to fit page width (when PDF panel is active)',
+    description: uiText("Reset zoom to fit page width (when PDF panel is active)"),
   },
   {
     id: 'pdfNextPage',
-    label: 'Next Page',
+    label: uiText("Next Page"),
     category: 'pdf',
     key: 'ArrowDown',
-    description: 'Go to next PDF page (when PDF panel is active)',
+    description: uiText("Go to next PDF page (when PDF panel is active)"),
   },
   {
     id: 'pdfPrevPage',
-    label: 'Previous Page',
+    label: uiText("Previous Page"),
     category: 'pdf',
     key: 'ArrowUp',
-    description: 'Go to previous PDF page (when PDF panel is active)',
+    description: uiText("Go to previous PDF page (when PDF panel is active)"),
   },
 
   // --- WSAD Navigation ---
@@ -277,80 +278,80 @@ export const shortcuts: Shortcut[] = [
   // prefers `code` whenever it is set.
   {
     id: 'panBoardLeft',
-    label: 'Pan Left',
+    label: uiText("Pan Left"),
     category: 'wsad',
     key: 'a',
     code: 'KeyA',
-    description: 'Move the view left (board or PDF)',
+    description: uiText("Move the view left (board or PDF)"),
   },
   {
     id: 'panBoardRight',
-    label: 'Pan Right',
+    label: uiText("Pan Right"),
     category: 'wsad',
     key: 'd',
     code: 'KeyD',
-    description: 'Move the view right (board or PDF)',
+    description: uiText("Move the view right (board or PDF)"),
   },
   {
     id: 'panBoardUp',
-    label: 'Pan Up',
+    label: uiText("Pan Up"),
     category: 'wsad',
     key: 'w',
     code: 'KeyW',
-    description: 'Move the view up (board or PDF)',
+    description: uiText("Move the view up (board or PDF)"),
   },
   {
     id: 'panBoardDown',
-    label: 'Pan Down',
+    label: uiText("Pan Down"),
     category: 'wsad',
     key: 's',
     code: 'KeyS',
-    description: 'Move the view down (board or PDF)',
+    description: uiText("Move the view down (board or PDF)"),
   },
   {
     id: 'rotateBoardCCW',
-    label: 'Rotate CCW',
+    label: uiText("Rotate CCW"),
     category: 'wsad',
     key: 'q',
     code: 'KeyQ',
-    description: 'Rotate 90° counter-clockwise (board or PDF page)',
+    description: uiText("Rotate 90° counter-clockwise (board or PDF page)"),
   },
   {
     id: 'rotateBoardCW',
-    label: 'Rotate CW',
+    label: uiText("Rotate CW"),
     category: 'wsad',
     key: 'e',
     code: 'KeyE',
-    description: 'Rotate 90° clockwise (board or PDF page)',
+    description: uiText("Rotate 90° clockwise (board or PDF page)"),
   },
   {
     id: 'zoomBoardIn',
-    label: 'Zoom In',
+    label: uiText("Zoom In"),
     category: 'wsad',
     key: 'w',
     code: 'KeyW',
     shift: true,
-    description: 'Zoom in at the canvas center (board or PDF)',
+    description: uiText("Zoom in at the canvas center (board or PDF)"),
   },
   {
     id: 'zoomBoardOut',
-    label: 'Zoom Out',
+    label: uiText("Zoom Out"),
     category: 'wsad',
     key: 's',
     code: 'KeyS',
     shift: true,
-    description: 'Zoom out at the canvas center (board or PDF)',
+    description: uiText("Zoom out at the canvas center (board or PDF)"),
   },
 
   // --- File (extended) ---
   {
     id: 'toggleLibrary',
-    label: 'Toggle Library',
+    label: uiText("Toggle Library"),
     category: 'file',
     key: '',
     code: ['Backquote', 'IntlBackslash'],
     displayLabel: '~',
-    description: 'Open or close the Library sidebar (key left of `1`, layout-independent — works as `~` on US, `°` on DE, etc.)',
+    description: uiText("Open or close the Library sidebar (key left of `1`, layout-independent — works as `~` on US, `°` on DE, etc.)"),
     ignoreShift: true,
   },
 ];
@@ -358,11 +359,11 @@ export const shortcuts: Shortcut[] = [
 /** Display labels for each shortcut category — the single source of truth for
  *  every cheat sheet (home backdrop, `?` overlay, Settings ▸ Keyboard). */
 export const CATEGORY_LABELS: Record<Shortcut['category'], string> = {
-  file: 'File',
-  view: 'Board',
-  wsad: 'WSAD Navigation',
-  navigation: 'Navigation',
-  pdf: 'PDF (when panel is active)',
+  file: uiText("File"),
+  view: uiText("Board"),
+  wsad: uiText("WSAD Navigation"),
+  navigation: uiText("Navigation"),
+  pdf: uiText("PDF (when panel is active)"),
 };
 
 /** Order categories are rendered in across all cheat sheets. */

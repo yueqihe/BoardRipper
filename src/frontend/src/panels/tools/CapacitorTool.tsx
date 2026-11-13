@@ -1,10 +1,11 @@
+import { uiText } from '../../i18n';
 import { useState } from 'react';
 import { CAP_UNITS, CAP_UNIT_TO_PF, formatCapValue, type CapUnit } from '../../tools/capacitor';
 
 const UNIT_LABEL: Record<CapUnit, string> = {
-  pF: 'Picofarads (pF)',
-  nF: 'Nanofarads (nF)',
-  'µF': 'Microfarads (µF)',
+  pF: uiText("Picofarads (pF)"),
+  nF: uiText("Nanofarads (nF)"),
+  'µF': uiText("Microfarads (µF)"),
 };
 
 /** ASCII test-id per unit (avoid the µ glyph in attribute selectors). */
@@ -35,7 +36,7 @@ export function CapacitorTool() {
 
   return (
     <div className="cap-converter">
-      <div className="cap-converter-hint">Enter a value in any unit — the others convert live.</div>
+      <div className="cap-converter-hint">{uiText("Enter a value in any unit — the others convert live.")}</div>
       {CAP_UNITS.map(unit => (
         <label key={unit} className="cap-field">
           <span className="cap-field-label">{UNIT_LABEL[unit]}</span>
@@ -48,7 +49,7 @@ export function CapacitorTool() {
           />
         </label>
       ))}
-      <div className="cap-cheatsheet">1 µF = 1000 nF = 1 000 000 pF</div>
+      <div className="cap-cheatsheet">{uiText("1 µF = 1000 nF = 1 000 000 pF")}</div>
     </div>
   );
 }

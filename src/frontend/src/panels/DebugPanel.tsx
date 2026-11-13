@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useSyncExternalStore, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { logStore, LOG_SCOPES, type LogScope, log } from '../store/log-store';
 import { boardCache } from '../store/board-cache';
@@ -232,31 +233,31 @@ function GestureRecognizer() {
     <div className="gesture-rec">
       <div className="gesture-rec-head" onClick={() => setOpen(o => !o)}>
         <span className="gesture-rec-caret">{open ? '▾' : '▸'}</span>
-        <span className="gesture-rec-title">Input Gesture Recognizer</span>
-        <span className="gesture-rec-sub">verbose calibration prototype</span>
+        <span className="gesture-rec-title">{uiText("Input Gesture Recognizer")}</span>
+        <span className="gesture-rec-sub">{uiText("verbose calibration prototype")}</span>
       </div>
 
       {open && (
         <div className="gesture-rec-body">
           <div className="gesture-rec-controls">
             <div className="gesture-rec-seg">
-              <span className="gesture-rec-seg-label">Surface</span>
+              <span className="gesture-rec-seg-label">{uiText("Surface")}</span>
               {(['board', 'pdf'] as Surface[]).map(s => (
                 <button
                   key={s}
                   className={`gesture-rec-segbtn${surface === s ? ' is-active' : ''}`}
                   onClick={() => setSurface(s)}
-                >{s === 'board' ? 'Board' : 'PDF'}</button>
+                >{s === 'board' ? uiText("Board") : uiText("PDF")}</button>
               ))}
             </div>
             <div className="gesture-rec-seg">
-              <span className="gesture-rec-seg-label">Action</span>
+              <span className="gesture-rec-seg-label">{uiText("Action")}</span>
               {(['pan', 'zoom'] as Action[]).map(a => (
                 <button
                   key={a}
                   className={`gesture-rec-segbtn${action === a ? ' is-active' : ''}`}
                   onClick={() => setAction(a)}
-                >{a === 'pan' ? 'Pan' : 'Zoom'}</button>
+                >{a === 'pan' ? uiText("Pan") : uiText("Zoom")}</button>
               ))}
             </div>
           </div>
@@ -266,16 +267,13 @@ function GestureRecognizer() {
             className="gesture-rec-capture"
             onPointerDown={onPointerDown}
           >
-            <div className="gesture-rec-capture-prompt">
-              Demonstrate how you want to <b>{action.toUpperCase()}</b> the <b>{surface === 'board' ? 'BOARD' : 'PDF'}</b>
-              <br />scroll · swipe · pinch · drag here
-            </div>
+            <div className="gesture-rec-capture-prompt">{uiText("Demonstrate how you want to ")}<b>{action.toUpperCase()}</b>{uiText(" the ")}<b>{surface === 'board' ? uiText("BOARD") : uiText("PDF")}</b>
+              <br />{uiText("scroll · swipe · pinch · drag here")}</div>
             {latest && (
               <div className={`gesture-rec-verdict${latest.verdict.confident ? '' : ' is-weak'}`}>
                 <span className="gesture-rec-verdict-label">{latest.verdict.label}</span>
-                <span className="gesture-rec-verdict-meta">
-                  device={latest.verdict.device} · modifier={latest.verdict.modifier}
-                  {latest.verdict.confident ? '' : ' · low confidence'}
+                <span className="gesture-rec-verdict-meta">{uiText("device=")}{latest.verdict.device}{uiText(" · modifier=")}{latest.verdict.modifier}
+                  {latest.verdict.confident ? '' : uiText(" · low confidence")}
                 </span>
               </div>
             )}
@@ -289,7 +287,7 @@ function GestureRecognizer() {
                 disabled={!recommendation.ok || appliedSummary === recommendation.summary}
                 onClick={apply}
               >
-                {appliedSummary === recommendation.summary ? 'Applied ✓' : 'Confirm & Apply'}
+                {appliedSummary === recommendation.summary ? uiText("Applied ✓") : uiText("Confirm & Apply")}
               </button>
             </div>
           )}
@@ -303,14 +301,12 @@ function GestureRecognizer() {
           {inertia && (
             <div className={`gesture-rec-inertia${inertia.hasInertia ? ' is-on' : ''}`}>
               <div className="gesture-rec-inertia-head">
-                <span className="gesture-rec-inertia-title">Inertia</span>
+                <span className="gesture-rec-inertia-title">{uiText("Inertia")}</span>
                 <span className="gesture-rec-inertia-verdict">
-                  {inertia.hasInertia ? 'MOMENTUM DETECTED · trackpad' : 'no momentum (discrete / mouse-like)'}
+                  {inertia.hasInertia ? uiText("MOMENTUM DETECTED · trackpad") : uiText("no momentum (discrete / mouse-like)")}
                 </span>
               </div>
-              <div className="gesture-rec-inertia-stats">
-                events={inertia.eventCount} · peak={inertia.peakAbs.toFixed(1)} · cur={inertia.currentAbs.toFixed(1)} · decay-run={inertia.decayRun} · avg-gap={inertia.avgGapMs.toFixed(0)}ms
-              </div>
+              <div className="gesture-rec-inertia-stats">{uiText("events=")}{inertia.eventCount}{uiText(" · peak=")}{inertia.peakAbs.toFixed(1)}{uiText(" · cur=")}{inertia.currentAbs.toFixed(1)}{uiText(" · decay-run=")}{inertia.decayRun}{uiText(" · avg-gap=")}{inertia.avgGapMs.toFixed(0)}{uiText("ms")}</div>
               <ul className="gesture-rec-reasons">
                 {inertia.reasons.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
@@ -322,7 +318,7 @@ function GestureRecognizer() {
                     disabled={inertiaApplied === inertiaReco.summary}
                     onClick={applyInertia}
                   >
-                    {inertiaApplied === inertiaReco.summary ? 'Applied ✓' : 'Confirm & Apply'}
+                    {inertiaApplied === inertiaReco.summary ? uiText("Applied ✓") : uiText("Confirm & Apply")}
                   </button>
                 </div>
               )}
@@ -331,7 +327,7 @@ function GestureRecognizer() {
 
           <div className="gesture-rec-log">
             {rows.length === 0
-              ? <div className="gesture-rec-log-empty">No events captured yet.</div>
+              ? <div className="gesture-rec-log-empty">{uiText("No events captured yet.")}</div>
               : rows.map(r => (
                   <div key={r.id} className="gesture-rec-log-row">
                     <span className="gesture-rec-log-verdict">{r.verdict.label}</span>
@@ -415,40 +411,34 @@ export function DebugPanel() {
       <div className="debug-panel-toolbar">
         <span className="debug-panel-count">
           {filtered.length === entries.length
-            ? `${entries.length} entries`
-            : `${filtered.length} of ${entries.length} entries`}
+            ? uiText`${entries.length} entries`
+            : uiText`${filtered.length} of ${entries.length} entries`}
         </span>
         <button
           onClick={() => boardCache.clear().then(() => log.cache.log('Board cache cleared'))}
           className="debug-panel-btn debug-panel-btn-warn"
-          title="Clear IndexedDB board cache — forces re-parse on next open"
-        >
-          Clear Cache
-        </button>
+          title={uiText("Clear IndexedDB board cache — forces re-parse on next open")}
+        >{uiText("Clear Cache")}</button>
         <button
           onClick={() => exportTvwLayerPngs()}
           className="debug-panel-btn debug-panel-btn-muted"
-          title="TVW only: render every parsed layer as a separate PNG and download as ZIP"
-        >
-          Export Layer PNGs
-        </button>
+          title={uiText("TVW only: render every parsed layer as a separate PNG and download as ZIP")}
+        >{uiText("Export Layer PNGs")}</button>
         <button
           onClick={() => logStore.clear()}
           className="debug-panel-btn debug-panel-btn-muted"
-        >
-          Clear Log
-        </button>
+        >{uiText("Clear Log")}</button>
       </div>
 
       <GestureRecognizer />
 
       <div className="debug-filter-bar">
-        <label className="debug-filter-toggle" title="Global logging kill switch">
+        <label className="debug-filter-toggle" title={uiText("Global logging kill switch")}>
           <span
             className={`debug-filter-dot ${loggingEnabled ? 'debug-filter-dot-on' : 'debug-filter-dot-off'}`}
             onClick={toggleLogging}
           />
-          <span className="debug-filter-label" onClick={toggleLogging}>Logging</span>
+          <span className="debug-filter-label" onClick={toggleLogging}>{uiText("Logging")}</span>
         </label>
 
         <div className={`debug-filter-scopes ${!loggingEnabled ? 'debug-filter-disabled' : ''}`}>
@@ -465,13 +455,13 @@ export function DebugPanel() {
           ))}
         </div>
 
-        <label className="debug-filter-persist" title="Remember enabled scopes across sessions">
+        <label className="debug-filter-persist" title={uiText("Remember enabled scopes across sessions")}>
           <input
             type="checkbox"
             checked={persist}
             onChange={() => setPersist(p => !p)}
           />
-          <span>persist filters</span>
+          <span>{uiText("persist filters")}</span>
         </label>
       </div>
 
@@ -481,10 +471,10 @@ export function DebugPanel() {
         className="debug-panel-log"
       >
         {!loggingEnabled && (
-          <div className="debug-panel-empty">Logging disabled — toggle the switch above to capture entries.</div>
+          <div className="debug-panel-empty">{uiText("Logging disabled — toggle the switch above to capture entries.")}</div>
         )}
         {loggingEnabled && filtered.length === 0 && (
-          <div className="debug-panel-empty">No matching entries. Enable scopes above or open a board file.</div>
+          <div className="debug-panel-empty">{uiText("No matching entries. Enable scopes above or open a board file.")}</div>
         )}
         {filtered.map(e => (
           <div

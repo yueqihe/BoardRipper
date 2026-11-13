@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect, useRef, useState } from 'react';
 import { fmtVersion } from '../store/update-store';
 import { ReleaseNotes } from './ReleaseNotes';
@@ -54,10 +55,10 @@ export function DesktopUpdateBadge() {
     : phase === 'ready' ? 'Restart' : null;
 
   const title = phase === 'ready'
-    ? `${latestV} is ready — restart to install`
-    : busy ? `Downloading ${latestV}`
-    : highlight ? `Update available: ${latestV}`
-    : `${fmtVersion(state.current)} — click to check`;
+    ? uiText`${latestV} is ready — restart to install`
+    : busy ? uiText`Downloading ${latestV}`
+    : highlight ? uiText`Update available: ${latestV}`
+    : uiText`${fmtVersion(state.current)} — click to check`;
 
   return (
     <div className="update-badge-wrap" ref={ref}>
@@ -77,7 +78,7 @@ export function DesktopUpdateBadge() {
             ? (
               <span className="update-badge-swap" aria-hidden="true">
                 <span className="swap-version">{latestV}</span>
-                <span className="swap-word">Update</span>
+                <span className="swap-word">{uiText("Update")}</span>
               </span>
             )
             : <span>{fmtVersion(state.current)}</span>}
@@ -87,7 +88,7 @@ export function DesktopUpdateBadge() {
         <div className="update-dropdown" data-testid="update-dropdown">
           <div className="update-dropdown-header">
             <div className="update-dropdown-header-main">
-              <span>{offered ? (phase === 'ready' ? 'Update ready' : 'Update available') : fmtVersion(state.current)}</span>
+              <span>{offered ? (phase === 'ready' ? uiText("Update ready") : uiText("Update available")) : fmtVersion(state.current)}</span>
               {offered && <span className="update-dropdown-version-tag">{latestV}</span>}
             </div>
             <button className="update-dropdown-close" onClick={() => setOpen(false)}>x</button>
@@ -95,7 +96,7 @@ export function DesktopUpdateBadge() {
 
           {offered && latest?.notes && (
             <details className="update-dropdown-notes" data-testid="update-whats-new">
-              <summary>{`What's new in ${latestV}`}</summary>
+              <summary>{uiText`What's new in ${latestV}`}</summary>
               <div className="update-dropdown-body">
                 <ReleaseNotes notes={latest.notes} />
               </div>
@@ -103,58 +104,50 @@ export function DesktopUpdateBadge() {
           )}
 
           {phase === 'checking' && (
-            <div className="update-dropdown-body"><p>Checking for updates…</p></div>
+            <div className="update-dropdown-body"><p>{uiText("Checking for updates…")}</p></div>
           )}
           {phase === 'idle' && (
-            <div className="update-dropdown-body"><p>You are on the latest version.</p></div>
+            <div className="update-dropdown-body"><p>{uiText("You are on the latest version.")}</p></div>
           )}
           {phase === 'error' && (
             <div className="update-dropdown-body" data-testid="update-error">
-              <p>The last update attempt failed.</p>
+              <p>{uiText("The last update attempt failed.")}</p>
               <p className="update-progress-error">{state.error}</p>
             </div>
           )}
           {busy && (
             <div className="update-dropdown-body" data-testid="update-progress">
-              <p>{phase === 'staging' ? 'Verifying and unpacking…' : `Downloading ${latestV}…`}</p>
+              <p>{phase === 'staging' ? uiText("Verifying and unpacking…") : uiText`Downloading ${latestV}…`}</p>
               <div className="update-dropdown-meter"><div style={{ width: `${phase === 'staging' ? 100 : pct}%` }} /></div>
               {progress && phase === 'downloading' && (
-                <p className="update-dropdown-version">{`${fmtMB(progress.received)} of ${fmtMB(progress.total)}`}</p>
+                <p className="update-dropdown-version">{uiText`${fmtMB(progress.received)} of ${fmtMB(progress.total)}`}</p>
               )}
             </div>
           )}
           {phase === 'ready' && (
             <div className="update-dropdown-body">
-              <p>Downloaded and verified. It installs when BoardRipper quits; restart now to use it.</p>
+              <p>{uiText("Downloaded and verified. It installs when BoardRipper quits; restart now to use it.")}</p>
             </div>
           )}
           {phase === 'manual' && (
             <div className="update-dropdown-body" data-testid="update-manual">
-              <p>{`Downloaded and verified, but it cannot be installed automatically because ${state.manualReason}.`}</p>
-              <p>Replace the app with the one in the downloaded zip.</p>
+              <p>{uiText`Downloaded and verified, but it cannot be installed automatically because ${state.manualReason}.`}</p>
+              <p>{uiText("Replace the app with the one in the downloaded zip.")}</p>
             </div>
           )}
 
           <div className="update-dropdown-actions">
             {phase === 'available' && (
-              <button className="update-dropdown-btn" data-testid="update-install" onClick={() => void api.install()}>
-                Download &amp; Install
-              </button>
+              <button className="update-dropdown-btn" data-testid="update-install" onClick={() => void api.install()}>{uiText("Download & Install")}</button>
             )}
             {phase === 'ready' && (
-              <button className="update-dropdown-btn" data-testid="update-restart" onClick={() => void api.restart()}>
-                Restart Now
-              </button>
+              <button className="update-dropdown-btn" data-testid="update-restart" onClick={() => void api.restart()}>{uiText("Restart Now")}</button>
             )}
             {phase === 'manual' && (
-              <button className="update-dropdown-btn" onClick={() => void api.reveal()}>
-                Show Download
-              </button>
+              <button className="update-dropdown-btn" onClick={() => void api.reveal()}>{uiText("Show Download")}</button>
             )}
             {phase === 'error' && (
-              <button className="update-dropdown-btn" onClick={() => void api.check()}>
-                Check Again
-              </button>
+              <button className="update-dropdown-btn" onClick={() => void api.check()}>{uiText("Check Again")}</button>
             )}
             <div className="update-dropdown-actions-right">
               {offered && latest?.notes_url && (
@@ -162,9 +155,7 @@ export function DesktopUpdateBadge() {
                   className="update-dropdown-notes-link"
                   href={latest.notes_url}
                   onClick={(e) => { e.preventDefault(); void api.openNotes(); }}
-                >
-                  Release notes ↗
-                </a>
+                >{uiText("Release notes ↗")}</a>
               )}
               {phase === 'available' && state.skipped !== latest?.version && (
                 <a
@@ -172,9 +163,7 @@ export function DesktopUpdateBadge() {
                   href="#"
                   data-testid="update-skip"
                   onClick={(e) => { e.preventDefault(); void api.skip(); }}
-                >
-                  Skip this version
-                </a>
+                >{uiText("Skip this version")}</a>
               )}
               <span className="update-dropdown-version">
                 {offered ? `${fmtVersion(state.current)} \u2192 ${latestV}` : fmtVersion(state.current)}

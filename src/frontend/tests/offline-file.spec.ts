@@ -35,7 +35,7 @@ test('single-file offline build runs from file:// with no external loads', async
     mimeType: 'application/octet-stream',
     buffer: fs.readFileSync(FIXTURE),
   });
-  await expect(page.getByTestId('statusbar')).toContainText('Components:', { timeout: 15000 });
+  await expect(page.getByTestId('statusbar')).toContainText(/Components:|元件：/, { timeout: 15000 });
   await page.waitForTimeout(500);
 
   // The point of a single file: NOTHING is fetched externally (any external

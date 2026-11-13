@@ -1,3 +1,4 @@
+import { uiText } from '../../i18n';
 /**
  * Settings ▸ Board ▸ Board overlay — the editor for the board ribbon.
  *
@@ -57,9 +58,9 @@ const EDITOR_ICONS: Partial<Record<string, Icon>> = {
 };
 
 const ON_SELECT_MODES = [
-  { v: 'highlight'      as const, label: 'Just highlight' },
-  { v: 'panIfOffscreen' as const, label: 'Pan if off-screen' },
-  { v: 'panZoomFit'     as const, label: 'Pan & zoom to fit' },
+  { v: 'highlight'      as const, label: uiText("Just highlight") },
+  { v: 'panIfOffscreen' as const, label: uiText("Pan if off-screen") },
+  { v: 'panZoomFit'     as const, label: uiText("Pan & zoom to fit") },
 ];
 
 function safe(fn: () => void) { try { fn(); } catch { /* tolerate a stale store in tests */ } }
@@ -89,32 +90,32 @@ function SlotRow({ slot, index, count, dragging, onDragStart, onDragEnd, onDragO
       data-slot-id={slot.id}
       data-testid={`overlay-slot-row-${slot.id}`}
     >
-      <span className="ovc-grip" title="Drag to reorder" aria-hidden><IconGripVertical size={14} /></span>
+      <span className="ovc-grip" title={uiText("Drag to reorder")} aria-hidden><IconGripVertical size={14} /></span>
       <span className="ovc-chip" aria-hidden>{chip}</span>
       <span className="ovc-label">{label}</span>
       <button
         type="button"
         className="ovc-btn"
         aria-pressed={slot.visible}
-        aria-label={slot.visible ? `Hide ${label}` : `Show ${label}`}
-        title={slot.visible ? 'Shown on the bar — click to hide' : 'Hidden — click to show'}
+        aria-label={slot.visible ? uiText`Hide ${label}` : uiText`Show ${label}`}
+        title={slot.visible ? uiText("Shown on the bar — click to hide") : uiText("Hidden — click to show")}
         data-testid={`overlay-slot-eye-${slot.id}`}
         onClick={() => safe(() => renderSettingsStore.setOverlaySlotVisible(slot.id, !slot.visible))}
       >
         {slot.visible ? <IconEye size={14} /> : <IconEyeOff size={14} />}
       </button>
-      <button type="button" className="ovc-btn" aria-label={`Move ${label} up`} title="Move left on the bar" disabled={index === 0}
+      <button type="button" className="ovc-btn" aria-label={uiText`Move ${label} up`} title={uiText("Move left on the bar")} disabled={index === 0}
         data-testid={`overlay-slot-up-${slot.id}`}
         onClick={() => safe(() => renderSettingsStore.moveOverlaySlot(slot.id, -1))}>
         <IconArrowUp size={14} />
       </button>
-      <button type="button" className="ovc-btn" aria-label={`Move ${label} down`} title="Move right on the bar" disabled={index === count - 1}
+      <button type="button" className="ovc-btn" aria-label={uiText`Move ${label} down`} title={uiText("Move right on the bar")} disabled={index === count - 1}
         data-testid={`overlay-slot-down-${slot.id}`}
         onClick={() => safe(() => renderSettingsStore.moveOverlaySlot(slot.id, 1))}>
         <IconArrowDown size={14} />
       </button>
       {sep ? (
-        <button type="button" className="ovc-btn ovc-remove" aria-label="Remove separator" title="Remove this separator"
+        <button type="button" className="ovc-btn ovc-remove" aria-label={uiText("Remove separator")} title={uiText("Remove this separator")}
           data-testid={`overlay-slot-remove-${slot.id}`}
           onClick={() => safe(() => renderSettingsStore.removeOverlaySeparator(slot.id))}>
           <IconX size={14} />
@@ -162,12 +163,9 @@ export function OverlayCustomizer() {
 
   return (
     <div className="overlay-customizer">
-      <div className="settings-subsection-label">
-        On the bar, in order{hiddenCount > 0 ? ` · ${hiddenCount} hidden` : ''}
+      <div className="settings-subsection-label">{uiText("On the bar, in order")}{hiddenCount > 0 ? uiText` · ${hiddenCount} hidden` : ''}
       </div>
-      <p className="settings-hint" style={{ margin: '0 0 6px' }}>
-        Eye shows or hides, arrows move, drag also moves. The same list is one right-click away on the bar itself.
-      </p>
+      <p className="settings-hint" style={{ margin: '0 0 6px' }}>{uiText("Eye shows or hides, arrows move, drag also moves. The same list is one right-click away on the bar itself.")}</p>
       <div className="ovc-list" data-testid="overlay-customizer-list" onDragOver={handleDragOver} onDrop={handleListDrop}>
         {layout.map((slot, i) => (
           <SlotRow
@@ -186,30 +184,26 @@ export function OverlayCustomizer() {
 
       <div className="settings-row" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <button type="button" className="settings-reset-btn" data-testid="overlay-add-separator-btn"
-          title="Add a gap between two groups of buttons"
-          onClick={() => safe(() => renderSettingsStore.addOverlaySeparator())}>
-          + Separator
-        </button>
+          title={uiText("Add a gap between two groups of buttons")}
+          onClick={() => safe(() => renderSettingsStore.addOverlaySeparator())}>{uiText("+ Separator")}</button>
         <button type="button" className="settings-reset-btn" data-testid="overlay-reset-layout-btn"
-          title="Default order and visibility, row on the left. Selection behaviour below is not touched."
-          onClick={() => safe(() => renderSettingsStore.resetOverlayLayout())}>
-          &#x21BA; Reset layout
-        </button>
+          title={uiText("Default order and visibility, row on the left. Selection behaviour below is not touched.")}
+          onClick={() => safe(() => renderSettingsStore.resetOverlayLayout())}>{uiText("&#x21BA; Reset layout")}</button>
         <span style={{ flex: 1 }} />
       </div>
       <div className="settings-row" style={{ display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12 }}>
-        <span role="radiogroup" aria-label="Overlay position" style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
-          <span className="settings-label" style={{ marginBottom: 0 }}>Position</span>
+        <span role="radiogroup" aria-label={uiText("Overlay position")} style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+          <span className="settings-label" style={{ marginBottom: 0 }}>{uiText("Position")}</span>
           {([['left', 'Left'], ['center', 'Centred'], ['floating', 'Floating']] as const).map(([pos, label]) => (
-            <label key={pos} title={pos === 'floating' ? 'Drag the bar by its handle' : undefined}>
+            <label key={pos} title={pos === 'floating' ? uiText("Drag the bar by its handle") : undefined}>
               <input type="radio" name="overlay-position" checked={overlayPosition === pos}
                 onChange={() => safe(() => renderSettingsStore.setOverlayPosition(pos))} />
               {' '}{label}
             </label>
           ))}
         </span>
-        <span role="radiogroup" aria-label="Overlay orientation" style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
-          <span className="settings-label" style={{ marginBottom: 0 }}>Orientation</span>
+        <span role="radiogroup" aria-label={uiText("Overlay orientation")} style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+          <span className="settings-label" style={{ marginBottom: 0 }}>{uiText("Orientation")}</span>
           {([['horizontal', 'Horizontal'], ['vertical', 'Vertical']] as const).map(([o, label]) => (
             <label key={o}>
               <input type="radio" name="overlay-orientation" checked={overlayOrientation === o}
@@ -220,9 +214,9 @@ export function OverlayCustomizer() {
         </span>
       </div>
 
-      <div className="settings-subsection-label" style={{ marginTop: 14 }}>When you pick something</div>
-      <div className="settings-row" role="radiogroup" aria-label="On-select behavior for parts">
-        <span className="settings-label" style={{ display: 'block', marginBottom: 2 }}>A part</span>
+      <div className="settings-subsection-label" style={{ marginTop: 14 }}>{uiText("When you pick something")}</div>
+      <div className="settings-row" role="radiogroup" aria-label={uiText("On-select behavior for parts")}>
+        <span className="settings-label" style={{ display: 'block', marginBottom: 2 }}>{uiText("A part")}</span>
         {ON_SELECT_MODES.map(m => (
           <label key={m.v} style={{ marginRight: 12 }}>
             <input type="radio" name="overlay-parts-on-select" checked={overlayPartsOnSelect === m.v}
@@ -231,8 +225,8 @@ export function OverlayCustomizer() {
           </label>
         ))}
       </div>
-      <div className="settings-row" role="radiogroup" aria-label="On-select behavior for nets">
-        <span className="settings-label" style={{ display: 'block', marginBottom: 2 }}>A net</span>
+      <div className="settings-row" role="radiogroup" aria-label={uiText("On-select behavior for nets")}>
+        <span className="settings-label" style={{ display: 'block', marginBottom: 2 }}>{uiText("A net")}</span>
         {ON_SELECT_MODES.map(m => (
           <label key={m.v} style={{ marginRight: 12 }}>
             <input type="radio" name="overlay-nets-on-select" checked={overlayNetsOnSelect === m.v}
@@ -245,22 +239,18 @@ export function OverlayCustomizer() {
         <label>
           <input type="checkbox" checked={showSelectionOverlay}
             onChange={e => safe(() => renderSettingsStore.setShowSelectionOverlay(e.target.checked))} />
-          {' '}Show the selected part's name under the bar
-        </label>
+          {' '}{uiText("Show the selected part's name under the bar")}</label>
       </div>
       <div className="settings-row">
         <label>
           <input type="checkbox" checked={searchAutoDim}
             onChange={e => safe(() => renderSettingsStore.setSearchAutoDim(e.target.checked))} />
-          {' '}Auto-dim while a searched part or net is selected
-        </label>
+          {' '}{uiText("Auto-dim while a searched part or net is selected")}</label>
       </div>
 
       <button className="settings-reset-btn" data-testid="overlay-reset-btn"
-        title="Layout, position and selection behaviour back to defaults"
-        onClick={() => safe(() => renderSettingsStore.resetOverlayDefaults())}>
-        &#x21BA; Reset all of the above
-      </button>
+        title={uiText("Layout, position and selection behaviour back to defaults")}
+        onClick={() => safe(() => renderSettingsStore.resetOverlayDefaults())}>{uiText("&#x21BA; Reset all of the above")}</button>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useState } from 'react';
 import { readSession, clearSession, restoreSession, type SavedSession } from '../store/session-store';
 
@@ -43,8 +44,8 @@ export function SessionRestorePrompt() {
   return (
     <div className="session-restore-backdrop" role="dialog" aria-modal="true" data-testid="session-restore-prompt">
       <div className="session-restore-card">
-        <div className="session-restore-title">Reopen your last session?</div>
-        <div className="session-restore-body">{parts} were open — uncheck any you don't want to reopen.</div>
+        <div className="session-restore-title">{uiText("Reopen your last session?")}</div>
+        <div className="session-restore-body">{parts}{uiText(" were open — uncheck any you don't want to reopen.")}</div>
         <div className="session-restore-list" data-testid="session-restore-list">
           {session.entries.map((e, i) => (
             <label key={`${e.kind}:${e.fileName}:${i}`} className="session-restore-item">
@@ -55,22 +56,20 @@ export function SessionRestorePrompt() {
                 disabled={busy}
                 data-testid="session-restore-check"
               />
-              <span className="session-restore-item-kind">{e.kind === 'pdf' ? 'PDF' : 'Board'}</span>
+              <span className="session-restore-item-kind">{e.kind === 'pdf' ? uiText("PDF") : uiText("Board")}</span>
               <span className="session-restore-item-name" title={e.fileName}>{e.fileName}</span>
             </label>
           ))}
         </div>
         <div className="session-restore-actions">
-          <button className="session-restore-btn" data-testid="session-discard" onClick={onDiscard} disabled={busy}>
-            Discard
-          </button>
+          <button className="session-restore-btn" data-testid="session-discard" onClick={onDiscard} disabled={busy}>{uiText("Discard")}</button>
           <button
             className="session-restore-btn primary"
             data-testid="session-reopen"
             onClick={onReopen}
             disabled={busy || selected.size === 0}
           >
-            {busy ? 'Reopening…' : allSelected ? 'Reopen' : `Reopen (${selected.size})`}
+            {busy ? uiText("Reopening…") : allSelected ? uiText("Reopen") : uiText`Reopen (${selected.size})`}
           </button>
         </div>
       </div>

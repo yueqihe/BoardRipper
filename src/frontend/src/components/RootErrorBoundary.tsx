@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { log } from '../store/log-store';
 
@@ -26,11 +27,11 @@ export class RootErrorBoundary extends Component<{ children: ReactNode }, { erro
     if (!error) return this.props.children;
     return (
       <div className="panel-error-boundary root-error-boundary" data-testid="root-error-boundary">
-        <div className="panel-error-title">BoardRipper hit an error</div>
-        <div className="panel-error-message">{error.message || 'An unexpected error occurred.'}</div>
+        <div className="panel-error-title">{uiText("BoardRipper hit an error")}</div>
+        <div className="panel-error-message">{error.message || uiText("An unexpected error occurred.")}</div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="panel-error-reset" onClick={() => this.setState({ error: null })}>Reload interface</button>
-          <button className="panel-error-reset" onClick={() => window.location.reload()}>Reload page</button>
+          <button className="panel-error-reset" onClick={() => this.setState({ error: null })}>{uiText("Reload interface")}</button>
+          <button className="panel-error-reset" onClick={() => window.location.reload()}>{uiText("Reload page")}</button>
         </div>
       </div>
     );

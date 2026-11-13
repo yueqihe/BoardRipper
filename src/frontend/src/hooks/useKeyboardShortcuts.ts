@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useEffect } from 'react';
 import { shortcuts, matchesShortcut, getShortcut } from '../store/keyboard-shortcuts';
 import { boardStore } from '../store/board-store';
@@ -528,9 +529,9 @@ export function useKeyboardShortcuts() {
             if (!text) return;
             e.preventDefault();
             copyText(text).then(
-              () => boardStore.addToast(`Copied '${text}'`, 'info'),
+              () => boardStore.addToast(uiText`Copied '${text}'`, 'info'),
               (err) => boardStore.addToast(
-                `Copy failed: ${err instanceof Error ? err.message : String(err)}`, 'error'),
+                uiText`Copy failed: ${err instanceof Error ? err.message : String(err)}`, 'error'),
             );
             return;
           }

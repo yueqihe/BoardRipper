@@ -1,3 +1,4 @@
+import { uiText } from '../i18n';
 import { useState, useCallback, useRef, useMemo, useEffect, useSyncExternalStore, createContext, useContext } from 'react';
 import { setWatermarkTerms } from '../store/pdf-filter-actions';
 import { IconPalette, IconLayoutBoardSplit, IconKeyboard, IconBooks, IconSettings, IconPlug, IconClick, IconGauge } from '@tabler/icons-react';
@@ -96,13 +97,13 @@ const TAB_ICONS: Record<SettingsTabId, typeof IconPalette> = {
 };
 
 const TAB_LABELS: Record<SettingsTabId, string> = {
-  theme:        'Theme',
-  board:        'Board',
-  rendering:    'Rendering',
-  input:        'Input',
-  library:      'Library',
-  system:       'System',
-  integrations: 'Integrations',
+  theme:        uiText("Theme"),
+  board:        uiText("Board"),
+  rendering:    uiText("Rendering"),
+  input:        uiText("Input"),
+  library:      uiText("Library"),
+  system:       uiText("System"),
+  integrations: uiText("Integrations"),
 };
 
 /** Maps each section id to the tab that owns it. Used by focusSection deep-links. */
@@ -260,8 +261,8 @@ function Slider({ label, value, min, max, step, field, onUpdate, title, toggleFi
         />
         <div className={`settings-slider-tooltip${dragging ? ' is-visible' : ''}`} style={{ left: `${pct}%` }}>
           {dragging
-            ? <span className="settings-slider-reset-hint">dbl-click track to reset{isModified ? ` (${Number(defaultValue.toFixed(2))})` : ''}</span>
-            : <>{Number(value.toFixed(2))}{toggleField ? <span className="settings-slider-reset-hint"> · click thumb or name: {on ? 'off' : 'on'}</span> : null}</>
+            ? <span className="settings-slider-reset-hint">{uiText("dbl-click track to reset")}{isModified ? ` (${Number(defaultValue.toFixed(2))})` : ''}</span>
+            : <>{Number(value.toFixed(2))}{toggleField ? <span className="settings-slider-reset-hint">{uiText(" · click thumb or name: ")}{on ? uiText("off") : uiText("on")}</span> : null}</>
           }
         </div>
       </div>
@@ -339,8 +340,8 @@ function PartTypeRow({ type: t, actions, hideShapes }: { type: PartType; actions
         onChange={e => setEditPrefixes(e.target.value)}
         onBlur={commitPrefixes}
         onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-        title="Comma-separated prefixes (e.g. R, PR, PH)"
-        placeholder="R, PR, PH"
+        title={uiText("Comma-separated prefixes (e.g. R, PR, PH)")}
+        placeholder={uiText("R, PR, PH")}
       />
       {!hideShapes && (
       <div className="pt-col-pad settings-btn-group">
@@ -379,7 +380,7 @@ function PartTypeRow({ type: t, actions, hideShapes }: { type: PartType; actions
           onChange={e => actions.update(t.id, { hidden: e.target.checked })}
         />
       </span>
-      <span className="pt-col-bridge" title="Bridge nets through this type in hierarchical (chain + adjacent) net lines, even with more than 2 pins — e.g. 4-pin current-sense resistors, transistors.">
+      <span className="pt-col-bridge" title={uiText("Bridge nets through this type in hierarchical (chain + adjacent) net lines, even with more than 2 pins — e.g. 4-pin current-sense resistors, transistors.")}>
         <input type="checkbox" checked={t.hierarchyBridge}
           onChange={e => actions.update(t.id, { hierarchyBridge: e.target.checked })}
         />
@@ -392,19 +393,19 @@ function PartTypesSection({ types, actions, hideShapes }: { types: PartType[]; a
   return (
     <div className={`part-types${hideShapes ? ' compact' : ''}`}>
       <div className="part-types-header">
-        <span>Type</span>
-        <span>Prefixes</span>
-        {!hideShapes && <span>Pads</span>}
-        {!hideShapes && <span>Body</span>}
-        <span>Fill</span>
-        <span>Hide</span>
-        <span title="Bridge nets through this type in hierarchical net lines, even with >2 pins.">Bridge</span>
+        <span>{uiText("Type")}</span>
+        <span>{uiText("Prefixes")}</span>
+        {!hideShapes && <span>{uiText("Pads")}</span>}
+        {!hideShapes && <span>{uiText("Body")}</span>}
+        <span>{uiText("Fill")}</span>
+        <span>{uiText("Hide")}</span>
+        <span title={uiText("Bridge nets through this type in hierarchical net lines, even with >2 pins.")}>{uiText("Bridge")}</span>
       </div>
       {types.map(t => (
         <PartTypeRow key={t.id} type={t} actions={actions} hideShapes={hideShapes} />
       ))}
-      <div className="color-rule-hint">Longest prefix wins across all types (e.g. FB beats F for FB1).</div>
-      <div className="color-rule-hint">Bridge: carry hierarchical (chain + adjacent) net lines through &gt;2-pin parts of this type (e.g. current-sense resistors, transistors).</div>
+      <div className="color-rule-hint">{uiText("Longest prefix wins across all types (e.g. FB beats F for FB1).")}</div>
+      <div className="color-rule-hint">{uiText("Bridge: carry hierarchical (chain + adjacent) net lines through >2-pin parts of this type (e.g. current-sense resistors, transistors).")}</div>
     </div>
   );
 }
@@ -434,14 +435,13 @@ function LibraryFolderSetting() {
 
   if (!backendAvailable) {
     return (
-      <div className="color-rule-hint">Backend not available. Start the Docker container to configure the library folder.</div>
+      <div className="color-rule-hint">{uiText("Backend not available. Start the Docker container to configure the library folder.")}</div>
     );
   }
 
   return (
     <div className="settings-library-folder">
-      <div className="color-rule-hint" style={{ marginBottom: 6 }}>
-        Path inside the container to scan for board/PDF files. Mount a NAS folder with <code>docker -v /host/path:/library</code>.
+      <div className="color-rule-hint" style={{ marginBottom: 6 }}>{uiText("Path inside the container to scan for board/PDF files. Mount a NAS folder with ")}<code>docker -v /host/path:/library</code>.
       </div>
       {editing ? (
         <div className="settings-library-edit">
@@ -450,24 +450,24 @@ function LibraryFolderSetting() {
             className="settings-library-input"
             value={inputVal}
             onChange={e => setInputVal(e.target.value)}
-            placeholder="/library"
+            placeholder={uiText("/library")}
             autoFocus
             onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
           />
           <button className="settings-action-btn settings-apply-btn" onClick={handleSave} disabled={saving}>
-            {saving ? '...' : 'Save'}
+            {saving ? '...' : uiText("Save")}
           </button>
-          <button className="settings-action-btn" onClick={() => setEditing(false)}>Cancel</button>
+          <button className="settings-action-btn" onClick={() => setEditing(false)}>{uiText("Cancel")}</button>
         </div>
       ) : (
         <div className="settings-row settings-toggle-row">
-          <label className="settings-label">Library Folder</label>
+          <label className="settings-label">{uiText("Library Folder")}</label>
           <span
             className="settings-library-path"
             onClick={() => { setInputVal(libraryPath ?? '/library'); setEditing(true); }}
-            title="Click to edit"
+            title={uiText("Click to edit")}
           >
-            {libraryPath || <em>Not configured</em>}
+            {libraryPath || <em>{uiText("Not configured")}</em>}
           </span>
         </div>
       )}
@@ -482,10 +482,10 @@ interface McpStatus { enabled: boolean; drive_ui: boolean; clients: number; acti
 
 type McpClientId = 'claude-code' | 'claude-desktop' | 'cursor' | 'other';
 const MCP_CLIENTS: { id: McpClientId; label: string; paste: string }[] = [
-  { id: 'claude-code', label: 'Claude Code', paste: 'Run this in your terminal.' },
-  { id: 'claude-desktop', label: 'Claude Desktop', paste: 'Add to claude_desktop_config.json, then restart Claude Desktop.' },
-  { id: 'cursor', label: 'Cursor', paste: 'Add to ~/.cursor/mcp.json (or .cursor/mcp.json in your project).' },
-  { id: 'other', label: 'Other', paste: 'Any MCP client over Streamable HTTP.' },
+  { id: 'claude-code', label: uiText("Claude Code"), paste: 'Run this in your terminal.' },
+  { id: 'claude-desktop', label: uiText("Claude Desktop"), paste: 'Add to claude_desktop_config.json, then restart Claude Desktop.' },
+  { id: 'cursor', label: uiText("Cursor"), paste: 'Add to ~/.cursor/mcp.json (or .cursor/mcp.json in your project).' },
+  { id: 'other', label: uiText("Other"), paste: 'Any MCP client over Streamable HTTP.' },
 ];
 
 // oauth=true drops the bearer header — the client discovers the auth server and
@@ -525,7 +525,7 @@ function CopyButton({ text, disabled }: { text: string; disabled?: boolean }) {
         try { await copyText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }
         catch { /* clipboard blocked */ }
       }}>
-      {copied ? 'Copied ✓' : 'Copy'}
+      {copied ? uiText("Copied ✓") : uiText("Copy")}
     </button>
   );
 }
@@ -540,12 +540,12 @@ function McpLiveStatus({ status }: { status: McpStatus }) {
   return (
     <div style={{ marginTop: 8 }}>
       <div className="settings-row">
-        <span className="settings-label">Connected pages</span>
+        <span className="settings-label">{uiText("Connected pages")}</span>
         <span>{status.clients}</span>
       </div>
       <div className="settings-row">
-        <span className="settings-label">Tool calls</span>
-        <span>{act?.total_calls ?? 0}{act?.last_tool ? ` · last: ${act.last_tool}${ago ? ` (${ago})` : ''}` : ''}</span>
+        <span className="settings-label">{uiText("Tool calls")}</span>
+        <span>{act?.total_calls ?? 0}{act?.last_tool ? uiText` · last: ${act.last_tool}${ago ? ` (${ago})` : ''}` : ''}</span>
       </div>
       <div className="settings-row settings-toggle-row">
         <button type="button" className="library-tab" disabled={testing}
@@ -557,11 +557,11 @@ function McpLiveStatus({ status }: { status: McpStatus }) {
             } catch (e: any) { setTest({ ok: false, error: String(e?.message ?? e) }); }
             setTesting(false);
           }}>
-          {testing ? 'Testing…' : 'Test connection'}
+          {testing ? uiText("Testing…") : uiText("Test connection")}
         </button>
         {test && (
           <span style={{ fontSize: 12, color: test.ok ? 'var(--accent, #4ade80)' : '#f87171' }}>
-            {test.ok ? `✓ responding · ${test.count} tools` : `✗ ${test.error ?? 'failed'}`}
+            {test.ok ? uiText`✓ responding · ${test.count} tools` : `✗ ${test.error ?? 'failed'}`}
           </span>
         )}
       </div>
@@ -594,7 +594,7 @@ function ElectronMcpToggle() {
 
   return (
     <div className="settings-row settings-toggle-row">
-      <label className="settings-label">Enable MCP server</label>
+      <label className="settings-label">{uiText("Enable MCP server")}</label>
       <input type="checkbox" checked={enabled} disabled={!loaded || pending}
         onChange={e => toggle(e.target.checked)} />
     </div>
@@ -646,11 +646,11 @@ function IntegrationsSection() {
         const n = d?.revoked ?? 0;
         boardStore.addToast(
           n > 0
-            ? `Disconnected ${n} OAuth agent${n === 1 ? '' : 's'} — they must approve access again.`
-            : 'No OAuth agents were connected.',
+            ? uiText`Disconnected ${n} OAuth agent${n === 1 ? '' : uiText('plural.s')} — they must approve access again.`
+            : uiText("No OAuth agents were connected."),
           'info');
       })
-      .catch(() => boardStore.addToast('Could not reset OAuth — check backend connection.', 'error'));
+      .catch(() => boardStore.addToast(uiText("Could not reset OAuth — check backend connection."), 'error'));
   }, []);
 
   const refresh = useCallback(() => {
@@ -714,26 +714,19 @@ function IntegrationsSection() {
 
   return (
     <div className="settings-tab-body">
-      <StandaloneCollapsibleSection title="MCP server (AI agents)" defaultOpen storageKey="mcp">
-        <p className="settings-hint">
-          Let an AI agent (Claude Code, Claude Desktop, Cursor, or any MCP client) query
-          this BoardRipper — PDF full-text search, OpenBoardData readings, the board
-          reference DB, and the live connectivity of whatever board you have open — and
-          drive the view. Off by default.
-        </p>
+      <StandaloneCollapsibleSection title={uiText("MCP server (AI agents)")} defaultOpen storageKey="mcp">
+        <p className="settings-hint">{uiText("Let an AI agent (Claude Code, Claude Desktop, Cursor, or any MCP client) query this BoardRipper — PDF full-text search, OpenBoardData readings, the board reference DB, and the live connectivity of whatever board you have open — and drive the view. Off by default.")}</p>
         {isElectron()
           ? <ElectronMcpToggle />
           : (
             <div className="settings-row settings-toggle-row">
-              <label className="settings-label">Enable MCP server</label>
+              <label className="settings-label">{uiText("Enable MCP server")}</label>
               <input type="checkbox" checked={enabled}
                 onChange={e => setFlag('mcp_enabled', e.target.checked)} />
             </div>
           )}
         <div className="settings-row settings-toggle-row">
-          <label className="settings-label" title="Lets agents highlight nets, select parts, change side, and navigate PDFs on the open board">
-            Allow agents to control the UI
-          </label>
+          <label className="settings-label" title={uiText("Lets agents highlight nets, select parts, change side, and navigate PDFs on the open board")}>{uiText("Allow agents to control the UI")}</label>
           <input type="checkbox" checked={!!status?.drive_ui} disabled={!enabled}
             onChange={e => setFlag('mcp_drive_ui', e.target.checked)} />
         </div>
@@ -742,60 +735,53 @@ function IntegrationsSection() {
           <>
             <McpLiveStatus status={status!} />
 
-            <p className="settings-hint" style={{ margin: '12px 0 4px' }}>Authentication:</p>
+            <p className="settings-hint" style={{ margin: '12px 0 4px' }}>{uiText("Authentication:")}</p>
             <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
               <button type="button" className={`library-tab ${!oauth ? 'active' : ''}`}
-                onClick={() => setAuthMode('token')}>Token</button>
+                onClick={() => setAuthMode('token')}>{uiText("Token")}</button>
               <button type="button" className={`library-tab ${oauth ? 'active' : ''}`}
-                onClick={() => setAuthMode('oauth')}>OAuth (no token)</button>
+                onClick={() => setAuthMode('oauth')}>{uiText("OAuth (no token)")}</button>
             </div>
             <p className="settings-hint" style={{ margin: '0 0 8px' }}>
               {oauth
-                ? 'Clients can connect with just the URL and approve access in the browser the first time — no token to copy. Bearer tokens keep working too, so users can mix both.'
-                : 'New clients authenticate with the bearer token below. Agents that already approved access over OAuth stay connected — switching modes never logs anyone out.'}
+                ? uiText("Clients can connect with just the URL and approve access in the browser the first time — no token to copy. Bearer tokens keep working too, so users can mix both.")
+                : uiText("New clients authenticate with the bearer token below. Agents that already approved access over OAuth stay connected — switching modes never logs anyone out.")}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '0 0 8px' }}>
               <button type="button" className="settings-action-btn" data-testid="mcp-oauth-reset"
-                onClick={resetOAuth}>Disconnect all OAuth agents</button>
-              <span className="settings-hint" style={{ margin: 0 }}>
-                Revokes every approved OAuth session. They can reconnect by approving again.
-              </span>
+                onClick={resetOAuth}>{uiText("Disconnect all OAuth agents")}</button>
+              <span className="settings-hint" style={{ margin: 0 }}>{uiText("Revokes every approved OAuth session. They can reconnect by approving again.")}</span>
             </div>
 
             {!oauth && (
               <>
-                <p className="settings-hint" style={{ margin: '12px 0 4px', opacity: 0.9 }}>
-                  ⚠ MCP tokens were <strong>reset</strong> by the multi-user session-separation
-                  update — resetting the shared credential was the only way to migrate properly.
-                  Agents connected before this update are logged out and must reconnect with a
-                  token from below.
-                </p>
-                <p className="settings-hint" style={{ margin: '12px 0 4px' }}>Token:</p>
+                <p className="settings-hint" style={{ margin: '12px 0 4px', opacity: 0.9 }}>{uiText("⚠ MCP tokens were ")}<strong>{uiText("reset")}</strong>{uiText(" by the multi-user session-separation update — resetting the shared credential was the only way to migrate properly. Agents connected before this update are logged out and must reconnect with a token from below.")}</p>
+                <p className="settings-hint" style={{ margin: '12px 0 4px' }}>{uiText("Token:")}</p>
                 <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
                   <button type="button" className={`library-tab ${tokenSource === 'browser' ? 'active' : ''}`}
-                    onClick={() => setTokenSource('browser')}>This browser&#39;s agent</button>
+                    onClick={() => setTokenSource('browser')}>{uiText("This browser's agent")}</button>
                   <button type="button" className={`library-tab ${tokenSource === 'shared' ? 'active' : ''}`}
-                    onClick={() => setTokenSource('shared')}>Shared (all sessions)</button>
+                    onClick={() => setTokenSource('shared')}>{uiText("Shared (all sessions)")}</button>
                 </div>
                 <p className="settings-hint" style={{ margin: '0 0 8px' }}>
                   {tokenSource === 'browser'
-                    ? 'Scoped to boards open in this browser — your agent never sees or drives other users’ sessions. Recommended.'
-                    : 'Sees and can drive every connected session on this install. Use deliberately, e.g. to analyze other users’ sessions; pass an explicit session from board_sessions.'}
+                    ? uiText("Scoped to boards open in this browser — your agent never sees or drives other users’ sessions. Recommended.")
+                    : uiText("Sees and can drive every connected session on this install. Use deliberately, e.g. to analyze other users’ sessions; pass an explicit session from board_sessions.")}
                 </p>
                 {tokenSource === 'browser' && (
                   <div className="settings-row" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                    <label className="settings-label" title="Shown to agents in board_sessions so your pages are recognizable">Browser label</label>
+                    <label className="settings-label" title={uiText("Shown to agents in board_sessions so your pages are recognizable")}>{uiText("Browser label")}</label>
                     <input type="text" data-testid="mcp-pair-label" value={pairLabel}
                       style={{ flex: 1, minWidth: 0 }}
                       onChange={e => setPairLabel(e.target.value)}
                       onBlur={e => { const v = e.target.value.trim(); if (v) { setMcpClientLabel(v); pair(v); } }} />
-                    <button type="button" className="library-tab" title="Mint a new token for this browser; the old one stops working"
-                      onClick={rotatePair}>Rotate</button>
+                    <button type="button" className="library-tab" title={uiText("Mint a new token for this browser; the old one stops working")}
+                      onClick={rotatePair}>{uiText("Rotate")}</button>
                   </div>
                 )}
               </>
             )}
-            <p className="settings-hint" style={{ margin: '12px 0 4px' }}>Connect a client:</p>
+            <p className="settings-hint" style={{ margin: '12px 0 4px' }}>{uiText("Connect a client:")}</p>
             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 6 }}>
               {MCP_CLIENTS.map(c => (
                 <button key={c.id} type="button"
@@ -852,7 +838,7 @@ function AutoScanToggle() {
 
   return (
     <div className="settings-row settings-toggle-row">
-      <label className="settings-label">Auto-scan on startup</label>
+      <label className="settings-label">{uiText("Auto-scan on startup")}</label>
       <input type="checkbox" checked={autoScan} onChange={e => handleToggle(e.target.checked)} />
     </div>
   );
@@ -898,14 +884,14 @@ function DatabaseInfoSection() {
   };
 
   const handleResetPdf = async () => {
-    if (!confirm('Reset all extracted PDF text? You will need to re-run PDF extraction.')) return;
+    if (!confirm(uiText("Reset all extracted PDF text? You will need to re-run PDF extraction."))) return;
     setResetting(true);
     await databankStore.resetPdf();
     setResetting(false);
   };
 
   const handleResetAll = async () => {
-    if (!confirm('Wipe ALL scan data (files, bindings, PDF text)? This cannot be undone.')) return;
+    if (!confirm(uiText("Wipe ALL scan data (files, bindings, PDF text)? This cannot be undone."))) return;
     setResetting(true);
     await databankStore.resetAll();
     setResetting(false);
@@ -917,7 +903,7 @@ function DatabaseInfoSection() {
     try {
       const r = await databankStore.optimizeDatabase();
       if (r) {
-        boardStore.addToast(`Database compacted — reclaimed ${formatBytes(r.reclaimed_bytes)}`, 'info');
+        boardStore.addToast(uiText`Database compacted — reclaimed ${formatBytes(r.reclaimed_bytes)}`, 'info');
       }
     } finally {
       setOptimizing(false);
@@ -929,37 +915,37 @@ function DatabaseInfoSection() {
       {stats && (
         <>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">Board files</label>
+            <label className="settings-label">{uiText("Board files")}</label>
             <span>{stats.boards}</span>
           </div>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">PDF files</label>
+            <label className="settings-label">{uiText("PDF files")}</label>
             <span>{stats.pdfs}</span>
           </div>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">Bindings</label>
+            <label className="settings-label">{uiText("Bindings")}</label>
             <span>{stats.bindings}</span>
           </div>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">PDF pages indexed</label>
+            <label className="settings-label">{uiText("PDF pages indexed")}</label>
             <span>{pdfIndexStats?.pages ?? 0}</span>
           </div>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">PDF index status</label>
+            <label className="settings-label">{uiText("PDF index status")}</label>
             <span>
               {pdfIndexProgress?.running
-                ? `Indexing ${pdfIndexProgress.done}/${pdfIndexProgress.total}`
-                  + (pdfIndexProgress.workers > 0 ? ` · ${pdfIndexProgress.active_workers}/${pdfIndexProgress.workers} threads` : '')
-                  + (pdfIndexProgress.errors > 0 ? ` (${pdfIndexProgress.errors} err)` : '')
+                ? uiText`Indexing ${pdfIndexProgress.done}/${pdfIndexProgress.total}`
+                  + (pdfIndexProgress.workers > 0 ? uiText` · ${pdfIndexProgress.active_workers}/${pdfIndexProgress.workers} threads` : '')
+                  + (pdfIndexProgress.errors > 0 ? uiText` (${pdfIndexProgress.errors} err)` : '')
                   + (fmtIndexEta(pdfIndexProgress) ? ` · ${fmtIndexEta(pdfIndexProgress)}` : '')
                 : pdfIndexStats
-                  ? `Idle — ${pdfIndexStats.indexed} indexed, ${pdfIndexStats.pending} pending`
+                  ? uiText`Idle — ${pdfIndexStats.indexed} indexed, ${pdfIndexStats.pending} pending`
                   : '—'}
             </span>
           </div>
           {pdfIndexProgress?.running && pdfIndexProgress.current_file && (
             <div className="settings-row settings-toggle-row">
-              <label className="settings-label">Current file</label>
+              <label className="settings-label">{uiText("Current file")}</label>
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60%', direction: 'rtl' }} title={pdfIndexProgress.current_file}>
                 {pdfIndexProgress.current_file}
               </span>
@@ -967,34 +953,33 @@ function DatabaseInfoSection() {
           )}
           {(pdfIndexStats?.failed ?? 0) > 0 && (
             <div className="settings-row settings-toggle-row">
-              <label className="settings-label">PDF index errors</label>
+              <label className="settings-label">{uiText("PDF index errors")}</label>
               <span>{pdfIndexStats!.failed}</span>
             </div>
           )}
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">Duplicate content</label>
+            <label className="settings-label">{uiText("Duplicate content")}</label>
             <span>
               {dedupProgress?.running
-                ? `Finding duplicates ${dedupProgress.done}/${dedupProgress.total}`
-                  + (dedupProgress.errors > 0 ? ` (${dedupProgress.errors} err)` : '')
+                ? uiText`Finding duplicates ${dedupProgress.done}/${dedupProgress.total}`
+                  + (dedupProgress.errors > 0 ? uiText` (${dedupProgress.errors} err)` : '')
                 : dedupStats
-                  ? `${dedupStats.groups} duplicate group${dedupStats.groups === 1 ? '' : 's'} · ${dedupStats.duplicate_files} redundant cop${dedupStats.duplicate_files === 1 ? 'y' : 'ies'}`
+                  ? uiText`${dedupStats.groups} duplicate group${dedupStats.groups === 1 ? '' : uiText('plural.s')} · ${dedupStats.duplicate_files} redundant cop${dedupStats.duplicate_files === 1 ? uiText('plural.y') : uiText('plural.ies')}`
                   : '—'}
             </span>
           </div>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">Database size</label>
+            <label className="settings-label">{uiText("Database size")}</label>
             <span>
               {formatBytes(stats.db_size_bytes)}
               {worthOptimizing && (
                 <span style={{ color: 'var(--warn, #b8730a)' }}>
-                  {' '}· {formatBytes(reclaimable)} reclaimable
-                </span>
+                  {' '}· {formatBytes(reclaimable)}{uiText(" reclaimable")}</span>
               )}
             </span>
           </div>
           <div className="settings-row settings-toggle-row">
-            <label className="settings-label">Last file scan</label>
+            <label className="settings-label">{uiText("Last file scan")}</label>
             <span>{formatDate(stats.last_file_scan_at)}</span>
           </div>
         </>
@@ -1003,53 +988,44 @@ function DatabaseInfoSection() {
         <button
           className="settings-action-btn"
           onClick={ensureDatabaseEditorPanel}
-          title="Open the read-only Database Editor in a Dockview panel"
-        >
-          Open Database Editor
-        </button>
+          title={uiText("Open the read-only Database Editor in a Dockview panel")}
+        >{uiText("Open Database Editor")}</button>
         {dedupProgress?.running ? (
           <button
             className="settings-action-btn"
             onClick={() => databankStore.stopDedup()}
-            title="Stop the duplicate-finding pass"
-          >
-            Stop ({dedupProgress.done}/{dedupProgress.total})
+            title={uiText("Stop the duplicate-finding pass")}
+          >{uiText("Stop (")}{dedupProgress.done}/{dedupProgress.total})
           </button>
         ) : (
           <button
             className="settings-action-btn"
             onClick={() => databankStore.runDedup()}
             disabled={!!isRunning}
-            title="Hash size-colliding files and group byte-identical duplicates"
-          >
-            Find duplicates
-          </button>
+            title={uiText("Hash size-colliding files and group byte-identical duplicates")}
+          >{uiText("Find duplicates")}</button>
         )}
         <button
           className={`settings-action-btn${worthOptimizing ? ' active' : ''}`}
           onClick={handleOptimize}
           disabled={optimizing || !!isRunning}
-          title="Compact the database (VACUUM) to reclaim free pages left by past scans and index changes. Runs automatically at boot when badly bloated; safe to run any time."
+          title={uiText("Compact the database (VACUUM) to reclaim free pages left by past scans and index changes. Runs automatically at boot when badly bloated; safe to run any time.")}
         >
-          {optimizing ? 'Optimizing…' : worthOptimizing ? `Optimize (reclaim ${formatBytes(reclaimable)})` : 'Optimize database'}
+          {optimizing ? uiText("Optimizing…") : worthOptimizing ? uiText`Optimize (reclaim ${formatBytes(reclaimable)})` : uiText("Optimize database")}
         </button>
         <button
           className="settings-action-btn"
           onClick={handleResetPdf}
           disabled={resetting}
-          title="Wipe extracted PDF text — keeps file index and bindings. Independent of the file scan; the backend stops the indexer before wiping."
-        >
-          Reset PDF Text
-        </button>
+          title={uiText("Wipe extracted PDF text — keeps file index and bindings. Independent of the file scan; the backend stops the indexer before wiping.")}
+        >{uiText("Reset PDF Text")}</button>
         <button
           className="settings-action-btn"
           onClick={handleResetAll}
           disabled={!!isRunning || resetting}
-          title="Wipe ALL scan data"
+          title={uiText("Wipe ALL scan data")}
           style={{ color: '#e55' }}
-        >
-          Reset Database
-        </button>
+        >{uiText("Reset Database")}</button>
       </div>
     </div>
   );
@@ -1115,10 +1091,10 @@ function LibrarySettingsSection() {
   const handleForceReindex = useCallback(async () => {
     if (forcing) return;
     if (!confirm(
-      'Force re-index ALL PDFs?\n\n' +
-      'This resets every status row (indexed / empty / failed) back to "pending" and re-extracts text from scratch. ' +
-      'Use this only after changing the watermark term list or upgrading the indexer. ' +
-      'It takes hours on a large library and is NOT what you want for a regular rescan — for that, "Index all PDFs" is already additive.',
+      uiText("Force re-index ALL PDFs?\n\n") +
+      uiText("This resets every status row (indexed / empty / failed) back to \"pending\" and re-extracts text from scratch. ") +
+      uiText("Use this only after changing the watermark term list or upgrading the indexer. ") +
+      uiText("It takes hours on a large library and is NOT what you want for a regular rescan — for that, \"Index all PDFs\" is already additive."),
     )) return;
     setForcing(true);
     try {
@@ -1142,26 +1118,22 @@ function LibrarySettingsSection() {
 
   return (
     <div className="settings-subsection">
-      <div className="settings-subsection-label">Library</div>
+      <div className="settings-subsection-label">{uiText("Library")}</div>
 
       {/* Scan / index actions — moved from the Library panel statsbar so the
        *  panel chrome stays focused on browsing. */}
       <div className="settings-row-field">
-        <span>Scan boards & PDFs</span>
+        <span>{uiText("Scan boards & PDFs")}</span>
         {scanRunning ? (
           <button
             className="settings-action-btn"
             onClick={() => databankStore.stopScan()}
-          >
-            Stop scan
-          </button>
+          >{uiText("Stop scan")}</button>
         ) : (
           <button
             className="settings-action-btn"
             onClick={() => databankStore.triggerFileScan()}
-          >
-            Scan now
-          </button>
+          >{uiText("Scan now")}</button>
         )}
       </div>
 
@@ -1169,22 +1141,16 @@ function LibrarySettingsSection() {
        *  appear as they arrive). Bulk API = one gzipped JSON download — often
        *  faster on slow connections, no progressive rows. Switching reloads. */}
       <div className="settings-row-field">
-        <span title="How the full library list is fetched. Streaming shows rows as they arrive; Bulk API downloads one compressed file (often faster on slow links). The stream also auto-falls-back to Bulk on failure. Changing this reloads the library.">
-          Library load mode
-        </span>
+        <span title={uiText("How the full library list is fetched. Streaming shows rows as they arrive; Bulk API downloads one compressed file (often faster on slow links). The stream also auto-falls-back to Bulk on failure. Changing this reloads the library.")}>{uiText("Library load mode")}</span>
         <span className="settings-pdfindex-actions">
           <button
             className={`settings-action-btn${libraryLoadMode === 'stream' ? ' active' : ''}`}
             onClick={() => databankStore.setLibraryLoadMode('stream')}
-          >
-            Streaming
-          </button>
+          >{uiText("Streaming")}</button>
           <button
             className={`settings-action-btn${libraryLoadMode === 'bulk' ? ' active' : ''}`}
             onClick={() => databankStore.setLibraryLoadMode('bulk')}
-          >
-            Bulk API
-          </button>
+          >{uiText("Bulk API")}</button>
         </span>
       </div>
 
@@ -1193,48 +1159,43 @@ function LibrarySettingsSection() {
        *  rows); the separate Force row below resets every row first. */}
       <div className="settings-pdfindex-card">
         <div className="settings-pdfindex-header">
-          <span className="settings-pdfindex-label">PDF text indexing</span>
+          <span className="settings-pdfindex-label">{uiText("PDF text indexing")}</span>
           <span className="settings-pdfindex-actions">
             {pdfIndexRunning ? (
               <button
                 className="settings-action-btn settings-pdfindex-stop"
                 onClick={() => pdfIndexClient.stop()}
-                title="Stop the indexer. Files already in progress finish their current page; the rest stay pending and resume when you continue."
-              >
-                Stop
-              </button>
+                title={uiText("Stop the indexer. Files already in progress finish their current page; the rest stay pending and resume when you continue.")}
+              >{uiText("Stop")}</button>
             ) : (
               <button
                 className="settings-action-btn"
                 onClick={async () => { setRunError(await databankStore.runPdfIndex()); }}
                 title={hasPending
-                  ? 'Continue indexing the remaining pending PDFs from where it left off.'
-                  : 'Index all PDFs (extract searchable text).'}
+                  ? uiText("Continue indexing the remaining pending PDFs from where it left off.")
+                  : uiText("Index all PDFs (extract searchable text).")}
               >
-                {hasPending ? 'Continue' : 'Index all PDFs'}
+                {hasPending ? uiText("Continue") : uiText("Index all PDFs")}
               </button>
             )}
             <button
               className="settings-action-btn"
               onClick={handleRestart}
-              title="Stop the current sweep and start a fresh pass over all pending PDFs. Keeps already-indexed files (not a reset)."
-            >
-              Restart
-            </button>
+              title={uiText("Stop the current sweep and start a fresh pass over all pending PDFs. Keeps already-indexed files (not a reset).")}
+            >{uiText("Restart")}</button>
           </span>
         </div>
 
         {pdfIndexState === 'unavailable' ? (
-          <div className="settings-pdfindex-stats settings-pdfindex-err" data-testid="pdf-index-unavailable">
-            Not available: {pdfIndexReason}.
+          <div className="settings-pdfindex-stats settings-pdfindex-err" data-testid="pdf-index-unavailable">{uiText("Not available: ")}{pdfIndexReason}.
           </div>
         ) : runError ? (
-          <div className="settings-pdfindex-stats settings-pdfindex-err">Could not start: {runError}</div>
+          <div className="settings-pdfindex-stats settings-pdfindex-err">{uiText("Could not start: ")}{runError}</div>
         ) : null}
         {pdfIndexRunning && pdfIndexProgress && pdfIndexProgress.total === 0 && pdfIndexProgress.done === 0 ? (
           // The server lists the library before it knows the total; "0 / 0"
           // there read as "nothing to do" while it was counting.
-          <div className="settings-pdfindex-stats">Counting files to index…</div>
+          <div className="settings-pdfindex-stats">{uiText("Counting files to index…")}</div>
         ) : pdfIndexRunning && pdfIndexProgress ? (
           <>
             <div className="settings-pdfindex-bar">
@@ -1243,10 +1204,10 @@ function LibrarySettingsSection() {
             <div className="settings-pdfindex-stats">
               <span>{pdfIndexProgress.done.toLocaleString()} / {pdfIndexProgress.total.toLocaleString()} ({indexPct}%)</span>
               {pdfIndexProgress.workers > 0 && (
-                <span> · {pdfIndexProgress.active_workers}/{pdfIndexProgress.workers} threads</span>
+                <span> · {pdfIndexProgress.active_workers}/{pdfIndexProgress.workers}{uiText(" threads")}</span>
               )}
               {pdfIndexProgress.errors > 0 && (
-                <span className="settings-pdfindex-err"> · {pdfIndexProgress.errors} err</span>
+                <span className="settings-pdfindex-err"> · {pdfIndexProgress.errors}{uiText(" err")}</span>
               )}
               {indexEta && <span> · {indexEta}</span>}
             </div>
@@ -1258,45 +1219,40 @@ function LibrarySettingsSection() {
           </>
         ) : pdfIndexStats ? (
           <div className="settings-pdfindex-stats">
-            <span>{pdfIndexStats.indexed.toLocaleString()} indexed</span>
-            <span> · {pdfIndexStats.pages.toLocaleString()} pages</span>
-            {pdfIndexStats.pending > 0 && <span> · {pdfIndexStats.pending.toLocaleString()} pending</span>}
+            <span>{pdfIndexStats.indexed.toLocaleString()}{uiText(" indexed")}</span>
+            <span> · {pdfIndexStats.pages.toLocaleString()}{uiText(" pages")}</span>
+            {pdfIndexStats.pending > 0 && <span> · {pdfIndexStats.pending.toLocaleString()}{uiText(" pending")}</span>}
             {pdfIndexStats.failed > 0 && (
-              <span className="settings-pdfindex-err"> · {pdfIndexStats.failed} failed</span>
+              <span className="settings-pdfindex-err"> · {pdfIndexStats.failed}{uiText(" failed")}</span>
             )}
             {(pdfIndexStats.given_up ?? 0) > 0 && (
-              <span title="Files that failed three times are no longer retried automatically. Retry them from the Library's failed list, or they are retried when the file changes.">
-                {' '}({pdfIndexStats.given_up} no longer retried)
-              </span>
+              <span title={uiText("Files that failed three times are no longer retried automatically. Retry them from the Library's failed list, or they are retried when the file changes.")}>
+                {' '}({pdfIndexStats.given_up}{uiText(" no longer retried)")}</span>
             )}
           </div>
         ) : null}
       </div>
 
       <div className="settings-row-field">
-        <span title="Resets every PDF status row back to pending and re-extracts text from scratch. Hours on a large library — use only after changing the watermark term list or upgrading the indexer.">
-          Force re-index everything
-        </span>
+        <span title={uiText("Resets every PDF status row back to pending and re-extracts text from scratch. Hours on a large library — use only after changing the watermark term list or upgrading the indexer.")}>{uiText("Force re-index everything")}</span>
         <button
           className="settings-action-btn settings-action-danger"
           disabled={forcing || pdfIndexRunning}
           onClick={handleForceReindex}
         >
-          {forcing ? '…' : 'Force re-index'}
+          {forcing ? '…' : uiText("Force re-index")}
         </button>
       </div>
 
       <div className="settings-row-field">
-        <span title="Rewrites the index file into one fresh, contiguous copy. Keeps every indexed page — nothing is extracted again. Use it when search or the index counters are slow on a NAS: on btrfs (Synology's default) the file fragments over time and every read pays for it. Needs free space for a second copy; indexing pauses meanwhile, search keeps working.">
-          Compact index file
-        </span>
+        <span title={uiText("Rewrites the index file into one fresh, contiguous copy. Keeps every indexed page — nothing is extracted again. Use it when search or the index counters are slow on a NAS: on btrfs (Synology's default) the file fragments over time and every read pays for it. Needs free space for a second copy; indexing pauses meanwhile, search keeps working.")}>{uiText("Compact index file")}</span>
         <button
           className="settings-action-btn"
           data-testid="pdf-index-compact"
           disabled={compactRunning}
           onClick={async () => { setCompactError(await databankStore.compactPdfIndex()); }}
         >
-          {compactRunning ? 'Compacting…' : 'Compact'}
+          {compactRunning ? uiText("Compacting…") : uiText("Compact")}
         </button>
       </div>
       {(compactRunning || compactError || compact?.finished_at) && (
@@ -1312,9 +1268,7 @@ function LibrarySettingsSection() {
           disabled={autoResume === null}
           onChange={(e) => void toggleAutoResume(e.target.checked)}
         />
-        <span title="When on, the indexer continues any pending PDFs automatically — on server start and after a scan finds new PDFs — without pressing anything.">
-          Auto-index PDFs in the background
-        </span>
+        <span title={uiText("When on, the indexer continues any pending PDFs automatically — on server start and after a scan finds new PDFs — without pressing anything.")}>{uiText("Auto-index PDFs in the background")}</span>
       </label>
 
       <label className="settings-row-toggle">
@@ -1323,11 +1277,11 @@ function LibrarySettingsSection() {
           checked={autoPdf}
           onChange={(e) => databankStore.setAutoPdf(e.target.checked)}
         />
-        <span>Auto-load bound PDFs when opening a board</span>
+        <span>{uiText("Auto-load bound PDFs when opening a board")}</span>
       </label>
 
       <label className="settings-row-field">
-        <span>Recent history depth</span>
+        <span>{uiText("Recent history depth")}</span>
         <input
           type="number"
           min={1}
@@ -1341,14 +1295,12 @@ function LibrarySettingsSection() {
       </label>
 
       <div className="settings-row-field">
-        <span>Recent history ({recentItems.length} item{recentItems.length === 1 ? '' : 's'})</span>
+        <span>{uiText("Recent history (")}{recentItems.length}{uiText(" item")}{recentItems.length === 1 ? '' : uiText("plural.s")})</span>
         <button
           className="settings-action-btn"
           disabled={recentItems.length === 0}
           onClick={() => databankStore.clearHistory()}
-        >
-          Clear
-        </button>
+        >{uiText("Clear")}</button>
       </div>
     </div>
   );
@@ -1386,7 +1338,7 @@ function SlotBindingsEditor<A extends ScrollAction>({ surface, slots, actions, v
                 style={{ '--pill-color': ACTION_COLOR[action] } as React.CSSProperties}
                 data-testid={`scroll-slot-${surface}-${slot}`}
                 data-action={action}
-                title={`${SLOT_LABEL[slot]}: ${ACTION_LABEL[action]} — click to change`}
+                title={uiText`${SLOT_LABEL[slot]}: ${ACTION_LABEL[action]} — click to change`}
                 onClick={() => onChange(slot, nextAction(actions, action))}
               >
                 {ACTION_LABEL[action]}
@@ -1399,7 +1351,7 @@ function SlotBindingsEditor<A extends ScrollAction>({ surface, slots, actions, v
         <p className="settings-hint scroll-bindings-note" data-testid={`scroll-note-${surface}`}>{SHIFT_SCROLL_NOTE}</p>
       )}
       {onReset && (
-        <button className="scroll-bindings-reset" onClick={onReset}>Reset to default</button>
+        <button className="scroll-bindings-reset" onClick={onReset}>{uiText("Reset to default")}</button>
       )}
     </div>
   );
@@ -1457,7 +1409,7 @@ function PdfQualitySelector() {
       </div>
       <p className="settings-hint">{pdfQualityDescription(quality)}</p>
       <div className="pdf-quality-details" translate="no">
-        <span>{`Page up to ${cfg.maxMainTier}× · neighbours ${cfg.maxAdjTier}× near, ${cfg.neighbourFarTier}× far · cache ${cfg.cacheMaxEntries} pages / ${Math.round(cfg.cacheMaxPixels / 1_000_000)} MP`}</span>
+        <span>{uiText`Page up to ${cfg.maxMainTier}× · neighbours ${cfg.maxAdjTier}× near, ${cfg.neighbourFarTier}× far · cache ${cfg.cacheMaxEntries} pages / ${Math.round(cfg.cacheMaxPixels / 1_000_000)} MP`}</span>
       </div>
     </div>
   );
@@ -1466,9 +1418,9 @@ function PdfQualitySelector() {
 // ---- Selected pins on the light schemes ----
 
 const LIGHT_SELECTION_OPTIONS: { id: LightSelectionStyle; label: string; title: string }[] = [
-  { id: 'highlighter', label: 'Highlighter', title: 'A yellow halo behind each pin, the pin in its own colour, a thin ink ring' },
-  { id: 'ink', label: 'Ink pins', title: 'Each pin filled solid ink with a white rim' },
-  { id: 'inkHighlighter', label: 'Ink on highlighter', title: 'Each pin filled solid ink on a yellow halo' },
+  { id: 'highlighter', label: uiText("Highlighter"), title: uiText("A yellow halo behind each pin, the pin in its own colour, a thin ink ring") },
+  { id: 'ink', label: uiText("Ink pins"), title: uiText("Each pin filled solid ink with a white rim") },
+  { id: 'inkHighlighter', label: uiText("Ink on highlighter"), title: uiText("Each pin filled solid ink on a yellow halo") },
 ];
 
 /** How the selected net's pins are marked on Light and Atari, where a coloured
@@ -1479,8 +1431,8 @@ function LightSelectionStyleRow({ value, onUpdate }: { value: LightSelectionStyl
   if (hidden) return null;
   return (
     <div className={`settings-row${matched ? ' settings-search-match' : ''}`}
-      title="How the pins of the selected net are marked on the light schemes (Light, Atari)">
-      <label className="settings-label">Selected pins on light schemes</label>
+      title={uiText("How the pins of the selected net are marked on the light schemes (Light, Atari)")}>
+      <label className="settings-label">{uiText("Selected pins on light schemes")}</label>
       <div className="settings-btn-group">
         {LIGHT_SELECTION_OPTIONS.map(o => (
           <button key={o.id} type="button" title={o.title}
@@ -1498,15 +1450,15 @@ function LightSelectionStyleRow({ value, onUpdate }: { value: LightSelectionStyl
 // ---- PDF render mode selector ----
 
 const RENDER_MODE_LABELS: Record<'auto' | 'standard' | 'always-tile', string> = {
-  auto: 'Auto',
-  standard: 'Standard',
-  'always-tile': 'Always tile',
+  auto: uiText("Auto"),
+  standard: uiText("Standard"),
+  'always-tile': uiText("Always tile"),
 };
 
 const RENDER_MODE_DESCRIPTIONS: Record<'auto' | 'standard' | 'always-tile', string> = {
-  auto: 'Tile above 1.05× zoom for crisp text at deep zoom. Full page below.',
-  standard: 'Always render the full page into one canvas (Firefox-style). Smoother during pinch/zoom; pixels go soft past ~5–6× zoom on A4. Default.',
-  'always-tile': 'Always tile. Mostly an escape hatch for debugging — rarely useful.',
+  auto: uiText("Tile above 1.05× zoom for crisp text at deep zoom. Full page below."),
+  standard: uiText("Always render the full page into one canvas (Firefox-style). Smoother during pinch/zoom; pixels go soft past ~5–6× zoom on A4. Default."),
+  'always-tile': uiText("Always tile. Mostly an escape hatch for debugging — rarely useful."),
 };
 
 function PdfRenderModeSelector() {
@@ -1586,9 +1538,9 @@ function PdfWatermarkFilterEditor() {
     try {
       await pdfIndexClient.reindexWatermark();
       databankStore.startPdfIndexPolling();
-      boardStore.addToast('Re-indexing PDFs with updated watermark terms…', 'info');
+      boardStore.addToast(uiText("Re-indexing PDFs with updated watermark terms…"), 'info');
     } catch {
-      boardStore.addToast('Failed to start reindex — check backend connection.', 'error');
+      boardStore.addToast(uiText("Failed to start reindex — check backend connection."), 'error');
     } finally {
       setReindexing(false);
       setShowReindex(false);
@@ -1609,7 +1561,7 @@ function PdfWatermarkFilterEditor() {
             commit();
           }
         }}
-        placeholder={'One term per line\n(commas also accepted)'}
+        placeholder={uiText("One term per line\n(commas also accepted)")}
         spellCheck={false}
       />
       <div className="pdf-watermark-actions">
@@ -1618,50 +1570,40 @@ function PdfWatermarkFilterEditor() {
           className="settings-btn-option pdf-watermark-save"
           onClick={commit}
           disabled={!dirty}
-          title={dirty ? 'Save watermark filter (Ctrl/Cmd + Enter)' : 'No unsaved changes'}
+          title={dirty ? uiText("Save watermark filter (Ctrl/Cmd + Enter)") : uiText("No unsaved changes")}
         >
-          {dirty ? 'Save' : 'Saved'}
+          {dirty ? uiText("Save") : uiText("Saved")}
         </button>
         {dirty && (
           <button
             type="button"
             className="settings-btn-option pdf-watermark-revert"
             onClick={revert}
-            title="Discard changes"
-          >
-            Revert
-          </button>
+            title={uiText("Discard changes")}
+          >{uiText("Revert")}</button>
         )}
       </div>
       {showReindex && hasBackend() && (
         <div className="pdf-watermark-reindex-prompt">
-          <span className="pdf-watermark-reindex-hint">
-            Watermark terms changed — reindex PDFs to apply?
-          </span>
+          <span className="pdf-watermark-reindex-hint">{uiText("Watermark terms changed — reindex PDFs to apply?")}</span>
           <button
             type="button"
             className="settings-btn-option pdf-watermark-reindex-btn"
             onClick={handleReindex}
             disabled={reindexing}
-            title="Reset and re-run PDF text indexing with the new watermark terms"
+            title={uiText("Reset and re-run PDF text indexing with the new watermark terms")}
           >
-            {reindexing ? 'Starting…' : 'Reindex PDFs'}
+            {reindexing ? uiText("Starting…") : uiText("Reindex PDFs")}
           </button>
           <button
             type="button"
             className="settings-btn-option pdf-watermark-reindex-dismiss"
             onClick={() => setShowReindex(false)}
-            title="Dismiss — reindex later"
-          >
-            Dismiss
-          </button>
+            title={uiText("Dismiss — reindex later")}
+          >{uiText("Dismiss")}</button>
         </div>
       )}
-      <p className="settings-hint">
-        One term per line (or comma-separated). Matches ignore case and whitespace,
-        so "www.chinafix.com" catches "w w w . c h i n a f i x . c o m". Matching
-        text is erased before rendering. Press Ctrl/Cmd + Enter to save.
-      </p>
+      <p className="settings-hint">{uiText("One term per line (or comma-separated). Matches ignore case and whitespace, so \"www.chinafix.com\" catches \"w w w . c h i n a f i x . c o m\". Matching text is erased before rendering. Press Ctrl/Cmd + Enter to save.")}</p>
     </div>
   );
 }
@@ -1700,8 +1642,8 @@ const BOARD_DRAG_ACTIONS: BoardDragAction[] = ['pan', 'zoom'];
 const BOARD_DRAG_MODIFIER_KEYS = ['bare', 'shift'] as const;
 type BoardDragModifier = typeof BOARD_DRAG_MODIFIER_KEYS[number];
 const BOARD_DRAG_MODIFIER_LABELS: Record<BoardDragModifier, React.ReactNode> = {
-  bare: 'Left-drag',
-  shift: 'Shift + Left-drag',
+  bare: uiText("Left-drag"),
+  shift: uiText("Shift + Left-drag"),
 };
 
 function BoardDragBindingsEditor({ dragToZoom, onUpdate }: { dragToZoom: boolean; onUpdate: DraftUpdater }) {
@@ -1778,8 +1720,8 @@ function PdfInertiaToggle() {
     window.dispatchEvent(new CustomEvent('pdf-inertia-changed'));
   }, [enabled]);
   return (
-    <div className="settings-row settings-toggle-row" title="Continue panning with momentum after releasing the drag. When disabled, panning stops immediately on release. Note: trackpad scroll momentum is controlled by your OS settings and cannot be disabled by the app">
-      <label className="settings-label">Inertia</label>
+    <div className="settings-row settings-toggle-row" title={uiText("Continue panning with momentum after releasing the drag. When disabled, panning stops immediately on release. Note: trackpad scroll momentum is controlled by your OS settings and cannot be disabled by the app")}>
+      <label className="settings-label">{uiText("Inertia")}</label>
       <input type="checkbox" checked={enabled} onChange={toggle} />
     </div>
   );
@@ -1804,32 +1746,32 @@ function CacheControlBar({ hasBoard }: { hasBoard: boolean }) {
   };
 
   return (
-    <div className="settings-cache-bar" role="group" aria-label="Cache control">
-      <div className="settings-cache-bar-title">Cache</div>
+    <div className="settings-cache-bar" role="group" aria-label={uiText("Cache control")}>
+      <div className="settings-cache-bar-title">{uiText("Cache")}</div>
       <div className="settings-cache-bar-buttons">
         <button
           className="settings-cache-btn"
           onClick={() => run('reparse', () => boardStore.reparseActiveBoard())}
           disabled={!hasBoard || busy !== null}
-          title="Delete the cache entry for the current board and re-run the parser on it. Fastest way to pick up a parser fix on the file you're looking at."
+          title={uiText("Delete the cache entry for the current board and re-run the parser on it. Fastest way to pick up a parser fix on the file you're looking at.")}
         >
-          {busy === 'reparse' ? 'Re-parsing…' : 'Re-parse current'}
+          {busy === 'reparse' ? uiText("Re-parsing…") : uiText("Re-parse current")}
         </button>
         <button
           className="settings-cache-btn"
           onClick={() => run('boards', () => boardStore.resetBoardCaches())}
           disabled={busy !== null}
-          title="Clear all cached parsed boards from IndexedDB and re-parse every open tab. PDF caches are left alone."
+          title={uiText("Clear all cached parsed boards from IndexedDB and re-parse every open tab. PDF caches are left alone.")}
         >
-          {busy === 'boards' ? 'Clearing…' : 'Reset board caches'}
+          {busy === 'boards' ? uiText("Clearing…") : uiText("Reset board caches")}
         </button>
         <button
           className="settings-cache-btn"
           onClick={() => run('pdf', () => boardStore.resetPdfCaches())}
           disabled={busy !== null}
-          title="Clear cached PDF text, tile bitmaps, font glyphs, and watermark skip sets. Board parses are left alone."
+          title={uiText("Clear cached PDF text, tile bitmaps, font glyphs, and watermark skip sets. Board parses are left alone.")}
         >
-          {busy === 'pdf' ? 'Clearing…' : 'Reset PDF caches'}
+          {busy === 'pdf' ? uiText("Clearing…") : uiText("Reset PDF caches")}
         </button>
       </div>
     </div>
@@ -1849,19 +1791,16 @@ function LocalSettingsResetBar() {
     return () => clearTimeout(t);
   }, [armed]);
   return (
-    <div className="settings-cache-bar" role="group" aria-label="Local settings">
-      <div className="settings-cache-bar-title">Local settings</div>
-      <div className="settings-cache-hint">
-        Every setting this browser saved — view, theme, layout, panels — back to its default, then the page reloads.
-        Recent files, favourites, history, worklists, bookmarks and cached boards are kept.
-      </div>
+    <div className="settings-cache-bar" role="group" aria-label={uiText("Local settings")}>
+      <div className="settings-cache-bar-title">{uiText("Local settings")}</div>
+      <div className="settings-cache-hint">{uiText("Every setting this browser saved — view, theme, layout, panels — back to its default, then the page reloads. Recent files, favourites, history, worklists, bookmarks and cached boards are kept.")}</div>
       <div className="settings-cache-bar-buttons">
         <button
           className={`settings-cache-btn${armed ? ' settings-cache-btn-danger' : ''}`}
           data-testid="reset-local-settings"
           onClick={() => { if (armed) resetLocalSettings(); else setArmed(true); }}
         >
-          {armed ? 'Click again to reset and reload' : 'Reset all local settings'}
+          {armed ? uiText("Click again to reset and reload") : uiText("Reset all local settings")}
         </button>
       </div>
     </div>
@@ -2121,18 +2060,18 @@ export function SettingsPanel() {
               <button
                 className={`settings-mode-btn${effectiveMode === 'global' ? ' active' : ''}`}
                 onClick={() => setMode('global')}
-              >Global</button>
+              >{uiText("Global")}</button>
               <button
                 className={`settings-mode-btn${effectiveMode === 'board' ? ' active' : ''}`}
                 onClick={() => setMode('board')}
                 disabled={!hasBoard}
-                title={hasBoard ? `Board overrides for ${activeFileName}` : 'Open a board to edit per-board settings'}
-              >Board</button>
+                title={hasBoard ? uiText`Board overrides for ${activeFileName}` : uiText("Open a board to edit per-board settings")}
+              >{uiText("Board")}</button>
             </div>
             <div className="settings-mode-hint">
               {isBoardMode
-                ? <>Overrides for <strong>{activeFileName}</strong> &middot; <span className="settings-override-legend">yellow</span> = overridden</>
-                : 'Changes apply to all boards'}
+                ? <>{uiText("Overrides for ")}<strong>{activeFileName}</strong>{uiText(" &middot; ")}<span className="settings-override-legend">{uiText("yellow")}</span>{uiText(" = overridden")}</>
+                : uiText("Changes apply to all boards")}
             </div>
 
             {/* Render preview (SettingsMockup) is silently disabled for now —
@@ -2143,12 +2082,12 @@ export function SettingsPanel() {
               <button
                 className={`settings-action-btn ${previewing ? 'active' : ''}`}
                 onClick={handlePreview} disabled={!dirty}
-                title={previewing ? 'Stop preview, revert board to saved' : 'Preview changes on the board'}
+                title={previewing ? uiText("Stop preview, revert board to saved") : uiText("Preview changes on the board")}
               >
-                {previewing ? 'Stop Preview' : 'Preview'}
+                {previewing ? uiText("Stop Preview") : uiText("Preview")}
               </button>
-              <button className="settings-action-btn settings-apply-btn" onClick={handleApply} disabled={!dirty}>Apply</button>
-              <button className="settings-action-btn" onClick={handleCancel} disabled={!dirty}>Cancel</button>
+              <button className="settings-action-btn settings-apply-btn" onClick={handleApply} disabled={!dirty}>{uiText("Apply")}</button>
+              <button className="settings-action-btn" onClick={handleCancel} disabled={!dirty}>{uiText("Cancel")}</button>
             </div>
           </>
         )}
@@ -2163,111 +2102,107 @@ export function SettingsPanel() {
       )}
 
       {activeTab === SECTION_TO_TAB.outline && (
-      <CollapsibleSection id="outline" title="Board Outline" isOpen={openSections.has('outline')}
+      <CollapsibleSection id="outline" title={uiText("Board Outline")} isOpen={openSections.has('outline')}
         onToggle={toggleSection} sectionRef={outlineRef} isFocused={focusedSection === 'outline'}>
-        <Slider label="Stroke Width" value={draft.outlineWidth} min={0.5} max={20} step={0.5} field="outlineWidth" onUpdate={updateDraft}
-          title="Thickness of the PCB board outline stroke (mils)" />
-        <Slider label="Stroke Opacity" value={draft.outlineAlpha} min={0} max={1} step={0.05} field="outlineAlpha" onUpdate={updateDraft}
-          title="Transparency of the board outline. 0 = invisible, 1 = fully opaque" />
-        <Slider label="Board Fill" value={draft.boardFillAlpha} min={0} max={0.5} step={0.01} field="boardFillAlpha" onUpdate={updateDraft}
-          title="Semi-transparent fill inside the board outline. Helps distinguish the PCB area from the background" />
-        <Toggle label="Use board metadata color" value={draft.useMetadataBoardColor} field="useMetadataBoardColor" onUpdate={updateDraft}
-          title="When on, boards with a known PCB color (Apple → black, Dell → blue, etc.) render with that tint instead of the theme default. Boards without a metadata match silently fall back to the theme default. Intensity is the Board Fill slider above." />
+        <Slider label={uiText("Stroke Width")} value={draft.outlineWidth} min={0.5} max={20} step={0.5} field="outlineWidth" onUpdate={updateDraft}
+          title={uiText("Thickness of the PCB board outline stroke (mils)")} />
+        <Slider label={uiText("Stroke Opacity")} value={draft.outlineAlpha} min={0} max={1} step={0.05} field="outlineAlpha" onUpdate={updateDraft}
+          title={uiText("Transparency of the board outline. 0 = invisible, 1 = fully opaque")} />
+        <Slider label={uiText("Board Fill")} value={draft.boardFillAlpha} min={0} max={0.5} step={0.01} field="boardFillAlpha" onUpdate={updateDraft}
+          title={uiText("Semi-transparent fill inside the board outline. Helps distinguish the PCB area from the background")} />
+        <Toggle label={uiText("Use board metadata color")} value={draft.useMetadataBoardColor} field="useMetadataBoardColor" onUpdate={updateDraft}
+          title={uiText("When on, boards with a known PCB color (Apple → black, Dell → blue, etc.) render with that tint instead of the theme default. Boards without a metadata match silently fall back to the theme default. Intensity is the Board Fill slider above.")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.parts && (
-      <CollapsibleSection id="parts" title="Parts / Components" isOpen={openSections.has('parts')}
+      <CollapsibleSection id="parts" title={uiText("Parts / Components")} isOpen={openSections.has('parts')}
         onToggle={toggleSection} sectionRef={partsRef} isFocused={focusedSection === 'parts'}>
-        <Slider label="Border Width" value={draft.partBorderWidth} min={0.1} max={10} step={0.1} field="partBorderWidth" onUpdate={updateDraft}
-          title="Thickness of component border outlines (mils). Always at least 1px on screen regardless of zoom" />
-        <Slider label="Border Opacity" value={draft.partBorderAlpha} min={0} max={1} step={0.05} field="partBorderAlpha" onUpdate={updateDraft}
-          title="Transparency of component border outlines. 0 = invisible, 1 = fully opaque" />
-        <Slider label="Padding" value={draft.partPadding} min={0} max={30} step={1} field="partPadding" onUpdate={updateDraft}
-          title="Extra space (mils) between component pins and the part border. Larger = more room around the IC/chip outline" />
-        <Slider label="2-Pin Body Ratio" value={draft.partMinBodyRatio} min={0} max={1} step={0.01} field="partMinBodyRatio" onUpdate={updateDraft}
-          title="Short-axis to pin-distance ratio for 2-pin parts (resistors, capacitors). 0.333 = 1:3 proportion. 0 = use file data as-is" />
+        <Slider label={uiText("Border Width")} value={draft.partBorderWidth} min={0.1} max={10} step={0.1} field="partBorderWidth" onUpdate={updateDraft}
+          title={uiText("Thickness of component border outlines (mils). Always at least 1px on screen regardless of zoom")} />
+        <Slider label={uiText("Border Opacity")} value={draft.partBorderAlpha} min={0} max={1} step={0.05} field="partBorderAlpha" onUpdate={updateDraft}
+          title={uiText("Transparency of component border outlines. 0 = invisible, 1 = fully opaque")} />
+        <Slider label={uiText("Padding")} value={draft.partPadding} min={0} max={30} step={1} field="partPadding" onUpdate={updateDraft}
+          title={uiText("Extra space (mils) between component pins and the part border. Larger = more room around the IC/chip outline")} />
+        <Slider label={uiText("2-Pin Body Ratio")} value={draft.partMinBodyRatio} min={0} max={1} step={0.01} field="partMinBodyRatio" onUpdate={updateDraft}
+          title={uiText("Short-axis to pin-distance ratio for 2-pin parts (resistors, capacitors). 0.333 = 1:3 proportion. 0 = use file data as-is")} />
         {/* Type colours: name/thumb toggle showComponentColors, drag sets the fill opacity. */}
-        <Slider label="Type colours" value={draft.componentFillAlpha} min={0} max={1} step={0.05} field="componentFillAlpha" toggleField="showComponentColors" onUpdate={updateDraft}
-          title="Transparency of the component type color fills. 0 = invisible, 1 = fully opaque" />
-        <Slider label="Part names" value={draft.partLabelScale ?? 1} min={0.3} max={4} step={0.1} field="partLabelScale" toggleField="showPartLabels" unit="×" onUpdate={updateDraft}
-          title="Show component designators (U1, R100…); the slider scales the auto-fit size. Click the name or the thumb to turn them off." />
-        <Toggle label="Label Drop Shadow" value={draft.partLabelShadow} field="partLabelShadow" onUpdate={updateDraft}
-          title="Add a dark shadow halo behind part labels for better readability against colored or busy backgrounds" />
-        <Toggle label="Pin Label Shadow" value={draft.pinLabelShadow} field="pinLabelShadow" onUpdate={updateDraft}
-          title="Add a dark shadow halo behind on-pin labels (pin numbers and net names) for readability. Net names were previously always shadowed; turn this off for crisp, shadow-free pin text." />
-        <Toggle label="Hide Mechanical Fills" value={draft.autoMarkMechanical} field="autoMarkMechanical" onUpdate={updateDraft}
-          title="Auto-detect EMI shields, heatsink frames and oversized through-hole connector shadows (footprint contains ≥5 other component origins, or description contains SHIELD/HEATSINK/FRAME, or trailing-dot duplicates). Detected parts render without a body fill — border outline and pins still draw — so smaller components beneath stay visible. Right-click any part for a per-component override." />
-        <Slider label="Min Label Size" value={draft.labelMinSize} min={1} max={30} step={1} field="labelMinSize" onUpdate={updateDraft}
-          title="Minimum font size (board mils) for part / pin / net-name labels. Acts as a floor on the auto-computed size, so tiny components still get a readable label. Labels smaller than the Zoom LOD thresholds are still hidden." />
+        <Slider label={uiText("Type colours")} value={draft.componentFillAlpha} min={0} max={1} step={0.05} field="componentFillAlpha" toggleField="showComponentColors" onUpdate={updateDraft}
+          title={uiText("Transparency of the component type color fills. 0 = invisible, 1 = fully opaque")} />
+        <Slider label={uiText("Part names")} value={draft.partLabelScale ?? 1} min={0.3} max={4} step={0.1} field="partLabelScale" toggleField="showPartLabels" unit="×" onUpdate={updateDraft}
+          title={uiText("Show component designators (U1, R100…); the slider scales the auto-fit size. Click the name or the thumb to turn them off.")} />
+        <Toggle label={uiText("Label Drop Shadow")} value={draft.partLabelShadow} field="partLabelShadow" onUpdate={updateDraft}
+          title={uiText("Add a dark shadow halo behind part labels for better readability against colored or busy backgrounds")} />
+        <Toggle label={uiText("Pin Label Shadow")} value={draft.pinLabelShadow} field="pinLabelShadow" onUpdate={updateDraft}
+          title={uiText("Add a dark shadow halo behind on-pin labels (pin numbers and net names) for readability. Net names were previously always shadowed; turn this off for crisp, shadow-free pin text.")} />
+        <Toggle label={uiText("Hide Mechanical Fills")} value={draft.autoMarkMechanical} field="autoMarkMechanical" onUpdate={updateDraft}
+          title={uiText("Auto-detect EMI shields, heatsink frames and oversized through-hole connector shadows (footprint contains ≥5 other component origins, or description contains SHIELD/HEATSINK/FRAME, or trailing-dot duplicates). Detected parts render without a body fill — border outline and pins still draw — so smaller components beneath stay visible. Right-click any part for a per-component override.")} />
+        <Slider label={uiText("Min Label Size")} value={draft.labelMinSize} min={1} max={30} step={1} field="labelMinSize" onUpdate={updateDraft}
+          title={uiText("Minimum font size (board mils) for part / pin / net-name labels. Acts as a floor on the auto-computed size, so tiny components still get a readable label. Labels smaller than the Zoom LOD thresholds are still hidden.")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.pins && (
-      <CollapsibleSection id="pins" title="Pins / Pads" isOpen={openSections.has('pins')}
+      <CollapsibleSection id="pins" title={uiText("Pins / Pads")} isOpen={openSections.has('pins')}
         onToggle={toggleSection} sectionRef={pinsRef} isFocused={focusedSection === 'pins'}>
-        <Slider label="Min Radius" value={draft.pinMinRadius} min={1} max={20} step={0.5} field="pinMinRadius" onUpdate={updateDraft}
-          title="Minimum pin circle radius (mils). All pins are rendered at least this size. Also the base size when Scale Factor = 0" />
-        <Slider label="Max Radius" value={draft.pinMaxRadius} min={5} max={100} step={1} field="pinMaxRadius" onUpdate={updateDraft}
-          title="Maximum pin circle radius (mils). Caps the visual size of large pins. On dense parts (BGA), pins are auto-clamped smaller to avoid overlap" />
-        <Slider label="Scale Factor" value={draft.pinScaleFactor} min={0} max={3} step={0.1} field="pinScaleFactor" onUpdate={updateDraft}
-          title="How much the file-specified pin radius affects rendered size. 0 = all pins identical (Min Radius). 1 = proportional to file data. >1 = exaggerated differences" />
-        <Slider label="Fill Opacity" value={draft.pinAlpha} min={0} max={1} step={0.05} field="pinAlpha" onUpdate={updateDraft}
-          title="Fill transparency of pin circles and rectangular pads. 0 = invisible, 1 = fully opaque" />
-        <Slider label="Pin numbers" value={draft.pinNumberScale ?? 1} min={0.3} max={4} step={0.1} field="pinNumberScale" toggleField="showPinNumbers" unit="×" onUpdate={updateDraft}
-          title="Show pin numbers on ICs and connectors; the slider scales them. Click the name or the thumb to turn them off." />
-        <Slider label="Net names" value={draft.netLabelScale ?? 1} min={0.3} max={4} step={0.1} field="netLabelScale" toggleField="showNetNames" unit="×" onUpdate={updateDraft}
-          title="Show net names on pins (GND and NC are excluded — already colour-coded); the slider scales them." />
-        <Slider label="Diode values" value={draft.diodeValueScale ?? 1} min={0.3} max={4} step={0.1} field="diodeValueScale" toggleField="showDiodeValues" unit="×" onUpdate={updateDraft}
-          title="Draw diode-mode readings on pins (from the file or OpenBoardData); the slider scales them." />
-        <Toggle label="Diode Values Only" value={draft.diodeValuesOnly} field="diodeValuesOnly" onUpdate={updateDraft}
-          title="While diode values are shown, hide pin numbers and net names board-wide so a pin carries nothing but its reading. Your Show Pin Numbers / Show Net Names settings are left untouched and come back when this is off. Same as the third state of the diode button on the board overlay" />
-        <Toggle label="Pin 1 Marker" value={draft.showPin1Marker} field="showPin1Marker" onUpdate={updateDraft}
-          title="Highlight pin 1 with red color and a triangle indicator on multi-pin parts" />
-        <Toggle label="Pin Label Background" value={draft.pinNetLabelBg} field="pinNetLabelBg" onUpdate={updateDraft}
-          title="Draw a dark background plate behind net name labels on circle pins. Improves readability when labels overflow beyond the pin area" />
-        <Toggle label="2-Pin Label Background" value={draft.twoPinNetLabelBg} field="twoPinNetLabelBg" onUpdate={updateDraft}
-          title="Draw a dark background plate behind net name labels on 2-pin rectangular pads" />
-        <Slider label="BGA Label Gap" value={draft.bgaLabelGapFactor} min={0} max={1} step={0.05} field="bgaLabelGapFactor" onUpdate={updateDraft}
-          title="Visible vertical gap between pin number and net name labels on dense BGA parts, as a fraction of pin radius. On BGAs, pin numbers and net names alternate above/below the pin center to avoid overlap. 0 = labels meet at the pin center; larger = more visible separation" />
+        <Slider label={uiText("Min Radius")} value={draft.pinMinRadius} min={1} max={20} step={0.5} field="pinMinRadius" onUpdate={updateDraft}
+          title={uiText("Minimum pin circle radius (mils). All pins are rendered at least this size. Also the base size when Scale Factor = 0")} />
+        <Slider label={uiText("Max Radius")} value={draft.pinMaxRadius} min={5} max={100} step={1} field="pinMaxRadius" onUpdate={updateDraft}
+          title={uiText("Maximum pin circle radius (mils). Caps the visual size of large pins. On dense parts (BGA), pins are auto-clamped smaller to avoid overlap")} />
+        <Slider label={uiText("Scale Factor")} value={draft.pinScaleFactor} min={0} max={3} step={0.1} field="pinScaleFactor" onUpdate={updateDraft}
+          title={uiText("How much the file-specified pin radius affects rendered size. 0 = all pins identical (Min Radius). 1 = proportional to file data. >1 = exaggerated differences")} />
+        <Slider label={uiText("Fill Opacity")} value={draft.pinAlpha} min={0} max={1} step={0.05} field="pinAlpha" onUpdate={updateDraft}
+          title={uiText("Fill transparency of pin circles and rectangular pads. 0 = invisible, 1 = fully opaque")} />
+        <Slider label={uiText("Pin numbers")} value={draft.pinNumberScale ?? 1} min={0.3} max={4} step={0.1} field="pinNumberScale" toggleField="showPinNumbers" unit="×" onUpdate={updateDraft}
+          title={uiText("Show pin numbers on ICs and connectors; the slider scales them. Click the name or the thumb to turn them off.")} />
+        <Slider label={uiText("Net names")} value={draft.netLabelScale ?? 1} min={0.3} max={4} step={0.1} field="netLabelScale" toggleField="showNetNames" unit="×" onUpdate={updateDraft}
+          title={uiText("Show net names on pins (GND and NC are excluded — already colour-coded); the slider scales them.")} />
+        <Slider label={uiText("Diode values")} value={draft.diodeValueScale ?? 1} min={0.3} max={4} step={0.1} field="diodeValueScale" toggleField="showDiodeValues" unit="×" onUpdate={updateDraft}
+          title={uiText("Draw diode-mode readings on pins (from the file or OpenBoardData); the slider scales them.")} />
+        <Toggle label={uiText("Diode Values Only")} value={draft.diodeValuesOnly} field="diodeValuesOnly" onUpdate={updateDraft}
+          title={uiText("While diode values are shown, hide pin numbers and net names board-wide so a pin carries nothing but its reading. Your Show Pin Numbers / Show Net Names settings are left untouched and come back when this is off. Same as the third state of the diode button on the board overlay")} />
+        <Toggle label={uiText("Pin 1 Marker")} value={draft.showPin1Marker} field="showPin1Marker" onUpdate={updateDraft}
+          title={uiText("Highlight pin 1 with red color and a triangle indicator on multi-pin parts")} />
+        <Toggle label={uiText("Pin Label Background")} value={draft.pinNetLabelBg} field="pinNetLabelBg" onUpdate={updateDraft}
+          title={uiText("Draw a dark background plate behind net name labels on circle pins. Improves readability when labels overflow beyond the pin area")} />
+        <Toggle label={uiText("2-Pin Label Background")} value={draft.twoPinNetLabelBg} field="twoPinNetLabelBg" onUpdate={updateDraft}
+          title={uiText("Draw a dark background plate behind net name labels on 2-pin rectangular pads")} />
+        <Slider label={uiText("BGA Label Gap")} value={draft.bgaLabelGapFactor} min={0} max={1} step={0.05} field="bgaLabelGapFactor" onUpdate={updateDraft}
+          title={uiText("Visible vertical gap between pin number and net name labels on dense BGA parts, as a fraction of pin radius. On BGAs, pin numbers and net names alternate above/below the pin center to avoid overlap. 0 = labels meet at the pin center; larger = more visible separation")} />
       </CollapsibleSection>
       )}
 
       {/* Navigation first — gesture/scroll setup is the most important thing a
           new user configures, so it leads the Input tab. */}
       {activeTab === SECTION_TO_TAB.navigation && (
-      <CollapsibleSection id="navigation" title="Navigation" isOpen={openSections.has('navigation')}
+      <CollapsibleSection id="navigation" title={uiText("Navigation")} isOpen={openSections.has('navigation')}
         onToggle={toggleSection} sectionRef={navigationRef} isFocused={focusedSection === 'navigation'}>
-        <div className="settings-row settings-toggle-row" title="Re-open the first-run gesture wizard: do the gesture you want for each pan/zoom action and it configures the bindings for you.">
-          <label className="settings-label">Interactive gesture setup</label>
+        <div className="settings-row settings-toggle-row" title={uiText("Re-open the first-run gesture wizard: do the gesture you want for each pan/zoom action and it configures the bindings for you.")}>
+          <label className="settings-label">{uiText("Interactive gesture setup")}</label>
           <button
             className="settings-action-btn"
             style={{ marginLeft: 'auto' }}
             onClick={() => welcomeStore.show()}
-          >
-            Re-run setup…
-          </button>
+          >{uiText("Re-run setup…")}</button>
         </div>
-        <div className="settings-subsection-label">Scroll wheel behavior</div>
-        <p className="settings-hint">Click a pill to change what that scroll does. Pinch and Ctrl+Scroll always zoom, dragging always pans.</p>
+        <div className="settings-subsection-label">{uiText("Scroll wheel behavior")}</div>
+        <p className="settings-hint">{uiText("Click a pill to change what that scroll does. Pinch and Ctrl+Scroll always zoom, dragging always pans.")}</p>
         <BoardScrollBindingsEditor draft={draft} onUpdate={updateGlobal} />
         <Toggle
-          label="Mouse wheel detection"
+          label={uiText("Mouse wheel detection")}
           value={draft.wheelDetection}
           field="wheelDetection"
           onUpdate={updateGlobal}
-          title="When scroll is set to pan, classic mouse-wheel events override to zoom instead — avoids jerky pan with a physical scroll wheel. Trackpads and fine-grained wheels are unaffected."
+          title={uiText("When scroll is set to pan, classic mouse-wheel events override to zoom instead — avoids jerky pan with a physical scroll wheel. Trackpads and fine-grained wheels are unaffected.")}
         />
 
-        <div className="settings-subsection-label">Trackpad/Mouse drag behavior</div>
-        <p className="settings-hint">Drag pills between slots to swap left-drag and Shift+left-drag actions.</p>
+        <div className="settings-subsection-label">{uiText("Trackpad/Mouse drag behavior")}</div>
+        <p className="settings-hint">{uiText("Drag pills between slots to swap left-drag and Shift+left-drag actions.")}</p>
         <BoardDragBindingsEditor dragToZoom={draft.dragToZoom} onUpdate={updateGlobal} />
 
-        <div className="settings-subsection-label">Keyboard pan / zoom</div>
-        <div className="settings-row" title="Fraction of screen dimension panned per WSAD or Alt+Arrow keypress. Default: 10% of screen width/height per press.">
-          <label className="settings-label">
-            Keyboard Pan Step
-            <span className="settings-value">{Math.round(draft.keyboardPanFraction * 100)}%</span>
+        <div className="settings-subsection-label">{uiText("Keyboard pan / zoom")}</div>
+        <div className="settings-row" title={uiText("Fraction of screen dimension panned per WSAD or Alt+Arrow keypress. Default: 10% of screen width/height per press.")}>
+          <label className="settings-label">{uiText("Keyboard Pan Step")}<span className="settings-value">{Math.round(draft.keyboardPanFraction * 100)}%</span>
           </label>
           <div className="settings-slider-wrap">
             <input
@@ -2280,171 +2215,167 @@ export function SettingsPanel() {
           </div>
         </div>
         <Slider
-          label="Keyboard Zoom Step"
+          label={uiText("Keyboard Zoom Step")}
           value={draft.keyboardZoomDelta}
           min={50} max={400} step={10}
           field="keyboardZoomDelta" onUpdate={updateGlobal}
-          title={`Raw zoom delta per Shift+W / Shift+S keypress. Applies to both board and PDF. Current: ×${Math.pow(2, 1.3 * (draft.keyboardZoomDelta / 500)).toFixed(2)} per press. Default: 100 (≈×1.32).`}
+          title={uiText`Raw zoom delta per Shift+W / Shift+S keypress. Applies to both board and PDF. Current: ×${Math.pow(2, 1.3 * (draft.keyboardZoomDelta / 500)).toFixed(2)} per press. Default: 100 (≈×1.32).`}
         />
 
-        <div className="settings-subsection-label">Zoom</div>
-        <Slider label="Wheel Smoothing" value={draft.wheelSmooth} min={1} max={20} step={1} field="wheelSmooth" onUpdate={updateGlobal}
-          title="Mouse wheel zoom smoothness. 1 = instant snap, higher = smoother animated zoom. Default: 5" />
-        <Slider label="Fit Padding" value={draft.fitPadding} min={0} max={200} step={10} field="fitPadding" onUpdate={updateGlobal}
-          title="Extra padding (screen pixels) added when fitting the board to the viewport (Fit to Screen, double-click zoom). Prevents the board from touching viewport edges" />
+        <div className="settings-subsection-label">{uiText("Zoom")}</div>
+        <Slider label={uiText("Wheel Smoothing")} value={draft.wheelSmooth} min={1} max={20} step={1} field="wheelSmooth" onUpdate={updateGlobal}
+          title={uiText("Mouse wheel zoom smoothness. 1 = instant snap, higher = smoother animated zoom. Default: 5")} />
+        <Slider label={uiText("Fit Padding")} value={draft.fitPadding} min={0} max={200} step={10} field="fitPadding" onUpdate={updateGlobal}
+          title={uiText("Extra padding (screen pixels) added when fitting the board to the viewport (Fit to Screen, double-click zoom). Prevents the board from touching viewport edges")} />
 
-        <div className="settings-subsection-label">Navigate-to-component</div>
-        <Slider label="Component Size" value={draft.navTargetSize} min={0.05} max={0.90} step={0.05} field="navTargetSize" onUpdate={updateGlobal}
-          title="Target on-screen size of a component after navigating to it from search / NetList / Worklist. Expressed as a fraction of the smaller viewport dimension. Default 0.25 (~25%)." />
-        <div className="settings-row" data-test="nav-zoom-mode" title="How navigation should treat zoom level.">
-          <label className="settings-label">Zoom Mode</label>
+        <div className="settings-subsection-label">{uiText("Navigate-to-component")}</div>
+        <Slider label={uiText("Component Size")} value={draft.navTargetSize} min={0.05} max={0.90} step={0.05} field="navTargetSize" onUpdate={updateGlobal}
+          title={uiText("Target on-screen size of a component after navigating to it from search / NetList / Worklist. Expressed as a fraction of the smaller viewport dimension. Default 0.25 (~25%).")} />
+        <div className="settings-row" data-test="nav-zoom-mode" title={uiText("How navigation should treat zoom level.")}>
+          <label className="settings-label">{uiText("Zoom Mode")}</label>
           <div className="settings-btn-group" style={{ marginLeft: 'auto' }}>
             <button
               className={`settings-btn-option${draft.navZoomMode === 'auto' ? ' active' : ''}`}
               onClick={() => updateGlobal({ navZoomMode: 'auto' })}
-              title="Auto — keep current zoom when the part is in the comfortable band (1.5%–70% of screen). Snap to Component Size only when extreme."
+              title={uiText("Auto — keep current zoom when the part is in the comfortable band (1.5%–70% of screen). Snap to Component Size only when extreme.")}
               data-test="nav-zoom-auto"
-            >Auto</button>
+            >{uiText("Auto")}</button>
             <button
               className={`settings-btn-option${draft.navZoomMode === 'keep' ? ' active' : ''}`}
               onClick={() => updateGlobal({ navZoomMode: 'keep' })}
-              title="Keep — never change zoom, just pan to the part. Component Size is ignored."
+              title={uiText("Keep — never change zoom, just pan to the part. Component Size is ignored.")}
               data-test="nav-zoom-keep"
-            >Keep</button>
+            >{uiText("Keep")}</button>
             <button
               className={`settings-btn-option${draft.navZoomMode === 'always' ? ' active' : ''}`}
               onClick={() => updateGlobal({ navZoomMode: 'always' })}
-              title="Always — every navigation snaps to Component Size. Pre-v0.31.4 behavior."
+              title={uiText("Always — every navigation snaps to Component Size. Pre-v0.31.4 behavior.")}
               data-test="nav-zoom-always"
-            >Always</button>
+            >{uiText("Always")}</button>
           </div>
         </div>
 
-        <div className="settings-subsection-label">Pan</div>
-        <div className="settings-row settings-toggle-row" title="Continue panning with momentum after releasing a drag gesture. When disabled, panning stops immediately on release. Note: trackpad scroll momentum is controlled by your OS settings and cannot be disabled by the app">
-          <label className="settings-label">Inertia</label>
+        <div className="settings-subsection-label">{uiText("Pan")}</div>
+        <div className="settings-row settings-toggle-row" title={uiText("Continue panning with momentum after releasing a drag gesture. When disabled, panning stops immediately on release. Note: trackpad scroll momentum is controlled by your OS settings and cannot be disabled by the app")}>
+          <label className="settings-label">{uiText("Inertia")}</label>
           <input type="checkbox" checked={!draft.disableInertia}
             onChange={(e) => updateGlobal({ disableInertia: !e.target.checked })} />
         </div>
 
-        <div className="settings-subsection-label">Zoom and rotation</div>
-        <Toggle label="Smooth wheel zoom" value={draft.smoothZoom} field="smoothZoom" onUpdate={updateGlobal}
-          title="Animated cursor-anchored zoom" />
-        <Toggle label="Two-finger rotation" value={draft.twoFingerRotate} field="twoFingerRotate" onUpdate={updateGlobal}
-          title="On a touch screen, turning two fingers turns the board about the point between them. Starts locked: a turn past the unlock angle unlocks it, a two-finger double-tap locks it again and squares the board. The angle is kept when the fingers lift, snapped to the nearest right angle when within the snap window. Off: two fingers only zoom and pan." />
-        <Slider label="Rotation unlock angle" value={draft.rotateUnlockDeg} min={4} max={45} step={1} field="rotateUnlockDeg" onUpdate={updateGlobal} unit="°"
-          title="While rotation is locked, two fingers must turn this far before it unlocks. Every pinch turns a little; too low and zooming starts rotating, too high and unlocking takes a deliberate twist. Default 24°." />
-        <Slider label="Rotation snap window" value={draft.rotateSnapDeg} min={0} max={45} step={1} field="rotateSnapDeg" onUpdate={updateGlobal} unit="°"
-          title="When the fingers lift within this many degrees of 0°, 90°, 180° or 270°, the board snaps to that right angle. 0 never snaps. Default 10°." />
-        <div className="settings-subsection-label">Click</div>
-        <Slider label="Pin Click Radius" value={draft.clickThreshold} min={5} max={100} step={5} field="clickThreshold" onUpdate={updateGlobal}
-          title="Maximum distance (screen pixels) from a pin center that counts as a click on that pin. Larger = easier to click small or densely packed pins" />
+        <div className="settings-subsection-label">{uiText("Zoom and rotation")}</div>
+        <Toggle label={uiText("Smooth wheel zoom")} value={draft.smoothZoom} field="smoothZoom" onUpdate={updateGlobal}
+          title={uiText("Animated cursor-anchored zoom")} />
+        <Toggle label={uiText("Two-finger rotation")} value={draft.twoFingerRotate} field="twoFingerRotate" onUpdate={updateGlobal}
+          title={uiText("On a touch screen, turning two fingers turns the board about the point between them. Starts locked: a turn past the unlock angle unlocks it, a two-finger double-tap locks it again and squares the board. The angle is kept when the fingers lift, snapped to the nearest right angle when within the snap window. Off: two fingers only zoom and pan.")} />
+        <Slider label={uiText("Rotation unlock angle")} value={draft.rotateUnlockDeg} min={4} max={45} step={1} field="rotateUnlockDeg" onUpdate={updateGlobal} unit="°"
+          title={uiText("While rotation is locked, two fingers must turn this far before it unlocks. Every pinch turns a little; too low and zooming starts rotating, too high and unlocking takes a deliberate twist. Default 24°.")} />
+        <Slider label={uiText("Rotation snap window")} value={draft.rotateSnapDeg} min={0} max={45} step={1} field="rotateSnapDeg" onUpdate={updateGlobal} unit="°"
+          title={uiText("When the fingers lift within this many degrees of 0°, 90°, 180° or 270°, the board snaps to that right angle. 0 never snaps. Default 10°.")} />
+        <div className="settings-subsection-label">{uiText("Click")}</div>
+        <Slider label={uiText("Pin Click Radius")} value={draft.clickThreshold} min={5} max={100} step={5} field="clickThreshold" onUpdate={updateGlobal}
+          title={uiText("Maximum distance (screen pixels) from a pin center that counts as a click on that pin. Larger = easier to click small or densely packed pins")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.zoomLod && (
-      <CollapsibleSection id="zoomLod" title="Zoom Level of Detail" isOpen={openSections.has('zoomLod')}
+      <CollapsibleSection id="zoomLod" title={uiText("Zoom Level of Detail")} isOpen={openSections.has('zoomLod')}
         onToggle={toggleSection} sectionRef={zoomLodRef} isFocused={focusedSection === 'zoomLod'}>
-        <div className="color-rule-hint" style={{ marginBottom: 6 }}>Controls when text labels appear/disappear as you zoom. Higher = must zoom in more. At 100% zoom: 1 mil = 1 screen pixel.</div>
-        <Slider label="Part Labels" value={draft.labelMinScreenPx} min={0} max={50} step={1} field="labelMinScreenPx" onUpdate={updateGlobal}
-          title="Part name labels (R1, U1, C42) appear when they reach this many screen pixels. At 100% zoom a medium (8 mil) label = 8px. Set to 10 to hide them below 125% zoom." />
-        <Slider label="Pin Numbers" value={draft.pinNumberMinScreenPx ?? 5} min={0} max={50} step={1} field="pinNumberMinScreenPx" onUpdate={updateGlobal}
-          title="Pin numbers on ICs/BGAs appear when they reach this many screen pixels. They sit inside the pin and cannot overlap, so this can be lower than the net-name floor; until the net name shows, the number is drawn centred in the pin." />
-        <Slider label="Net Names on Pins" value={draft.circleLabelMinScreenPx} min={0} max={50} step={1} field="circleLabelMinScreenPx" onUpdate={updateGlobal}
-          title="Net names on IC/BGA pins appear when they reach this many screen pixels. At 100% zoom a 6-mil label = 6px. When they appear, the pin numbers move out of the pin centre to make room." />
-        <Slider label="2-Pin Net Names" value={draft.twoPinLabelMinScreenPx} min={0} max={50} step={1} field="twoPinLabelMinScreenPx" onUpdate={updateGlobal}
-          title="Net names on resistors/capacitors (2-pin parts) appear when they reach this many screen pixels." />
-        <Slider label="Label Cull (mils)" value={draft.labelHideThreshold} min={0} max={20} step={0.5} field="labelHideThreshold" onUpdate={updateGlobal}
-          title="Labels smaller than this (in board mils) are permanently removed from the scene — never drawn at any zoom. Saves GPU memory on dense boards." />
-        <Slider label="Global Zoom Floor" value={draft.labelZoomHide} min={0} max={10} step={0.01} field="labelZoomHide" onUpdate={updateGlobal}
-          title="Hard minimum zoom level to show ANY text. 0 = disabled. All labels vanish below this zoom level." />
-        <Slider label="Selected Part Labels" value={draft.selectedLabelMinPx} min={0} max={30} step={1} field="selectedLabelMinPx" onUpdate={updateGlobal}
-          title="The selected part's labels never render smaller than this many screen pixels — they stay readable while you unzoom (Text fast mode). 0 = scale naturally with zoom." />
+        <div className="color-rule-hint" style={{ marginBottom: 6 }}>{uiText("Controls when text labels appear/disappear as you zoom. Higher = must zoom in more. At 100% zoom: 1 mil = 1 screen pixel.")}</div>
+        <Slider label={uiText("Part Labels")} value={draft.labelMinScreenPx} min={0} max={50} step={1} field="labelMinScreenPx" onUpdate={updateGlobal}
+          title={uiText("Part name labels (R1, U1, C42) appear when they reach this many screen pixels. At 100% zoom a medium (8 mil) label = 8px. Set to 10 to hide them below 125% zoom.")} />
+        <Slider label={uiText("Pin Numbers")} value={draft.pinNumberMinScreenPx ?? 5} min={0} max={50} step={1} field="pinNumberMinScreenPx" onUpdate={updateGlobal}
+          title={uiText("Pin numbers on ICs/BGAs appear when they reach this many screen pixels. They sit inside the pin and cannot overlap, so this can be lower than the net-name floor; until the net name shows, the number is drawn centred in the pin.")} />
+        <Slider label={uiText("Net Names on Pins")} value={draft.circleLabelMinScreenPx} min={0} max={50} step={1} field="circleLabelMinScreenPx" onUpdate={updateGlobal}
+          title={uiText("Net names on IC/BGA pins appear when they reach this many screen pixels. At 100% zoom a 6-mil label = 6px. When they appear, the pin numbers move out of the pin centre to make room.")} />
+        <Slider label={uiText("2-Pin Net Names")} value={draft.twoPinLabelMinScreenPx} min={0} max={50} step={1} field="twoPinLabelMinScreenPx" onUpdate={updateGlobal}
+          title={uiText("Net names on resistors/capacitors (2-pin parts) appear when they reach this many screen pixels.")} />
+        <Slider label={uiText("Label Cull (mils)")} value={draft.labelHideThreshold} min={0} max={20} step={0.5} field="labelHideThreshold" onUpdate={updateGlobal}
+          title={uiText("Labels smaller than this (in board mils) are permanently removed from the scene — never drawn at any zoom. Saves GPU memory on dense boards.")} />
+        <Slider label={uiText("Global Zoom Floor")} value={draft.labelZoomHide} min={0} max={10} step={0.01} field="labelZoomHide" onUpdate={updateGlobal}
+          title={uiText("Hard minimum zoom level to show ANY text. 0 = disabled. All labels vanish below this zoom level.")} />
+        <Slider label={uiText("Selected Part Labels")} value={draft.selectedLabelMinPx} min={0} max={30} step={1} field="selectedLabelMinPx" onUpdate={updateGlobal}
+          title={uiText("The selected part's labels never render smaller than this many screen pixels — they stay readable while you unzoom (Text fast mode). 0 = scale naturally with zoom.")} />
         <div className="settings-row settings-toggle-row"
-          title="Cap pin numbers and net names on ICs/BGAs at the size that fits between the part's pin centres, so a selected chip's labels cannot overlap. A label that would have to go below its appear-floor to fit is hidden. The pin you point at is exempt.">
-          <label className="settings-label">Fit pin labels to pitch</label>
+          title={uiText("Cap pin numbers and net names on ICs/BGAs at the size that fits between the part's pin centres, so a selected chip's labels cannot overlap. A label that would have to go below its appear-floor to fit is hidden. The pin you point at is exempt.")}>
+          <label className="settings-label">{uiText("Fit pin labels to pitch")}</label>
           <input type="checkbox" checked={draft.labelFitToPitch ?? true} onChange={e => updateGlobal({ labelFitToPitch: e.target.checked })} />
         </div>
-        <Slider label="Label Fade-In" value={draft.labelFadeRange ?? 0.5} min={0} max={1.5} step={0.05} field="labelFadeRange" onUpdate={updateGlobal}
-          title="Labels fade in as they grow past their appear-floor instead of popping in at full strength — fully opaque at floor × (1 + this). 0 = instant. Like the part-name fade, but at the small end." />
-        <Slider label="Other Pins of Selected Part" value={draft.selectedLabelOtherScale ?? 0.8} min={0.3} max={1} step={0.05} field="selectedLabelOtherScale" onUpdate={updateGlobal}
-          title="Fraction of the size above for the selected part's pin labels that are not the selected or hovered pin. The pin you point at, the selected pin and the part name keep the full size; the rest stay smaller so a dense part's labels don't overlap." />
+        <Slider label={uiText("Label Fade-In")} value={draft.labelFadeRange ?? 0.5} min={0} max={1.5} step={0.05} field="labelFadeRange" onUpdate={updateGlobal}
+          title={uiText("Labels fade in as they grow past their appear-floor instead of popping in at full strength — fully opaque at floor × (1 + this). 0 = instant. Like the part-name fade, but at the small end.")} />
+        <Slider label={uiText("Other Pins of Selected Part")} value={draft.selectedLabelOtherScale ?? 0.8} min={0.3} max={1} step={0.05} field="selectedLabelOtherScale" onUpdate={updateGlobal}
+          title={uiText("Fraction of the size above for the selected part's pin labels that are not the selected or hovered pin. The pin you point at, the selected pin and the part name keep the full size; the rest stay smaller so a dense part's labels don't overlap.")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.partTypeOverrides && (
-      <CollapsibleSection id="partTypeOverrides" title="Part properties" isOpen={openSections.has('partTypeOverrides')}
+      <CollapsibleSection id="partTypeOverrides" title={uiText("Part properties")} isOpen={openSections.has('partTypeOverrides')}
         onToggle={toggleSection} sectionRef={partTypeOverridesRef} isFocused={focusedSection === 'partTypeOverrides'}>
-        <Slider label="Hierarchy Depth" value={draft.hierarchyDepth} min={1} max={4} step={1} field="hierarchyDepth" onUpdate={updateDraft}
-          title="How many hops the hierarchical (chain + adjacent) net-line mode follows through bridging parts. 1 = immediate neighbours; up to 4 follows longer series chains." />
-        <div className="color-rule-hint" style={{ padding: '4px 0' }}>
-          Component fill colours &amp; prefixes are carried by the theme — edit
-          them under <strong>Settings ▸ Theme ▸ Board &amp; pin colours</strong>.
+        <Slider label={uiText("Hierarchy Depth")} value={draft.hierarchyDepth} min={1} max={4} step={1} field="hierarchyDepth" onUpdate={updateDraft}
+          title={uiText("How many hops the hierarchical (chain + adjacent) net-line mode follows through bridging parts. 1 = immediate neighbours; up to 4 follows longer series chains.")} />
+        <div className="color-rule-hint" style={{ padding: '4px 0' }}>{uiText("Component fill colours & prefixes are carried by the theme — edit them under ")}<strong>{uiText("Settings ▸ Theme ▸ Board & pin colours")}</strong>.
         </div>
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.netColors && (
-      <CollapsibleSection id="netColors" title="Pin Color Rules" isOpen={openSections.has('netColors')}
+      <CollapsibleSection id="netColors" title={uiText("Pin Color Rules")} isOpen={openSections.has('netColors')}
         onToggle={toggleSection} sectionRef={netColorsRef} isFocused={focusedSection === 'netColors'}>
-        <div className="color-rule-hint" style={{ padding: '4px 0' }}>
-          Pin colours are now grouped by net class (Power / Ground / Datalines /
-          Logical / Misc) and carried by the theme. Edit them under{' '}
-          <strong>Settings ▸ Theme ▸ Board &amp; pin colours</strong>.
+        <div className="color-rule-hint" style={{ padding: '4px 0' }}>{uiText("Pin colours are now grouped by net class (Power / Ground / Datalines / Logical / Misc) and carried by the theme. Edit them under")}{' '}
+          <strong>{uiText("Settings ▸ Theme ▸ Board & pin colours")}</strong>.
         </div>
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.selection && (
-      <CollapsibleSection id="selection" title="Selection & Highlight" isOpen={openSections.has('selection')}
+      <CollapsibleSection id="selection" title={uiText("Selection & Highlight")} isOpen={openSections.has('selection')}
         onToggle={toggleSection} sectionRef={selectionRef} isFocused={focusedSection === 'selection'}>
-        <Slider label="Selection Border" value={draft.selectionWidth} min={0.5} max={10} step={0.5} field="selectionWidth" onUpdate={updateDraft}
-          title="Thickness of the selection outline in screen pixels — the same at every zoom level" />
-        <Slider label="Selection Min Size" value={draft.selectionMinScreenPx} min={0} max={64} step={2} field="selectionMinScreenPx" onUpdate={updateDraft}
-          title="A selected part is never drawn smaller than this on screen (px): zoomed out, the outline is padded to this size so a tiny part stays findable; zoomed in, the padding drops to zero and the outline sits exactly on the component border" />
-        <Slider label="Selection Fill" value={draft.selectionFillAlpha} min={0} max={0.5} step={0.01} field="selectionFillAlpha" onUpdate={updateDraft}
-          title="Brightness of the semi-transparent fill inside the selected component outline. 0 = no fill, higher = brighter" />
-        <Slider label="Selection Padding" value={draft.selectionPadding} min={0} max={30} step={1} field="selectionPadding" onUpdate={updateDraft}
-          title="Extra gap (mils) between the component border and the selection outline. 0 = the outline is the border. Added on top of the dynamic minimum size" />
-        <Slider label="Net Highlight Ring" value={draft.netHighlightGrow} min={0} max={20} step={0.5} field="netHighlightGrow" onUpdate={updateDraft}
-          title="How much larger (mils) the yellow net highlight circle is compared to the pin circle. Creates a visible ring around each pin in the selected net" />
-        <Slider label="Highlight Ring Opacity" value={draft.netHighlightAlpha} min={0} max={1} step={0.05} field="netHighlightAlpha" onUpdate={updateDraft}
-          title="Opacity of the yellow highlight ring around pins in the selected net. Higher = more visible ring" />
+        <Slider label={uiText("Selection Border")} value={draft.selectionWidth} min={0.5} max={10} step={0.5} field="selectionWidth" onUpdate={updateDraft}
+          title={uiText("Thickness of the selection outline in screen pixels — the same at every zoom level")} />
+        <Slider label={uiText("Selection Min Size")} value={draft.selectionMinScreenPx} min={0} max={64} step={2} field="selectionMinScreenPx" onUpdate={updateDraft}
+          title={uiText("A selected part is never drawn smaller than this on screen (px): zoomed out, the outline is padded to this size so a tiny part stays findable; zoomed in, the padding drops to zero and the outline sits exactly on the component border")} />
+        <Slider label={uiText("Selection Fill")} value={draft.selectionFillAlpha} min={0} max={0.5} step={0.01} field="selectionFillAlpha" onUpdate={updateDraft}
+          title={uiText("Brightness of the semi-transparent fill inside the selected component outline. 0 = no fill, higher = brighter")} />
+        <Slider label={uiText("Selection Padding")} value={draft.selectionPadding} min={0} max={30} step={1} field="selectionPadding" onUpdate={updateDraft}
+          title={uiText("Extra gap (mils) between the component border and the selection outline. 0 = the outline is the border. Added on top of the dynamic minimum size")} />
+        <Slider label={uiText("Net Highlight Ring")} value={draft.netHighlightGrow} min={0} max={20} step={0.5} field="netHighlightGrow" onUpdate={updateDraft}
+          title={uiText("How much larger (mils) the yellow net highlight circle is compared to the pin circle. Creates a visible ring around each pin in the selected net")} />
+        <Slider label={uiText("Highlight Ring Opacity")} value={draft.netHighlightAlpha} min={0} max={1} step={0.05} field="netHighlightAlpha" onUpdate={updateDraft}
+          title={uiText("Opacity of the yellow highlight ring around pins in the selected net. Higher = more visible ring")} />
         <LightSelectionStyleRow value={draft.lightSelectionStyle} onUpdate={updateDraft} />
-        <Slider label="Dim Overlay Strength" value={draft.dimOverlayAlpha} min={0} max={0.8} step={0.05} field="dimOverlayAlpha" onUpdate={updateDraft}
-          title="Opacity of the black overlay that dims unselected areas when a net is highlighted. 0 = no dimming, higher = darker" />
-        <Toggle label="Ambient Dim" value={draft.ambientDim} field="ambientDim" onUpdate={updateDraft}
-          title="Always dim the board even when nothing is selected. Hovering over a pin punches through the overlay to reveal its net. Useful for high-contrast inspection" />
-        <Toggle label="Floating Part Label" value={draft.showElevatedPartLabel} field="showElevatedPartLabel" onUpdate={updateDraft}
-          title="Show a large background-backed label above the selected component with its reference designator (e.g. U1)" />
-        <Toggle label="Floating Pin Label" value={draft.showElevatedPinLabel} field="showElevatedPinLabel" onUpdate={updateDraft}
-          title="Show a background-backed label above the selected pin with its pin number and net name" />
-        <Slider label="HDR outline (experimental)" value={draft.hdrGlowIntensity} min={1} max={10} step={1} field="hdrGlowIntensity" toggleField="hdrFocusGlow" onUpdate={updateGlobal}
+        <Slider label={uiText("Dim Overlay Strength")} value={draft.dimOverlayAlpha} min={0} max={0.8} step={0.05} field="dimOverlayAlpha" onUpdate={updateDraft}
+          title={uiText("Opacity of the black overlay that dims unselected areas when a net is highlighted. 0 = no dimming, higher = darker")} />
+        <Toggle label={uiText("Ambient Dim")} value={draft.ambientDim} field="ambientDim" onUpdate={updateDraft}
+          title={uiText("Always dim the board even when nothing is selected. Hovering over a pin punches through the overlay to reveal its net. Useful for high-contrast inspection")} />
+        <Toggle label={uiText("Floating Part Label")} value={draft.showElevatedPartLabel} field="showElevatedPartLabel" onUpdate={updateDraft}
+          title={uiText("Show a large background-backed label above the selected component with its reference designator (e.g. U1)")} />
+        <Toggle label={uiText("Floating Pin Label")} value={draft.showElevatedPinLabel} field="showElevatedPinLabel" onUpdate={updateDraft}
+          title={uiText("Show a background-backed label above the selected pin with its pin number and net name")} />
+        <Slider label={uiText("HDR outline (experimental)")} value={draft.hdrGlowIntensity} min={1} max={10} step={1} field="hdrGlowIntensity" toggleField="hdrFocusGlow" onUpdate={updateGlobal}
           title={hdrCapable
-            ? "On an HDR display, burn the selected outline brighter than white for as long as it stays selected. The slider is the brightness: if the rest of the UI visibly dims while a part is selected, lower it. Click the name or the thumb to turn it off."
-            : "No HDR display detected. Needs an HDR-capable screen in HDR mode; automatic on macOS, must be enabled system-wide on Windows."} />
+            ? uiText("On an HDR display, burn the selected outline brighter than white for as long as it stays selected. The slider is the brightness: if the rest of the UI visibly dims while a part is selected, lower it. Click the name or the thumb to turn it off.")
+            : uiText("No HDR display detected. Needs an HDR-capable screen in HDR mode; automatic on macOS, must be enabled system-wide on Windows.")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.boardOverlay && (
-      <CollapsibleSection id="boardOverlay" title="Board overlay" isOpen={openSections.has('boardOverlay')}
+      <CollapsibleSection id="boardOverlay" title={uiText("Board overlay")} isOpen={openSections.has('boardOverlay')}
         onToggle={toggleSection} sectionRef={boardOverlayRef} isFocused={focusedSection === 'boardOverlay'}>
         <OverlayCustomizer />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.netLines && (
-      <CollapsibleSection id="netLines" title="Net Lines" isOpen={openSections.has('netLines')}
+      <CollapsibleSection id="netLines" title={uiText("Net Lines")} isOpen={openSections.has('netLines')}
         onToggle={toggleSection} sectionRef={netLinesRef} isFocused={focusedSection === 'netLines'}>
-        <div className="settings-row" title="Colour of net connection lines. Left: the selected net (primary). Right: chain-adjacent nets reached through 2-pin bridge components in hierarchical highlight mode.">
-          <label className="settings-label">Line colours</label>
+        <div className="settings-row" title={uiText("Colour of net connection lines. Left: the selected net (primary). Right: chain-adjacent nets reached through 2-pin bridge components in hierarchical highlight mode.")}>
+          <label className="settings-label">{uiText("Line colours")}</label>
           <div className="net-line-color-chain">
             <input
               type="color"
               className="color-rule-color"
               value={colorToHex(draft.netLineColor)}
               onChange={(e) => updateDraft({ netLineColor: hexToColor(e.target.value) })}
-              title="Primary net line colour (the selected net)"
+              title={uiText("Primary net line colour (the selected net)")}
             />
             <span className="net-line-color-chain-link" aria-hidden="true">→</span>
             <input
@@ -2452,83 +2383,81 @@ export function SettingsPanel() {
               className="color-rule-color"
               value={colorToHex(draft.adjacentNetLineColor)}
               onChange={(e) => updateDraft({ adjacentNetLineColor: hexToColor(e.target.value) })}
-              title="Adjacent (chain-propagated) net line colour, used when Hierarchy Depth > 1"
+              title={uiText("Adjacent (chain-propagated) net line colour, used when Hierarchy Depth > 1")}
             />
           </div>
         </div>
         {themeStore.activeTheme().palette && (
-          <p className="settings-hint">
-            The {themeStore.activeTheme().label} scheme sets the line colours; these apply on BoardRipper Default.
-          </p>
+          <p className="settings-hint">{uiText("The ")}{themeStore.activeTheme().label}{uiText(" scheme sets the line colours; these apply on BoardRipper Default.")}</p>
         )}
-        <Slider label="Line Width" value={draft.netLineWidth} min={0.5} max={5} step={0.5} field="netLineWidth" onUpdate={updateDraft}
-          title="Thickness of the connection lines drawn between pins of the same net when a net is selected" />
-        <Slider label="Line Opacity" value={draft.netLineAlpha} min={0} max={1} step={0.05} field="netLineAlpha" onUpdate={updateDraft}
-          title="Transparency of net connection lines. 0 = invisible, 1 = fully opaque" />
-        <Slider label="Dashed" value={draft.netLineDashLength} min={2} max={20} step={1} field="netLineDashLength" toggleField="netLineDashed" unit="px" onUpdate={updateDraft}
-          title="Length of each dash segment (screen pixels) in the dashed net line pattern" />
-        <Toggle label="Pulse Animation" value={draft.netLinePulse} field="netLinePulse" onUpdate={updateDraft}
-          title="Animate net lines with a red traveling pulse effect, making the connection path easier to follow across the board" />
+        <Slider label={uiText("Line Width")} value={draft.netLineWidth} min={0.5} max={5} step={0.5} field="netLineWidth" onUpdate={updateDraft}
+          title={uiText("Thickness of the connection lines drawn between pins of the same net when a net is selected")} />
+        <Slider label={uiText("Line Opacity")} value={draft.netLineAlpha} min={0} max={1} step={0.05} field="netLineAlpha" onUpdate={updateDraft}
+          title={uiText("Transparency of net connection lines. 0 = invisible, 1 = fully opaque")} />
+        <Slider label={uiText("Dashed")} value={draft.netLineDashLength} min={2} max={20} step={1} field="netLineDashLength" toggleField="netLineDashed" unit="px" onUpdate={updateDraft}
+          title={uiText("Length of each dash segment (screen pixels) in the dashed net line pattern")} />
+        <Toggle label={uiText("Pulse Animation")} value={draft.netLinePulse} field="netLinePulse" onUpdate={updateDraft}
+          title={uiText("Animate net lines with a red traveling pulse effect, making the connection path easier to follow across the board")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.performance && (
-      <CollapsibleSection id="performance" title="Rendering" isOpen={openSections.has('performance')}
+      <CollapsibleSection id="performance" title={uiText("Rendering")} isOpen={openSections.has('performance')}
         onToggle={toggleSection} sectionRef={performanceRef} isFocused={focusedSection === 'performance'}>
-        <div className="settings-subsection-label">Board</div>
+        <div className="settings-subsection-label">{uiText("Board")}</div>
         <div className="settings-quality-preset"><QualityPresetCard /></div>
         <details className="settings-fine-tune" data-testid="settings-board-fine-tune">
-          <summary>Fine-tune — the settings the preset sets</summary>
-          <Toggle label="Cap to 60 FPS" value={draft.cap60Fps} field="cap60Fps" onUpdate={updateGlobal}
-          title="Limit the renderer to 60 frames per second. Disable to let the ticker run at the display refresh rate (120/144/240 Hz) — smoother but more CPU/GPU work" />
-          <Toggle label="Touch device performance mode" value={draft.touchPerformanceMode} field="touchPerformanceMode" onUpdate={updateGlobal}
-          title="On a tablet (finger as the primary pointer): cap the board to 60 FPS instead of the panel's 120 and cap the render resolution at 1.5×. Edge smoothing stays on. Board text keeps full resolution. No effect on a mouse or trackpad machine. Takes effect when a board panel is next opened." />
-          <Slider label="Render resolution limit" value={draft.boardResolutionCap} min={0} max={2} step={0.25} field="boardResolutionCap" onUpdate={updateGlobal} unit="×"
-          title="Ceiling on the board's render resolution in device pixels per CSS pixel. 0 = no limit of its own (a tablet still gets the touch profile's 1.5×). 1 draws 44 % of the pixels 1.5 does. Board text is unaffected." />
-          <Toggle label="Edge smoothing (MSAA)" value={draft.boardAntialiasing} field="boardAntialiasing" onUpdate={updateGlobal}
-          title="Multisampled rendering for the board. Keep it on: thin lines such as the board outline are thinner than a pixel when zoomed out and break into jaggies without it. Turning it off saves GPU work on a machine that cannot afford it. Takes effect when a board panel is next opened." />
-          <Toggle label="Simple trace corners" value={draft.traceCorners === 'simple'} field="traceCorners"
+          <summary>{uiText("Fine-tune — the settings the preset sets")}</summary>
+          <Toggle label={uiText("Cap to 60 FPS")} value={draft.cap60Fps} field="cap60Fps" onUpdate={updateGlobal}
+          title={uiText("Limit the renderer to 60 frames per second. Disable to let the ticker run at the display refresh rate (120/144/240 Hz) — smoother but more CPU/GPU work")} />
+          <Toggle label={uiText("Touch device performance mode")} value={draft.touchPerformanceMode} field="touchPerformanceMode" onUpdate={updateGlobal}
+          title={uiText("On a tablet (finger as the primary pointer): cap the board to 60 FPS instead of the panel's 120 and cap the render resolution at 1.5×. Edge smoothing stays on. Board text keeps full resolution. No effect on a mouse or trackpad machine. Takes effect when a board panel is next opened.")} />
+          <Slider label={uiText("Render resolution limit")} value={draft.boardResolutionCap} min={0} max={2} step={0.25} field="boardResolutionCap" onUpdate={updateGlobal} unit="×"
+          title={uiText("Ceiling on the board's render resolution in device pixels per CSS pixel. 0 = no limit of its own (a tablet still gets the touch profile's 1.5×). 1 draws 44 % of the pixels 1.5 does. Board text is unaffected.")} />
+          <Toggle label={uiText("Edge smoothing (MSAA)")} value={draft.boardAntialiasing} field="boardAntialiasing" onUpdate={updateGlobal}
+          title={uiText("Multisampled rendering for the board. Keep it on: thin lines such as the board outline are thinner than a pixel when zoomed out and break into jaggies without it. Turning it off saves GPU work on a machine that cannot afford it. Takes effect when a board panel is next opened.")} />
+          <Toggle label={uiText("Simple trace corners")} value={draft.traceCorners === 'simple'} field="traceCorners"
           onUpdate={(p) => { const v: unknown = p.traceCorners; updateGlobal({ traceCorners: (v === true || v === 'simple') ? 'simple' : 'round' }); }}
-          title="Bevelled bends and square ends instead of rounded ones: about half the trace geometry. Invisible when zoomed out; corners look square deep in." />
+          title={uiText("Bevelled bends and square ends instead of rounded ones: about half the trace geometry. Invisible when zoomed out; corners look square deep in.")} />
         </details>
-        <div className="settings-subsection-label">PDF</div>
+        <div className="settings-subsection-label">{uiText("PDF")}</div>
         <PdfQualitySelector />
         <details className="settings-fine-tune" data-testid="settings-pdf-render-mode">
-          <summary>Render mode</summary>
+          <summary>{uiText("Render mode")}</summary>
           <PdfRenderModeSelector />
         </details>
-        <div className="settings-subsection-label">Board text</div>
-        <Toggle label="Board text on an overlay (recommended)" value={draft.textFastMode} field="textFastMode" onUpdate={updateGlobal}
-          title="Draw board text on a 2D overlay instead of as in-scene text objects — much faster on dense boards, and the default since 2026-07. Off falls back to the legacy in-scene text." />
+        <div className="settings-subsection-label">{uiText("Board text")}</div>
+        <Toggle label={uiText("Board text on an overlay (recommended)")} value={draft.textFastMode} field="textFastMode" onUpdate={updateGlobal}
+          title={uiText("Draw board text on a 2D overlay instead of as in-scene text objects — much faster on dense boards, and the default since 2026-07. Off falls back to the legacy in-scene text.")} />
         {!draft.textFastMode && <>
-          <Slider label="Label Atlas Resolution" value={draft.labelAtlasResolution} min={4} max={24} step={1} field="labelAtlasResolution" onUpdate={updateGlobal}
-          title="Pixel multiplier for the BitmapFont atlases used by pin/net/part labels. Higher = sharper labels at deep zoom; texture memory grows ~quadratically. Default 8. Triggers a scene rebuild." />
-          <Toggle label="Hide Text During Zoom" value={draft.hideTextDuringZoom} field="hideTextDuringZoom" onUpdate={updateGlobal}
-          title="Temporarily hide all text labels while zooming or panning for smoother performance. Labels reappear when interaction stops" />
+          <Slider label={uiText("Label Atlas Resolution")} value={draft.labelAtlasResolution} min={4} max={24} step={1} field="labelAtlasResolution" onUpdate={updateGlobal}
+          title={uiText("Pixel multiplier for the BitmapFont atlases used by pin/net/part labels. Higher = sharper labels at deep zoom; texture memory grows ~quadratically. Default 8. Triggers a scene rebuild.")} />
+          <Toggle label={uiText("Hide Text During Zoom")} value={draft.hideTextDuringZoom} field="hideTextDuringZoom" onUpdate={updateGlobal}
+          title={uiText("Temporarily hide all text labels while zooming or panning for smoother performance. Labels reappear when interaction stops")} />
         </>}
-        <div className="settings-subsection-label">Diagnostics</div>
-        <Toggle label="Show Perf Overlay" value={draft.showPerfOverlay} field="showPerfOverlay" onUpdate={updateGlobal}
-          title="Show per-phase frame-time stats (frame / lod / sel / net / gpu) on each board panel. Same toggle as the small 'i' button at the bottom-left of a panel" />
-        <Toggle label="[Debug] Pad Vertex Crosshairs" value={draft.showPadVertices} field="showPadVertices" onUpdate={updateGlobal}
-          title="Draw magenta crosshair markers at each pin's exact coordinate from the board file. Useful for verifying parser accuracy" />
-        <Toggle label="[Debug] Outline Vertex Numbers" value={draft.showVertexNumbers} field="showVertexNumbers" onUpdate={updateGlobal}
-          title="Show numbered markers at each board outline vertex. Yellow = unique, orange = duplicate coordinates. Works for all board formats" />
+        <div className="settings-subsection-label">{uiText("Diagnostics")}</div>
+        <Toggle label={uiText("Show Perf Overlay")} value={draft.showPerfOverlay} field="showPerfOverlay" onUpdate={updateGlobal}
+          title={uiText("Show per-phase frame-time stats (frame / lod / sel / net / gpu) on each board panel. Same toggle as the small 'i' button at the bottom-left of a panel")} />
+        <Toggle label={uiText("[Debug] Pad Vertex Crosshairs")} value={draft.showPadVertices} field="showPadVertices" onUpdate={updateGlobal}
+          title={uiText("Draw magenta crosshair markers at each pin's exact coordinate from the board file. Useful for verifying parser accuracy")} />
+        <Toggle label={uiText("[Debug] Outline Vertex Numbers")} value={draft.showVertexNumbers} field="showVertexNumbers" onUpdate={updateGlobal}
+          title={uiText("Show numbered markers at each board outline vertex. Yellow = unique, orange = duplicate coordinates. Works for all board formats")} />
       </CollapsibleSection>
       )}
 
       {activeTab === SECTION_TO_TAB.pdf && (
-      <CollapsibleSection id="pdf" title="PDF Viewer" isOpen={openSections.has('pdf')}
+      <CollapsibleSection id="pdf" title={uiText("PDF Viewer")} isOpen={openSections.has('pdf')}
         onToggle={toggleSection} sectionRef={pdfRef} isFocused={focusedSection === 'pdf'}>
-        <p className="settings-hint">Quality and render mode are under Settings ▸ Rendering.</p>
-        <div className="settings-subsection-label">Watermark filter</div>
+        <p className="settings-hint">{uiText("Quality and render mode are under Settings ▸ Rendering.")}</p>
+        <div className="settings-subsection-label">{uiText("Watermark filter")}</div>
         <PdfWatermarkFilterEditor />
-        <div className="settings-subsection-label">Navigation</div>
+        <div className="settings-subsection-label">{uiText("Navigation")}</div>
         <PdfInertiaToggle />
-        <Toggle label="Pan Boundaries" value={draft.pdfEnableBoundaries} field="pdfEnableBoundaries" onUpdate={updateGlobal}
-          title="Clamp PDF pan to page edges: prevents scrolling off the document at the first/last page and centers horizontally when the page fits the viewport. Page-flip thresholds still fire as you cross them either way. Zoom range stays at 0.5×–10× regardless." />
-        <Toggle label="Page scrubber" value={draft.pdfPageScrubber} field="pdfPageScrubber" onUpdate={updateGlobal}
-          title="A thin rail on the PDF's right edge: click or drag along it to jump to a page, with the page number shown as you go." />
-        <div className="settings-subsection-label">Shortcuts (when PDF panel is active)</div>
+        <Toggle label={uiText("Pan Boundaries")} value={draft.pdfEnableBoundaries} field="pdfEnableBoundaries" onUpdate={updateGlobal}
+          title={uiText("Clamp PDF pan to page edges: prevents scrolling off the document at the first/last page and centers horizontally when the page fits the viewport. Page-flip thresholds still fire as you cross them either way. Zoom range stays at 0.5×–10× regardless.")} />
+        <Toggle label={uiText("Page scrubber")} value={draft.pdfPageScrubber} field="pdfPageScrubber" onUpdate={updateGlobal}
+          title={uiText("A thin rail on the PDF's right edge: click or drag along it to jump to a page, with the page number shown as you go.")} />
+        <div className="settings-subsection-label">{uiText("Shortcuts (when PDF panel is active)")}</div>
         <div className="pdf-shortcuts-list">
           {shortcuts.filter(s => s.category === 'pdf').map(s => (
             <div key={s.id} className="shortcuts-row">
@@ -2537,8 +2466,8 @@ export function SettingsPanel() {
             </div>
           ))}
         </div>
-        <div className="settings-subsection-label">Scroll wheel behavior</div>
-        <p className="settings-hint">Click a pill to change what that scroll does. Pinch always zooms, dragging always pans; Page flips one page per notch.</p>
+        <div className="settings-subsection-label">{uiText("Scroll wheel behavior")}</div>
+        <p className="settings-hint">{uiText("Click a pill to change what that scroll does. Pinch always zooms, dragging always pans; Page flips one page per notch.")}</p>
         <ScrollBindingsEditor />
       </CollapsibleSection>
       )}
@@ -2548,7 +2477,7 @@ export function SettingsPanel() {
           {!isLiteBuild() && <SoftwareUpdateSection />}
           {/* Cache/render resets are troubleshooting tools, not everyday
               controls — demoted from the panel header into their own block. */}
-          <StandaloneCollapsibleSection title="Troubleshooting" defaultOpen={false}
+          <StandaloneCollapsibleSection title={uiText("Troubleshooting")} defaultOpen={false}
             storageKey="troubleshooting" searchSectionId="troubleshooting">
             <CacheControlBar hasBoard={hasBoard} />
             <LocalSettingsResetBar />
@@ -2560,14 +2489,14 @@ export function SettingsPanel() {
       <>
       {/* The everyday section first (scan/index controls); database stats,
           dedup and the destructive resets live in their own block below. */}
-      <CollapsibleSection id="server" title="Scanning & Indexing" isOpen={openSections.has('server')}
+      <CollapsibleSection id="server" title={uiText("Scanning & Indexing")} isOpen={openSections.has('server')}
         onToggle={toggleSection} sectionRef={serverRef} isFocused={focusedSection === 'server'}>
         <LibraryFolderSetting />
         <AutoScanToggle />
         <AutoBindSection />
         <LibrarySettingsSection />
       </CollapsibleSection>
-      <CollapsibleSection id="dbinfo" title="Database info" isOpen={openSections.has('dbinfo')}
+      <CollapsibleSection id="dbinfo" title={uiText("Database info")} isOpen={openSections.has('dbinfo')}
         onToggle={toggleSection} sectionRef={dbinfoRef} isFocused={focusedSection === 'dbinfo'}>
         <DatabaseInfoSection />
       </CollapsibleSection>
@@ -2575,7 +2504,7 @@ export function SettingsPanel() {
       )}
 
       {activeTab === SECTION_TO_TAB.shortcuts && (
-      <CollapsibleSection id="shortcuts" title="Keyboard Shortcuts" isOpen={openSections.has('shortcuts')}
+      <CollapsibleSection id="shortcuts" title={uiText("Keyboard Shortcuts")} isOpen={openSections.has('shortcuts')}
         onToggle={toggleSection} sectionRef={shortcutsRef} isFocused={focusedSection === 'shortcuts'}>
         {CATEGORY_ORDER.map(cat => (
           <div key={cat} className="shortcuts-category">
@@ -2601,8 +2530,8 @@ export function SettingsPanel() {
 
       {activeTab === 'board' && (
         <button className="settings-reset-btn" onClick={handleReset}
-          title={isBoardMode ? 'Clear all board overrides — revert to global settings' : 'Reset all settings to defaults (board render + input behavior)'}>
-          {isBoardMode ? 'Reset to Global' : 'Reset to Defaults'}
+          title={isBoardMode ? uiText("Clear all board overrides — revert to global settings") : uiText("Reset all settings to defaults (board render + input behavior)")}>
+          {isBoardMode ? uiText("Reset to Global") : uiText("Reset to Defaults")}
         </button>
       )}
       </div>
@@ -2627,15 +2556,15 @@ function InteractiveModeToggle() {
       type="button"
       className={`interactive-mode-toggle${enabled ? ' active' : ''}`}
       onClick={() => resizeModeStore.toggle()}
-      title="Click a pin, component, label, or empty board to resize it directly. The whole board updates live."
+      title={uiText("Click a pin, component, label, or empty board to resize it directly. The whole board updates live.")}
     >
       <IconClick size={22} className="interactive-mode-icon" />
       <span className="interactive-mode-text">
-        <strong>Interactive mode{enabled ? ' · ON' : ''}</strong>
+        <strong>{uiText("Interactive mode")}{enabled ? uiText(" · ON") : ''}</strong>
         <span className="interactive-mode-desc">
           {enabled
-            ? 'Click a pin, component, label, or empty board to resize it live.'
-            : 'Resize board elements by clicking them — sizes update live.'}
+            ? uiText("Click a pin, component, label, or empty board to resize it live.")
+            : uiText("Resize board elements by clicking them — sizes update live.")}
         </span>
       </span>
     </button>
@@ -2685,15 +2614,14 @@ function SearchEmptyState({ activeTab, goTab }: {
   return (
     <div className="settings-search-empty">
       {others.length === 0 ? (
-        'No settings match this search.'
+        uiText("No settings match this search.")
       ) : (
-        <>
-          No matches on this tab —{' '}
+        <>{uiText("No matches on this tab —")}{' '}
           {others.map((t, i) => (
             <span key={t}>
               {i > 0 && ', '}
               <button type="button" className="settings-search-empty-link" onClick={() => goTab(t)}>
-                {matches.perTabCount.get(t)} on {TAB_LABELS[t]}
+                {matches.perTabCount.get(t)}{uiText(" on ")}{TAB_LABELS[t]}
               </button>
             </span>
           ))}
@@ -2785,10 +2713,8 @@ function TokenPickerBlock({
               textTransform: 'none',
               letterSpacing: 0,
             }}
-            title="Revert to the active theme's default"
-          >
-            Reset
-          </button>
+            title={uiText("Revert to the active theme's default")}
+          >{uiText("Reset")}</button>
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px 8px' }}>
@@ -2796,7 +2722,7 @@ function TokenPickerBlock({
           type="color"
           value={eff}
           onChange={(e) => onChange(e.target.value.toLowerCase())}
-          title={`Pick a ${title.toLowerCase()} colour`}
+          title={uiText`Pick a ${title.toLowerCase()} colour`}
           style={{
             width: 36,
             height: 24,
@@ -2813,7 +2739,7 @@ function TokenPickerBlock({
         </code>
       </div>
       {presets && presets.length > 0 && (
-        <div role="listbox" aria-label={`${title} presets`} style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '0 8px' }}>
+        <div role="listbox" aria-label={uiText`${title} presets`} style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '0 8px' }}>
           {presets.map((p) => {
             const active = p.hex.toLowerCase() === eff;
             return (
@@ -2871,7 +2797,7 @@ function MiniColorRow({
         type="color"
         value={v}
         onChange={(e) => onChange(e.target.value.toLowerCase())}
-        title={`Pick ${label.toLowerCase()}`}
+        title={uiText`Pick ${label.toLowerCase()}`}
         style={{ width: 30, height: 22, padding: 0, border: '1px solid var(--border)', borderRadius: 3, background: 'transparent', cursor: 'pointer' }}
       />
       <code style={{ fontSize: 10.5, color: 'var(--text-secondary)', fontFamily: MONO }}>{v.toUpperCase()}</code>
@@ -2880,7 +2806,7 @@ function MiniColorRow({
         <button
           type="button"
           onClick={onClear}
-          title="Clear this override — fall back to the global setting"
+          title={uiText("Clear this override — fall back to the global setting")}
           style={{ marginLeft: 'auto', background: 'none', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: 10, lineHeight: 1, padding: '2px 6px', borderRadius: 3, cursor: 'pointer' }}
         >
           ×
@@ -2890,7 +2816,7 @@ function MiniColorRow({
   );
 }
 
-const GROUP_LABEL: React.CSSProperties = { fontSize: 10.5, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', margin: '8px 0 2px' };
+const GROUP_LABEL: React.CSSProperties = { fontSize: 10.5, textTransform: uiText("uppercase"), letterSpacing: 0.5, color: uiText("var(--text-secondary)"), margin: uiText("8px 0 2px") };
 
 /**
  * Custom theme editor — the single user-editable theme. Edits its interface
@@ -2909,18 +2835,15 @@ function ThemeBoardColorsEditor() {
   };
   return (
     <div>
-      <div style={GROUP_LABEL}>Board canvas</div>
-      <MiniColorRow label="Canvas" value={board.canvasBackground} onChange={(h) => setBoard('canvasBackground', h)} />
-      <MiniColorRow label="Board fill" value={board.boardFill} onChange={(h) => setBoard('boardFill', h)} />
-      <MiniColorRow label="Outline" value={board.outline} onChange={(h) => setBoard('outline', h)} />
-      <MiniColorRow label="Selection" value={board.selection} onChange={(h) => setBoard('selection', h)} />
-      <MiniColorRow label="Butterfly" value={board.butterflySelection} onChange={(h) => setBoard('butterflySelection', h)} />
-      <MiniColorRow label="Pin labels" value={board.labelText} onChange={(h) => setBoard('labelText', h)} />
-      <MiniColorRow label="Part labels" value={board.labelPart} onChange={(h) => setBoard('labelPart', h)} />
-      <div style={{ fontSize: 10.5, color: 'var(--text-secondary)', opacity: 0.7, padding: '2px 0' }}>
-        Net-label colours are under “Net labels” below. Body text and the
-        secondary surface/border tiers are derived automatically for contrast.
-      </div>
+      <div style={GROUP_LABEL}>{uiText("Board canvas")}</div>
+      <MiniColorRow label={uiText("Canvas")} value={board.canvasBackground} onChange={(h) => setBoard('canvasBackground', h)} />
+      <MiniColorRow label={uiText("Board fill")} value={board.boardFill} onChange={(h) => setBoard('boardFill', h)} />
+      <MiniColorRow label={uiText("Outline")} value={board.outline} onChange={(h) => setBoard('outline', h)} />
+      <MiniColorRow label={uiText("Selection")} value={board.selection} onChange={(h) => setBoard('selection', h)} />
+      <MiniColorRow label={uiText("Butterfly")} value={board.butterflySelection} onChange={(h) => setBoard('butterflySelection', h)} />
+      <MiniColorRow label={uiText("Pin labels")} value={board.labelText} onChange={(h) => setBoard('labelText', h)} />
+      <MiniColorRow label={uiText("Part labels")} value={board.labelPart} onChange={(h) => setBoard('labelPart', h)} />
+      <div style={{ fontSize: 10.5, color: 'var(--text-secondary)', opacity: 0.7, padding: '2px 0' }}>{uiText("Net-label colours are under “Net labels” below. Body text and the secondary surface/border tiers are derived automatically for contrast.")}</div>
     </div>
   );
 }
@@ -2942,7 +2865,7 @@ function ThemeComponentFillsEditor() {
   };
   return (
     <div>
-      <div style={GROUP_LABEL}>Component fills</div>
+      <div style={GROUP_LABEL}>{uiText("Component fills")}</div>
       <PartTypesSection types={types} actions={actions} hideShapes />
     </div>
   );
@@ -2955,15 +2878,13 @@ function CustomThemeStrip() {
   if (!themeStore.customTheme) return null;
   return (
     <div style={{ ...GROUP_LABEL, display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span>Custom theme {themeStore.isCustomActive ? '(active)' : ''}</span>
+      <span>{uiText("Custom theme ")}{themeStore.isCustomActive ? uiText("(active)") : ''}</span>
       <button
         type="button"
-        onClick={() => { if (confirm('Delete the custom theme? This reverts to BoardRipper Default.')) themeStore.resetCustom(); }}
+        onClick={() => { if (confirm(uiText("Delete the custom theme? This reverts to BoardRipper Default."))) themeStore.resetCustom(); }}
         style={{ marginLeft: 'auto', background: 'none', border: '1px solid var(--border)', color: 'var(--danger)', fontSize: 10, padding: '2px 8px', borderRadius: 3, cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}
-        title="Delete the custom theme"
-      >
-        Delete custom
-      </button>
+        title={uiText("Delete the custom theme")}
+      >{uiText("Delete custom")}</button>
     </div>
   );
 }
@@ -2988,8 +2909,8 @@ function gateThemeEdit(): boolean {
   const had = !!themeStore.customTheme;
   const ok = confirm(
     had
-      ? 'Editing colours here will overwrite your existing custom theme with the current theme + this change, and switch to it. Continue?'
-      : 'Editing colours here will create a custom theme from the current one and switch to it. Continue?',
+      ? uiText("Editing colours here will overwrite your existing custom theme with the current theme + this change, and switch to it. Continue?")
+      : uiText("Editing colours here will create a custom theme from the current one and switch to it. Continue?"),
   );
   if (!ok) return false;
   // Fork the currently-active theme (preserving its palette) into the custom
@@ -3021,19 +2942,15 @@ function ThemePinGroupsEditor() {
 
   return (
     <div>
-      <div style={GROUP_LABEL}>Pin colours (by net group)</div>
-      <div style={{ fontSize: 10.5, color: 'var(--text-secondary)', opacity: 0.75, padding: '0 0 6px' }}>
-        Keywords are comma-separated, matched case-insensitively (substring; <code style={{ fontFamily: MONO }}>*</code> = wildcard, <code style={{ fontFamily: MONO }}>#</code> = digits). First match across groups wins, in order.
-      </div>
+      <div style={GROUP_LABEL}>{uiText("Pin colours (by net group)")}</div>
+      <div style={{ fontSize: 10.5, color: 'var(--text-secondary)', opacity: 0.75, padding: '0 0 6px' }}>{uiText("Keywords are comma-separated, matched case-insensitively (substring; ")}<code style={{ fontFamily: MONO }}>*</code>{uiText(" = wildcard, ")}<code style={{ fontFamily: MONO }}>#</code>{uiText(" = digits). First match across groups wins, in order.")}</div>
       {groups.map((g, gi) => (
         <div key={g.id} style={{ marginBottom: 8, border: '1px solid var(--border)', borderRadius: 5, padding: '6px 8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
             <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>{g.label}</span>
             <label style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: 'var(--text-secondary)', cursor: 'pointer' }}
-              title="Render matching pins as outline-only circles (no fill / no labels) — e.g. no-connect pins.">
-              <input type="checkbox" checked={g.outlineOnly} onChange={(e) => setOutline(gi, e.target.checked)} />
-              outline-only
-            </label>
+              title={uiText("Render matching pins as outline-only circles (no fill / no labels) — e.g. no-connect pins.")}>
+              <input type="checkbox" checked={g.outlineOnly} onChange={(e) => setOutline(gi, e.target.checked)} />{uiText("outline-only")}</label>
           </div>
           {g.rules.map((r, ri) => (
             <PinGroupRuleRow key={r.id} rule={r}
@@ -3041,13 +2958,13 @@ function ThemePinGroupsEditor() {
               onColor={(c) => editRule(gi, ri, { color: c })}
               onRemove={() => removeRule(gi, ri)} />
           ))}
-          <button type="button" className="color-rule-add-btn" style={{ marginTop: 2 }} onClick={() => addRule(gi)} title="Add a keyword→colour rule to this group">+ rule</button>
+          <button type="button" className="color-rule-add-btn" style={{ marginTop: 2 }} onClick={() => addRule(gi)} title={uiText("Add a keyword→colour rule to this group")}>{uiText("+ rule")}</button>
         </div>
       ))}
-      <div style={GROUP_LABEL}>Default pin colour (no group matched)</div>
-      <MiniColorRow label="Top side" value={settings.defaultPinColorTop}
+      <div style={GROUP_LABEL}>{uiText("Default pin colour (no group matched)")}</div>
+      <MiniColorRow label={uiText("Top side")} value={settings.defaultPinColorTop}
         onChange={(h) => { if (gateThemeEdit()) themeStore.setCustomOverride('defaultPinColorTop', h); }} />
-      <MiniColorRow label="Bottom side" value={settings.defaultPinColorBottom}
+      <MiniColorRow label={uiText("Bottom side")} value={settings.defaultPinColorBottom}
         onChange={(h) => { if (gateThemeEdit()) themeStore.setCustomOverride('defaultPinColorBottom', h); }} />
 
       <ThemeNetLabelEditor />
@@ -3065,21 +2982,19 @@ function ThemeNetLabelEditor() {
   const opacity = board.netLabelBgOpacity ?? 0.6;
   return (
     <div>
-      <div style={GROUP_LABEL}>Net labels</div>
-      <MiniColorRow label="Font" value={board.labelNet}
+      <div style={GROUP_LABEL}>{uiText("Net labels")}</div>
+      <MiniColorRow label={uiText("Font")} value={board.labelNet}
         onChange={(h) => { if (gateThemeEdit()) themeStore.updateCustom({ board: { labelNet: h } }); }} />
-      <MiniColorRow label="Background" value={board.netLabelBg ?? '#000000'}
+      <MiniColorRow label={uiText("Background")} value={board.netLabelBg ?? '#000000'}
         onChange={(h) => { if (gateThemeEdit()) themeStore.updateCustom({ board: { netLabelBg: h } }); }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '3px 0' }}>
-        <span style={{ fontSize: 11, color: 'var(--text-secondary)', minWidth: 104 }}>Bg opacity</span>
+        <span style={{ fontSize: 11, color: 'var(--text-secondary)', minWidth: 104 }}>{uiText("Bg opacity")}</span>
         <input type="range" min={0} max={1} step={0.05} value={opacity}
           onChange={(e) => { if (gateThemeEdit()) themeStore.updateCustom({ board: { netLabelBgOpacity: parseFloat(e.target.value) } }); }}
           style={{ flex: 1, accentColor: 'var(--accent)' }} />
         <code style={{ fontSize: 10.5, color: 'var(--text-secondary)', fontFamily: MONO, minWidth: 28, textAlign: 'right' }}>{Math.round(opacity * 100)}%</code>
       </div>
-      <div style={{ fontSize: 10.5, color: 'var(--text-secondary)', opacity: 0.7, padding: '2px 0' }}>
-        The background box appears when net-label backgrounds are enabled (Board ▸ Labels).
-      </div>
+      <div style={{ fontSize: 10.5, color: 'var(--text-secondary)', opacity: 0.7, padding: '2px 0' }}>{uiText("The background box appears when net-label backgrounds are enabled (Board ▸ Labels).")}</div>
     </div>
   );
 }
@@ -3100,9 +3015,9 @@ function PinGroupRuleRow({ rule, onKeywords, onColor, onRemove }: {
       <input type="text" className="color-rule-pattern" value={text}
         onChange={(e) => setText(e.target.value)} onBlur={commit}
         onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-        placeholder="VCC, 3V3, …" title="Comma-separated keywords" />
+        placeholder={uiText("VCC, 3V3, …")} title={uiText("Comma-separated keywords")} />
       <input type="color" className="color-rule-color" value={rule.color} onChange={(e) => onColor(e.target.value)} />
-      <button className="color-rule-remove" onClick={onRemove} title="Remove rule">×</button>
+      <button className="color-rule-remove" onClick={onRemove} title={uiText("Remove rule")}>×</button>
     </div>
   );
 }
@@ -3119,16 +3034,9 @@ function ThemeTab() {
   return (
     <div className="settings-section-body" style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div>
-        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', marginBottom: 6 }}>
-          Board theme
-        </div>
-        <div style={{ fontSize: 11, color: 'var(--text-secondary)', padding: '0 8px 6px' }}>
-          Picks the canvas / board-side colour set (background, fill, outline,
-          selection accent) and any per-theme settings overlays. Light themes
-          also set a light interface baseline; text auto-adjusts for contrast.
-          The colour pickers below override the chosen theme's chrome.
-        </div>
-        <div role="radiogroup" aria-label="Board theme" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', marginBottom: 6 }}>{uiText("Board theme")}</div>
+        <div style={{ fontSize: 11, color: 'var(--text-secondary)', padding: '0 8px 6px' }}>{uiText("Picks the canvas / board-side colour set (background, fill, outline, selection accent) and any per-theme settings overlays. Light themes also set a light interface baseline; text auto-adjusts for contrast. The colour pickers below override the chosen theme's chrome.")}</div>
+        <div role="radiogroup" aria-label={uiText("Board theme")} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {themes.map(t => (
             <label
               key={t.id}
@@ -3167,77 +3075,55 @@ function ThemeTab() {
         </div>
       </div>
 
-      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)' }}>
-        Interface colours
-      </div>
+      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)' }}>{uiText("Interface colours")}</div>
 
       <TokenPickerBlock
-        title="Accent"
+        title={uiText("Accent")}
         effective={effectiveAccent}
         override={overrides.accent}
         onChange={(h) => themeStore.setAccent(h)}
         onReset={() => themeStore.setAccent(null)}
         presets={ACCENT_PRESETS}
         hint={
-          <>
-            Drives <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--accent</code>{' '}
-            (focus, active states, links) and{' '}
-            <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--accent-hover</code>{' '}
-            (derived in CSS via <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>color-mix</code>).
-            Pill colours and selection (yellow) are independent.
-          </>
+          <>{uiText("Drives ")}<code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--accent</code>{' '}{uiText("(focus, active states, links) and")}{' '}
+            <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--accent-hover</code>{' '}{uiText("(derived in CSS via ")}<code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>color-mix</code>{uiText("). Pill colours and selection (yellow) are independent.")}</>
         }
       />
 
       <TokenPickerBlock
-        title="Background"
+        title={uiText("Background")}
         effective={effectiveBackground}
         override={overrides.background}
         onChange={(h) => themeStore.setBackground(h)}
         onReset={() => themeStore.setBackground(null)}
         hint={
-          <>
-            The canvas + interactive surface tier. Drives{' '}
+          <>{uiText("The canvas + interactive surface tier. Drives")}{' '}
             <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--bg-primary</code>;{' '}
-            <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--bg-secondary</code>{' '}
-            (cards, button surfaces) cascades 6% lighter.
-          </>
+            <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--bg-secondary</code>{' '}{uiText("(cards, button surfaces) cascades 6% lighter.")}</>
         }
       />
 
       <TokenPickerBlock
-        title="Chrome"
+        title={uiText("Chrome")}
         effective={effectiveChrome}
         override={overrides.chrome}
         onChange={(h) => themeStore.setChrome(h)}
         onReset={() => themeStore.setChrome(null)}
         hint={
-          <>
-            Toolbar, status bar, and tab strip surfaces. Drives{' '}
+          <>{uiText("Toolbar, status bar, and tab strip surfaces. Drives")}{' '}
             <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--bg-tertiary</code>;{' '}
-            <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--border</code>{' '}
-            (panel boundaries) cascades 12% lighter.
-          </>
+            <code style={{ fontFamily: 'ui-monospace, Menlo, Consolas, monospace' }}>--border</code>{' '}{uiText("(panel boundaries) cascades 12% lighter.")}</>
         }
       />
 
-      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)' }}>
-        Interface scale
-      </div>
+      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)' }}>{uiText("Interface scale")}</div>
       <InterfaceScaleSlider />
 
-      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', paddingTop: 4 }}>
-        Sidebar navigation
-      </div>
+      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', paddingTop: 4 }}>{uiText("Sidebar navigation")}</div>
       <SidebarNavSwitch />
 
-      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', borderTop: '1px solid var(--border)', paddingTop: 12 }}>
-        Board & pin colours
-      </div>
-      <div style={{ fontSize: 11, color: 'var(--text-secondary)', padding: '0 0 2px' }}>
-        These are carried by the theme. Editing any of them copies the current
-        theme into your custom theme (one slot) and switches to it.
-      </div>
+      <div style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--text-secondary)', borderTop: '1px solid var(--border)', paddingTop: 12 }}>{uiText("Board & pin colours")}</div>
+      <div style={{ fontSize: 11, color: 'var(--text-secondary)', padding: '0 0 2px' }}>{uiText("These are carried by the theme. Editing any of them copies the current theme into your custom theme (one slot) and switches to it.")}</div>
       <CustomThemeStrip />
       <ThemeBoardColorsEditor />
       <ThemePinGroupsEditor />
@@ -3264,22 +3150,15 @@ function LibraryTab() {
   return (
     <div className="settings-tab-body" data-testid="settings-library-tab">
       <div className="settings-row settings-toggle-row">
-        <label className="settings-label">First-run library setup</label>
-        <button className="settings-action-btn" onClick={() => firstRunStore.show()} data-testid="firstrun-show-btn">
-          Show again
-        </button>
+        <label className="settings-label">{uiText("First-run library setup")}</label>
+        <button className="settings-action-btn" onClick={() => firstRunStore.show()} data-testid="firstrun-show-btn">{uiText("Show again")}</button>
       </div>
       <LibrarySyncSection />
 
-      <StandaloneCollapsibleSection title="OpenBoardData" storageKey="obd" searchSectionId="obd">
-        <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4, margin: '0 0 12px' }}>
-          Per-net diagnostic measurements (diode / voltage / resistance) and repair notes from{' '}
-          <a href="https://openboarddata.org" target="_blank" rel="noopener noreferrer">openboarddata.org</a>.
-          Data is community-contributed under the <strong>ODbL 1.0</strong> license. BoardRipper does not bundle this data;
-          you fetch it on demand. Re-distribution requires keeping the same license — see{' '}
-          <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">
-            the license terms
-          </a>.
+      <StandaloneCollapsibleSection title={uiText("OpenBoardData")} storageKey="obd" searchSectionId="obd">
+        <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4, margin: '0 0 12px' }}>{uiText("Per-net diagnostic measurements (diode / voltage / resistance) and repair notes from")}{' '}
+          <a href="https://openboarddata.org" target="_blank" rel="noopener noreferrer">{uiText("openboarddata.org")}</a>{uiText(". Data is community-contributed under the ")}<strong>{uiText("ODbL 1.0")}</strong>{uiText(" license. BoardRipper does not bundle this data; you fetch it on demand. Re-distribution requires keeping the same license — see")}{' '}
+          <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">{uiText("the license terms")}</a>.
         </p>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
@@ -3288,29 +3167,27 @@ function LibraryTab() {
             disabled={obd.syncing}
             data-testid="obd-sync-btn"
           >
-            {obd.syncing ? 'Syncing…' : 'Sync OBD index'}
+            {obd.syncing ? uiText("Syncing…") : uiText("Sync OBD index")}
           </button>
           <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
             {obd.indexSynced
-              ? `Last synced: ${obd.indexSyncedAt} · ${obd.indexBoardCount} boards`
-              : 'Never synced'}
+              ? uiText`Last synced: ${obd.indexSyncedAt} · ${obd.indexBoardCount} boards`
+              : uiText("Never synced")}
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
           {downloading ? (
-            <button onClick={() => obd.stopFetchAll()} data-testid="obd-fetch-all-stop">Stop</button>
+            <button onClick={() => obd.stopFetchAll()} data-testid="obd-fetch-all-stop">{uiText("Stop")}</button>
           ) : (
             <button onClick={() => obd.fetchAll()} data-testid="obd-fetch-all-btn"
-              title="Fetch every board in the index that is not cached yet (~1 request per second)">
-              Download all boards
-            </button>
+              title={uiText("Fetch every board in the index that is not cached yet (~1 request per second)")}>{uiText("Download all boards")}</button>
           )}
           <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
             {downloading && fa
-              ? `${fa.done} of ${fa.total} · ${fa.fetched} fetched · ${fa.skipped} cached${fa.failed ? ` · ${fa.failed} failed` : ''}${fa.current ? ` · ${fa.current}` : ''}`
+              ? uiText`${fa.done} of ${fa.total} · ${fa.fetched} fetched · ${fa.skipped} cached${fa.failed ? ` · ${fa.failed} failed` : ''}${fa.current ? ` · ${fa.current}` : ''}`
               : obd.indexSynced
-                ? `${obd.indexCached} of ${obd.indexBoardCount} boards cached${fa && !fa.running && fa.total > 0 ? ` · last run: ${fa.fetched} fetched, ${fa.failed} failed` : ''}`
-                : 'Sync the index first, or click Download all — it syncs on its own.'}
+                ? uiText`${obd.indexCached} of ${obd.indexBoardCount} boards cached${fa && !fa.running && fa.total > 0 ? ` · last run: ${fa.fetched} fetched, ${fa.failed} failed` : ''}`
+                : uiText("Sync the index first, or click Download all — it syncs on its own.")}
           </span>
         </div>
         {downloading && fa && fa.total > 0 && (
@@ -3324,14 +3201,12 @@ function LibraryTab() {
 
         <div style={{ marginTop: 12 }}>
           {!confirming ? (
-            <button onClick={() => setConfirming(true)}>Delete all OBD data</button>
+            <button onClick={() => setConfirming(true)}>{uiText("Delete all OBD data")}</button>
           ) : (
             <span>
-              <strong>Are you sure?</strong>{' '}
-              <button onClick={async () => { await obd.clearCache(); setConfirming(false); }}>
-                Yes, delete
-              </button>{' '}
-              <button onClick={() => setConfirming(false)}>Cancel</button>
+              <strong>{uiText("Are you sure?")}</strong>{' '}
+              <button onClick={async () => { await obd.clearCache(); setConfirming(false); }}>{uiText("Yes, delete")}</button>{' '}
+              <button onClick={() => setConfirming(false)}>{uiText("Cancel")}</button>
             </span>
           )}
         </div>
